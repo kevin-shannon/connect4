@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<div id="reset" onclick="Reset()"><a class="butt">reset</a></div>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+<style>
+canvas {
+	position: absolute;
+	margin-left: auto;
+	margin-right: auto;
+	left: 0;
+	right: 0;
+}
+
+@font-face { font-family: cartoonist_kooky; src: url('cartoonist_kooky.ttf'); } 
+
+#reset {
+	width: 300px;
+	height: 100px;  
+	border-bottom: 2px solid #eee;
+  
+	background-image: -webkit-linear-gradient(top, #fcee21, #ddd000 80%);
+	background-image: -moz-linear-gradient(top, #fcee21, #ddd000 80%);
+	background-image: -ms-linear-gradient(top, #fcee21, #ddd000 80%);
+	background-image: -o-linear-gradient(top, #fcee21, #ddd000 80%);
+	background-image: linear-gradient(top, #fcee21, #ddd000 80%);
+  
+	-moz-border-radius: 15px;  
+	-webkit-border-radius: 15px;  
+	border-radius: 15px;
+  
+	box-shadow: inset rgba(70,70,0,0.14) 0px 5px 6px ;
+  
+	left: 50%;
+	top: 85%;
+	margin-left: -150px;
+	position: absolute;
+}
+
+.butt {
+	position: absolute;
+	width: 280px;
+	height: 70px;
+	left: 10px;
+	top: 10px;
+	cursor: pointer;
+	font-family: "cartoonist_kooky";
+	font-size: 68px;
+	color: #330859;
+	text-shadow: 0px 1px 0px #8fa4fc;
+	text-align: center;
+	padding-top: 10px;
+  
+	-moz-border-radius: 15px;  
+	-webkit-border-radius: 15px;  
+	border-radius: 15px;  
+  
+	background-image: -webkit-linear-gradient(top, #2c88db, #2571b6 70%, #2165a1 100%);
+	background-image: -moz-linear-gradient(top, #2c88db, #2571b6 70%, #2165a1 100%);
+	background-image: -ms-linear-gradient(top, #2c88db, #2571b6 70%, #2165a1 100%);
+	background-image: -o-linear-gradient(top, #2c88db, #2571b6 70%, #2165a1 100%);
+	background-image: linear-gradient(top, #2c88db, #2571b6 70%, #2165a1 100%);
+  
+	background-position: 0 6px;
+    background-color: #2c88db;
+    background-repeat: no-repeat;
+	  
+	-webkit-box-shadow: rgba(0,0,0,.4) 0 3px 6px;  
+	-moz-box-shadow: rgba(0,0,0,.4) 0 3px 6px;  
+	box-shadow: rgba(0,0,0,.4) 0 3px 6px;
+	
+	-webkit-user-select: none; /* Chrome/Safari */        
+	-moz-user-select: none; /* Firefox */
+	-ms-user-select: none; /* IE10+ */
+}
+
+.butt:hover {
+  background-position: 0 0px;
+  
+  -webkit-box-shadow: rgba(0,0,0,.2) 0 3px 8px;  
+  -moz-box-shadow: rgba(0,0,0,.2) 0 3px 8px;  
+  box-shadow: rgba(0,0,0,.2) 0 3px 8px;
+}
+
+.butt:active {
+  width: 274px;
+  height: 68px;
+  margin: .5px 0 0 3px;   
+  border-bottom: 1px solid #fff;
+  font-size: 65px;
+  color: #3d0e66;
+
+  -webkit-box-shadow: inset rgba(0,0,0,.3) 0px 5px 10px;
+  -moz-box-shadow: inset rgba(0,0,0,.3) 0px 5px 10px;
+  }
+
+</style>
+<script>
+    var bw = 1050;
+    var bh = 900;
+    var canvas = $('<canvas/>').attr({
+        width: bw,
+        height: bh + (bh/6)
+    }).appendTo('body');
+    var ctx = canvas.get(0).getContext("2d");
+    ctx.translate(0, (bw/7));
+	var canvas2 = $('<canvas/>').attr({
+        width: bw,
+        height: bw
+    }).appendTo('body');
+    var ctx2 = canvas2.get(0).getContext("2d");
+	var pos_array;
+	var xPos = 0;
+    var moves = 0;
+	var winner = "False";
+	var once = "False";
+	var redchip = new Image;
+	redchip.src = "bestchipred.png";
+	var bluechip = new Image;
+	bluechip.src = "bestchipblue.png";
+	var board = new Image;
+	board.src = "board.png";
+	var redwins = new Image;
+	redwins.src = "redwins.png";
+	var bluewins = new Image;
+	bluewins.src = "bluewins.png";
+	var draw = new Image;
+	draw.src = "draw.png";
+	var XXX = new Image;
+	XXX.src = "X.png"
+	
+	fillArray();
+	
+	$(window).load(function() {
+		ctx2.drawImage(board,0,0,bw,bh + (bh/6));
+	});
+	
+	$(document).ready(function() {
+	  $('canvas').click(function(e) {
+		var offset = $(this).offset();
+		var xPos = (e.pageX - offset.left);
+		for (var i = 1; i < 8; i++) {
+			if(((i-1)*(bw/7)) < xPos && xPos < ((i)*(bw/7))) { 
+				dropChip(i);
+			}
+		}
+	  });
+	});
+	
+	$(document).ready(function(e) {
+	    $('canvas').mousemove(function(e) {
+			var offset = $(this).offset();
+			var xPos = (e.pageX - offset.left);
+			var image = new Image();
+			if (moves % 2 === 0) {
+				image.src = "bestchipred.png";
+			}
+			else {
+				image.src = "bestchipblue.png";
+			}
+				
+			for (var i = 1; i < 8; i++) {
+				if(xPos > ((i-1)*(bw/7)) && xPos < (i*(bw/7)) && winner == "False") {
+					ctx.clearRect(0, -(bh/6), bw, (bh/6));
+					ctx.drawImage(image, ((i-1)*(bw/7)), -(bh/6), (bw/7), (bh/6));
+				}
+			}
+			if (winner == "True" && once == "False") {
+				ctx.clearRect(0, -(bh/6), bw, (bh/6));
+				once = "True";
+			}
+	  });
+	});
+	
+    window.requestAnimFrame = (function(callback) {
+		return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
+		function(callback) {
+			window.setTimeout(callback, 1000 / 60);
+		};
+    })();
+	
+    function drawChip(x, y) {
+        var chipColor = redchip;
+		if (moves % 2 === 0) {
+            color = "red";
+			chipColor = redchip;
+        } else {
+            color = "blue";
+			chipColor = bluechip;
+        }
+		pos_array[x][y] = color;
+        x = (bw/7) * (x - 1);
+        y = (bh/6) * (y - 1);
+		
+		var chip = {
+			x: x,
+			y: 0,
+			width: (bw/7),
+			height: (bh/6),
+		};
+		
+		function drawImage(chip, ctx) { 
+			ctx.drawImage(chipColor,chip.x, chip.y, chip.width, chip.height); 
+		}
+		
+		function animate(chip, canvas, ctx, startTime) {
+			// update
+			var time = (new Date()).getTime() - startTime;
+
+			var a = 1300;
+			// pixels / second
+			var newY = (a * Math.pow(time / 1000, 2) - (bh/6));
+
+			if(newY < y) { 
+				chip.y = newY;
+				// request new frame
+				requestAnimFrame(function() {
+					animate(chip, canvas, ctx, startTime);
+				});
+			}
+			else {
+				chip.y = y;
+			}
+
+			// clear
+			ctx.clearRect(x, (chip.y - 110), (bw/7), ((bh/6) + 30));
+
+			drawImage(chip, ctx);
+
+		}
+		var startTime = (new Date()).getTime();
+		animate(chip, canvas, ctx, startTime);
+	}
+
+    function dropChip(x) {
+        //for loop that checks array starting at bottom of board which is at 6 going up to 1
+        for (var j = 6; j > 0; j--) {
+            if (pos_array[x][j] === undefined && winner == "False") {
+                drawChip(x, j);
+                moves++
+				winCondition()
+                break;
+            }
+        }
+    }
+	
+	function Reset() {
+		pos_array.length = 0
+		ctx.clearRect(0, -(bh/6), bw, bh + (bh/6));
+		fillArray();
+		winner = "False"
+		once = "False";
+		moves = 0;
+	}
+	
+	function fillArray() {
+		pos_array = new Array(7);
+		for (var i = 1; i < 8; i++) {
+			pos_array[i] = new Array(6);
+		}
+	}
+	
+	//[columns][rows]
+	function winCondition() {
+		for(var i = 1; i < 5; i++) {
+			for(var j = 1; j < 7; j++) {
+				if(pos_array[i][j] !== undefined && pos_array[i][j] === pos_array[i+1][j] && pos_array[i][j] === pos_array[i+2][j] && pos_array[i][j] === pos_array[i+3][j]) {
+					winner = "True";
+					checkColor();
+					setTimeout(function(i, j){
+						for(var n = 1; n < 5; n++) {
+							ctx.drawImage(XXX, (bw/7)*(i-1), (bh/6)*(j-1), (bw/7), (bh/6));
+							i++
+						}
+					}, 1000, i, j);
+				}
+			}
+		}
+		for(var i = 1; i < 8; i++) {
+			for(var j = 1; j < 4; j++) {
+				if(pos_array[i][j] !== undefined && pos_array[i][j] === pos_array[i][j+1] && pos_array[i][j] === pos_array[i][j+2] && pos_array[i][j] === pos_array[i][j+3]) {
+					winner = "True";
+					checkColor();
+					setTimeout(function(i, j){
+						for(var n = 1; n < 5; n++) {
+							ctx.drawImage(XXX, (bw/7)*(i-1), (bh/6)*(j-1), (bw/7), (bh/6));
+							j++
+						}
+					}, 1000, i, j);
+				}
+			}
+		}
+		// /diagonals
+		for(var i = 1; i < 5; i++) {
+			for(var j = 4; j < 7; j++) {
+				if(pos_array[i][j] !== undefined && pos_array[i][j] === pos_array[i+1][j-1] && pos_array[i][j] === pos_array[i+2][j-2] && pos_array[i][j] === pos_array[i+3][j-3]) {
+					winner = "True";
+					checkColor();
+					setTimeout(function(i, j){
+						for(var n = 1; n < 5; n++) {
+							ctx.drawImage(XXX, (bw/7)*(i-1), (bh/6)*(j-1), (bw/7), (bh/6));
+							j--
+							i++
+						}
+					}, 1000, i, j);
+				}
+			}
+		}
+		// \diagonals
+		for(var i = 1; i < 5; i++) {
+			for(var j = 1; j < 4; j++) {
+				if(pos_array[i][j] !== undefined && pos_array[i][j] === pos_array[i+1][j+1] && pos_array[i][j] === pos_array[i+2][j+2] && pos_array[i][j] === pos_array[i+3][j+3]) {
+					winner = "True";
+					checkColor();
+					setTimeout(function(i, j){
+						for(var n = 1; n < 5; n++) {
+							ctx.drawImage(XXX, (bw/7)*(i-1), (bh/6)*(j-1), (bw/7), (bh/6));
+							j++
+							i++
+						}
+					}, 1000, i, j);
+				}
+			}
+		}
+		// tie
+		if (moves == 42 && winner == "False") {
+			winner = "True";
+			setTimeout(function() {
+				ctx.drawImage(draw, (3*bw/10), -(bh/6), (bw/2.5), (bh/6));
+			}, 500);
+		}
+		
+		function checkColor() {
+			if(pos_array[i][j] == "red") {
+				setTimeout(function() {
+					ctx.drawImage(redwins, (bw/6), -(bh/6), (bw/1.5), (bh/6));
+				}, 500);
+			}
+			else {
+				setTimeout(function() {
+					ctx.drawImage(bluewins, (bw/6), -(bh/6), (bw/1.5), (bh/6));
+				}, 500);
+			}
+		}
+		function fourInARow () {
+			
+		}
+	}
+</script>
