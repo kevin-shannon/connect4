@@ -7,8 +7,12 @@
 /*
  * Variable declarations
  */
+
+//board dimensions
 var bw = 1050;
 var bh = 900;
+
+//canvases
 var canvas = $('<canvas/>').attr({
     width: bw,
     height: bh + (bh / 6)
@@ -20,23 +24,21 @@ var canvas2 = $('<canvas/>').attr({
     height: bw
 }).appendTo('body');
 var ctx2 = canvas2.get(0).getContext("2d");
+
+//logic globals (these are bad practice and will probably have to be replaced)
 var pos_array;
 var moves = 0;
 var winner = "False";
 var once = "False";
-var redchip = new Image;
+
+//images
+var redchip = new Image(), bluechip = new Image(), board = new Image(), redwins = new Image(), bluewins = new Image(), draw = new Image(), XXX = new Image();
 redchip.src = "img/bestchipred.png";
-var bluechip = new Image;
 bluechip.src = "img/bestchipblue.png";
-var board = new Image;
 board.src = "img/board.png";
-var redwins = new Image;
 redwins.src = "img/redwins.png";
-var bluewins = new Image;
 bluewins.src = "img/bluewins.png";
-var draw = new Image;
 draw.src = "img/draw.png";
-var XXX = new Image;
 XXX.src = "img/X.png";
 
 
