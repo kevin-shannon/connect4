@@ -80,12 +80,12 @@ $(document).ready(function (e) {
         }
 
         for (var i = 1; i < 8; i++) {
-            if (xPos > ((i - 1) * (bw / 7)) && xPos < (i * (bw / 7)) && winner == "False") {
+            if (xPos > ((i - 1) * (bw / 7)) && xPos < (i * (bw / 7)) && winner === "False") {
                 ctx.clearRect(0, -(bh / 6), bw, (bh / 6));
                 ctx.drawImage(image, ((i - 1) * (bw / 7)), -(bh / 6), (bw / 7), (bh / 6));
             }
         }
-        if (winner == "True" && once == "False") {
+        if (winner === "True" && once === "False") {
             ctx.clearRect(0, -(bh / 6), bw, (bh / 6));
             once = "True";
         }
@@ -120,7 +120,7 @@ function drawChip(x, y) {
         x: x,
         y: 0,
         width: (bw / 7),
-        height: (bh / 6),
+        height: (bh / 6)
     };
 
     function drawImage(chip, ctx) {
@@ -159,20 +159,20 @@ function drawChip(x, y) {
 function dropChip(x) {
     //for loop that checks array starting at bottom of board which is at 6 going up to 1
     for (var j = 6; j > 0; j--) {
-        if (pos_array[x][j] === undefined && winner == "False") {
+        if (pos_array[x][j] === undefined && winner === "False") {
             drawChip(x, j);
-            moves++
-            winCondition()
+            moves++;
+            winCondition();
             break;
         }
     }
 }
 
 function Reset() {
-    pos_array.length = 0
+    pos_array.length = 0;
     ctx.clearRect(0, -(bh / 6), bw, bh + (bh / 6));
     fillArray();
-    winner = "False"
+    winner = "False";
     once = "False";
     moves = 0;
 }
@@ -194,7 +194,7 @@ function winCondition() {
                 setTimeout(function (i, j) {
                     for (var n = 1; n < 5; n++) {
                         ctx.drawImage(XXX, (bw / 7) * (i - 1), (bh / 6) * (j - 1), (bw / 7), (bh / 6));
-                        i++
+                        i++;
                     }
                 }, 1000, i, j);
             }
@@ -208,7 +208,7 @@ function winCondition() {
                 setTimeout(function (i, j) {
                     for (var n = 1; n < 5; n++) {
                         ctx.drawImage(XXX, (bw / 7) * (i - 1), (bh / 6) * (j - 1), (bw / 7), (bh / 6));
-                        j++
+                        j++;
                     }
                 }, 1000, i, j);
             }
@@ -223,8 +223,8 @@ function winCondition() {
                 setTimeout(function (i, j) {
                     for (var n = 1; n < 5; n++) {
                         ctx.drawImage(XXX, (bw / 7) * (i - 1), (bh / 6) * (j - 1), (bw / 7), (bh / 6));
-                        j--
-                        i++
+                        j--;
+                        i++;
                     }
                 }, 1000, i, j);
             }
@@ -239,15 +239,15 @@ function winCondition() {
                 setTimeout(function (i, j) {
                     for (var n = 1; n < 5; n++) {
                         ctx.drawImage(XXX, (bw / 7) * (i - 1), (bh / 6) * (j - 1), (bw / 7), (bh / 6));
-                        j++
-                        i++
+                        j++;
+                        i++;
                     }
                 }, 1000, i, j);
             }
         }
     }
     // tie
-    if (moves == 42 && winner == "False") {
+    if (moves === 42 && winner === "False") {
         winner = "True";
         setTimeout(function () {
             ctx.drawImage(draw, (3 * bw / 10), -(bh / 6), (bw / 2.5), (bh / 6));
@@ -255,7 +255,7 @@ function winCondition() {
     }
 
     function checkColor() {
-        if (pos_array[i][j] == "red") {
+        if (pos_array[i][j] === "red") {
             setTimeout(function () {
                 ctx.drawImage(redwins, (bw / 6), -(bh / 6), (bw / 1.5), (bh / 6));
             }, 500);
