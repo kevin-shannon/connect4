@@ -21,7 +21,6 @@ var canvas2 = $('<canvas/>').attr({
 }).appendTo('body');
 var ctx2 = canvas2.get(0).getContext("2d");
 var pos_array;
-var xPos = 0;
 var moves = 0;
 var winner = "False";
 var once = "False";
@@ -240,14 +239,18 @@ function win(i, j, direction) {
 }
 
 function drawWinBanner(color) {
+
     //choose the correct picture for either red or blue
     var temp;
-    if (color === "red") {
-        temp = redwins;
+    switch (color) {
+        case "red":
+            temp = redwins;
+            break;
+        case "blue":
+            temp = bluewins;
+            break;
     }
-    else {
-        temp = bluewins;
-    }
+
     //draw that sucker
     ctx.drawImage(temp, (bw / 6), -(bh / 6), (bw / 1.5), (bh / 6));
 }
