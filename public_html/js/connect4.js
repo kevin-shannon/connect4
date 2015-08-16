@@ -55,6 +55,7 @@ $(window).load(function () {
 $(document).ready(function () {
     //Ran when user clicks on the canvas
     $('canvas').click(function (e) {
+        //drop the chip where the user clicked
         var offset = $(this).offset();
         var xPos = (e.pageX - offset.left);
         for (var i = 1; i < 8; i++) {
@@ -67,23 +68,30 @@ $(document).ready(function () {
 
 //Also ran when the site is fully loaded
 $(document).ready(function (e) {
+    //called when the mouse moves across the canvas
+    //hovers the cip above the board before being dropped
     $('canvas').mousemove(function (e) {
         var offset = $(this).offset();
         var xPos = (e.pageX - offset.left);
         var image = new Image();
+        
+        //checks which color's turn it is
         if (moves % 2 === 0) {
             image.src = "img/bestchipred.png";
         }
         else {
             image.src = "img/bestchipblue.png";
         }
-
+        
+        //draw the image of the chip to be dropped
         for (var i = 1; i < 8; i++) {
             if (xPos > ((i - 1) * (bw / 7)) && xPos < (i * (bw / 7)) && winner === "False") {
                 ctx.clearRect(0, -(bh / 6), bw, (bh / 6));
                 ctx.drawImage(image, ((i - 1) * (bw / 7)), -(bh / 6), (bw / 7), (bh / 6));
             }
         }
+        
+        //clear all draws of hover chips
         if (winner === "True" && once === "False") {
             ctx.clearRect(0, -(bh / 6), bw, (bh / 6));
             once = "True";
