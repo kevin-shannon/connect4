@@ -1,3 +1,12 @@
+
+/*
+ *   Connect 4 by Kevin Shannon
+ */
+
+
+/*
+ * Variable declarations
+ */
 var bw = 1050;
 var bh = 900;
 var canvas = $('<canvas/>').attr({
@@ -31,13 +40,21 @@ draw.src = "img/draw.png";
 var XXX = new Image;
 XXX.src = "img/X.png";
 
+
+/*
+ * Main Code
+ */
+
 fillArray();
 
+//Draw the board upon load
 $(window).load(function () {
     ctx2.drawImage(board, 0, 0, bw, bh + (bh / 6));
 });
 
+//Ran when the site is fully loaded
 $(document).ready(function () {
+    //Ran when user clicks on the canvas
     $('canvas').click(function (e) {
         var offset = $(this).offset();
         var xPos = (e.pageX - offset.left);
@@ -49,6 +66,7 @@ $(document).ready(function () {
     });
 });
 
+//Also ran when the site is fully loaded
 $(document).ready(function (e) {
     $('canvas').mousemove(function (e) {
         var offset = $(this).offset();
@@ -74,6 +92,10 @@ $(document).ready(function (e) {
     });
 });
 
+
+/*
+ * Functions
+ */
 window.requestAnimFrame = (function (callback) {
     return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
             function (callback) {
@@ -243,8 +265,5 @@ function winCondition() {
                 ctx.drawImage(bluewins, (bw / 6), -(bh / 6), (bw / 1.5), (bh / 6));
             }, 500);
         }
-    }
-    function fourInARow() {
-
     }
 }
