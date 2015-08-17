@@ -9,7 +9,7 @@
  */
 
 //multiplayer
-var isMultiplayer = true;
+var isMultiplayer = false;
 var AIDelay = 1000;
 
 //board dimensions
@@ -131,6 +131,7 @@ function dropChip(x) {
     for (var j = 6; j > 0; j--) {
         if (pos_array[x][j] === undefined && winner === false) {
             drawChip(x, j);
+            nextTurn();
             winCondition();
             break;
         }
@@ -267,7 +268,6 @@ function click(e) {
     for (var i = 1; i < 8; i++) {
         if (((i - 1) * (bw / 7)) < xPos && xPos < ((i) * (bw / 7))) {
             dropChip(i);
-            nextTurn();
         }
     }
 }
