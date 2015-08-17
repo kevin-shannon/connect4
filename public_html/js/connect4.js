@@ -307,7 +307,7 @@ function nextTurn() {
     moves++;
 
     //if this is a multiplayer games and every other turn
-    if (isMultiplayer === true && moves % 2 === 1) {
+    if (isMultiplayer === true && moves % 2 === 1 && winner === false) {
         isUsersTurn = false;
         randomAI();
     }
