@@ -54,10 +54,10 @@ $(window).load(drawBoard);
 
 //Ran when the site is fully loaded
 $(document).ready(function () {
-    
+
     //Ran when user clicks on the canvas
     $('canvas').click(click);
-    
+
     //called when the mouse moves across the canvas
     $('canvas').mousemove(hoverChip);
 });
@@ -86,12 +86,10 @@ function drawChip(x, y) {
         height: (bh / 6)
     };
     var startTime = (new Date()).getTime();
-    window.requestAnimFrame = (function (callback) {
-        return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
-                function (callback) {
-                    window.setTimeout(callback, 1000 / 60);
-                };
-    })();
+
+    //initial call, and recurs until the chip drops all the way
+    animate(chip, canvas, ctx, startTime);
+
     function animate(chip, canvas, ctx, startTime) {
         // update
         var time = (new Date()).getTime() - startTime;
@@ -114,8 +112,13 @@ function drawChip(x, y) {
         ctx.drawImage(chipColor, chip.x, chip.y, chip.width, chip.height);
     }
 
-//initial call, and recurs until the chip drops all the way
-    animate(chip, canvas, ctx, startTime);
+    window.requestAnimFrame = (function (callback) {
+        return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
+                function (callback) {
+                    window.setTimeout(callback, 1000 / 60);
+                };
+    })();
+
 }
 
 function dropChip(x) {
