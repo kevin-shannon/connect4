@@ -31,7 +31,7 @@ var ctx2 = canvas2.get(0).getContext("2d");
 //logic globals (these are bad practice and will probably have to be replaced)
 var pos_array;
 var moves = 0;
-var winner = "False";
+var winner = false;
 var once = false;
 
 //images
@@ -128,7 +128,7 @@ function drawChip(x, y) {
 function dropChip(x) {
 //for loop that checks array starting at bottom of board which is at 6 going up to 1
     for (var j = 6; j > 0; j--) {
-        if (pos_array[x][j] === undefined && winner === "False") {
+        if (pos_array[x][j] === undefined && winner === false) {
             drawChip(x, j);
             winCondition();
             break;
@@ -140,7 +140,7 @@ function Reset() {
     pos_array.length = 0;
     ctx.clearRect(0, -(bh / 6), bw, bh + (bh / 6));
     fillArray();
-    winner = "False";
+    winner = false;
     once = false;
     moves = 0;
 }
@@ -188,9 +188,9 @@ function winCondition() {
         }
     }
 // tie
-    if (moves === 42 && winner === "False") {
+    if (moves === 42 && winner === false) {
 //manual win event instead of using win function
-        winner = "True";
+        winner = true;
         setTimeout(function () {
             ctx.drawImage(draw, (3 * bw / 10), -(bh / 6), (bw / 2.5), (bh / 6));
         }, 500);
@@ -199,7 +199,7 @@ function winCondition() {
 
 //i and j are the coord of the first chip in the winning four
 function win(i, j, direction) {
-    winner = "True";
+    winner = true;
     //Draw the win pic based on the color of the chip that won after a delay
     setTimeout(drawWinBanner, 500, pos_array[i][j]);
     //delay
@@ -285,14 +285,14 @@ function hoverChip(e) {
 
     //draw the image of the chip to be dropped
     for (var i = 1; i < 8; i++) {
-        if (xPos > ((i - 1) * (bw / 7)) && xPos < (i * (bw / 7)) && winner === "False") {
+        if (xPos > ((i - 1) * (bw / 7)) && xPos < (i * (bw / 7)) && winner === false) {
             ctx.clearRect(0, -(bh / 6), bw, (bh / 6));
             ctx.drawImage(image, ((i - 1) * (bw / 7)), -(bh / 6), (bw / 7), (bh / 6));
         }
     }
 
     //clear all draws of hover chips
-    if (winner === "True" && once === false) {
+    if (winner === true && once === false) {
         ctx.clearRect(0, -(bh / 6), bw, (bh / 6));
         once = true;
     }
