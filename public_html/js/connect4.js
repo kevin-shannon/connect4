@@ -8,6 +8,9 @@
  * Variable declarations
  */
 
+//multiplayer
+var isMultiplayer = true;
+
 //board dimensions
 var bw = 1050;
 var bh = 900;
@@ -42,8 +45,7 @@ draw.src = "img/draw.png";
 XXX.src = "img/X.png";
 
 //event blocker
-var isUsersTurn = "true";
-
+var isUsersTurn = true;
 
 /*
  * Main Code
@@ -128,8 +130,10 @@ function dropChip(x) {
     for (var j = 6; j > 0; j--) {
         if (pos_array[x][j] === undefined && winner === "False") {
             drawChip(x, j);
-            moves++;
             winCondition();
+            if (winner === "false") {
+                nextTurn();
+            }
             break;
         }
     }
@@ -252,8 +256,9 @@ function drawBoard() {
 }
 
 function click(e) {
-    if (!isUsersTurn)
+    if (isUsersTurn === false) {
         return false;
+    }
 
     //drop the chip where the user clicked
     var offset = $(this).offset();
@@ -261,14 +266,15 @@ function click(e) {
     for (var i = 1; i < 8; i++) {
         if (((i - 1) * (bw / 7)) < xPos && xPos < ((i) * (bw / 7))) {
             dropChip(i);
+            nextTurn();
         }
     }
 }
 
 function hoverChip(e) {
-    if (!isUsersTurn)
+    if (isUsersTurn === false) {
         return false;
-
+    }
     var offset = $(this).offset();
     var xPos = (e.pageX - offset.left);
     var image = new Image();
@@ -293,4 +299,26 @@ function hoverChip(e) {
         ctx.clearRect(0, -(bh / 6), bw, (bh / 6));
         once = "True";
     }
+}
+
+function nextTurn() {
+    //advance moves
+    moves++;
+
+    //if this is a multiplayer games and every other turn
+    if (isMultiplayer === true && moves % 2 === 1) {
+        isUsersTurn = false;
+        console.log(isUsersTurn);
+        randomAI();
+    }
+}
+
+function randomAI() {
+    //pick column
+    setTimeout(function () {
+        var column = Math.floor((Math.random() * 7) + 1);
+        dropChip(column);
+        nextTurn();
+        isUsersTurn = true;
+    }, 2000);
 }
