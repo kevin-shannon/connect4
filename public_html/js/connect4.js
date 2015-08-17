@@ -32,7 +32,7 @@ var ctx2 = canvas2.get(0).getContext("2d");
 var pos_array;
 var moves = 0;
 var winner = "False";
-var once = "False";
+var once = false;
 
 //images
 var redchip = new Image(), bluechip = new Image(), board = new Image(), redwins = new Image(), bluewins = new Image(), draw = new Image(), XXX = new Image();
@@ -144,7 +144,7 @@ function Reset() {
     ctx.clearRect(0, -(bh / 6), bw, bh + (bh / 6));
     fillArray();
     winner = "False";
-    once = "False";
+    once = false;
     moves = 0;
 }
 
@@ -295,9 +295,9 @@ function hoverChip(e) {
     }
 
     //clear all draws of hover chips
-    if (winner === "True" && once === "False") {
+    if (winner === "True" && once === false) {
         ctx.clearRect(0, -(bh / 6), bw, (bh / 6));
-        once = "True";
+        once = true;
     }
 }
 
@@ -308,7 +308,6 @@ function nextTurn() {
     //if this is a multiplayer games and every other turn
     if (isMultiplayer === true && moves % 2 === 1) {
         isUsersTurn = false;
-        console.log(isUsersTurn);
         randomAI();
     }
 }
