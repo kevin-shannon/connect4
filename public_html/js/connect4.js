@@ -143,6 +143,7 @@ function Reset() {
     winner = false;
     once = false;
     moves = 0;
+    isUsersTurn = true;
 }
 
 function fillArray() {
@@ -200,6 +201,8 @@ function winCondition() {
 //i and j are the coord of the first chip in the winning four
 function win(i, j, direction) {
     winner = true;
+    //this is to make sure that the events are blocked
+    isUsersTurn = true;
     //Draw the win pic based on the color of the chip that won after a delay
     setTimeout(drawWinBanner, 500, pos_array[i][j]);
     //delay
