@@ -131,9 +131,6 @@ function dropChip(x) {
         if (pos_array[x][j] === undefined && winner === "False") {
             drawChip(x, j);
             winCondition();
-            if (winner === "false") {
-                nextTurn();
-            }
             break;
         }
     }
