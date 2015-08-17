@@ -41,6 +41,9 @@ bluewins.src = "img/bluewins.png";
 draw.src = "img/draw.png";
 XXX.src = "img/X.png";
 
+//event blocker
+var isUsersTurn = "true";
+
 
 /*
  * Main Code
@@ -87,6 +90,13 @@ function drawChip(x, y) {
     };
     var startTime = (new Date()).getTime();
 
+    window.requestAnimFrame = (function (callback) {
+        return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
+                function (callback) {
+                    window.setTimeout(callback, 1000 / 60);
+                };
+    })();
+
     //initial call, and recurs until the chip drops all the way
     animate(chip, canvas, ctx, startTime);
 
@@ -111,14 +121,6 @@ function drawChip(x, y) {
         ctx.clearRect(x, (chip.y - 110), (bw / 7), ((bh / 6) + 30));
         ctx.drawImage(chipColor, chip.x, chip.y, chip.width, chip.height);
     }
-
-    window.requestAnimFrame = (function (callback) {
-        return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
-                function (callback) {
-                    window.setTimeout(callback, 1000 / 60);
-                };
-    })();
-
 }
 
 function dropChip(x) {
@@ -250,7 +252,10 @@ function drawBoard() {
 }
 
 function click(e) {
-//drop the chip where the user clicked
+    if (!isUsersTurn)
+        return false;
+
+    //drop the chip where the user clicked
     var offset = $(this).offset();
     var xPos = (e.pageX - offset.left);
     for (var i = 1; i < 8; i++) {
@@ -261,6 +266,9 @@ function click(e) {
 }
 
 function hoverChip(e) {
+    if (!isUsersTurn)
+        return false;
+
     var offset = $(this).offset();
     var xPos = (e.pageX - offset.left);
     var image = new Image();
@@ -272,7 +280,7 @@ function hoverChip(e) {
         image.src = "img/bestchipblue.png";
     }
 
-//draw the image of the chip to be dropped
+    //draw the image of the chip to be dropped
     for (var i = 1; i < 8; i++) {
         if (xPos > ((i - 1) * (bw / 7)) && xPos < (i * (bw / 7)) && winner === "False") {
             ctx.clearRect(0, -(bh / 6), bw, (bh / 6));
@@ -280,7 +288,7 @@ function hoverChip(e) {
         }
     }
 
-//clear all draws of hover chips
+    //clear all draws of hover chips
     if (winner === "True" && once === "False") {
         ctx.clearRect(0, -(bh / 6), bw, (bh / 6));
         once = "True";
