@@ -10,7 +10,7 @@
 
 //multiplayer
 var isMultiplayer = true;
-var AIDelay = 2000;
+var AIDelay = 1000;
 
 //board dimensions
 var bw = 1050;
