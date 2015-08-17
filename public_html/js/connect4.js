@@ -10,6 +10,7 @@
 
 //multiplayer
 var isMultiplayer = true;
+var AIDelay = 2000;
 
 //board dimensions
 var bw = 1050;
@@ -319,5 +320,5 @@ function randomAI() {
         dropChip(column);
         nextTurn();
         isUsersTurn = true;
-    }, 2000);
+    }, AIDelay);
 }
