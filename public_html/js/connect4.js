@@ -13,8 +13,8 @@ var isMultiplayer = false;
 var AIDelay = 1000;
 
 //board dimensions
-var bw = 1050;
-var bh = 900;
+var bw = $(window).width()/2.5;   // returns height of browser viewport
+var bh = $(window).width()*12/35;  // returns width of browser viewport
 
 //canvases
 var canvas = $('<canvas/>').attr({
@@ -106,7 +106,7 @@ function drawChip(x, y) {
     function animate(chip, canvas, ctx, startTime) {
         // update
         var time = (new Date()).getTime() - startTime;
-        var a = 1300;
+        var a = bh*1.7;
         // pixels / second
         var newY = (a * Math.pow(time / 1000, 2) - (bh / 6));
         if (newY < y) {
