@@ -121,7 +121,7 @@ function drawChip(x, y) {
         }
 
         // clear
-        ctx.clearRect(x, (chip.y - 110), (bw / 7), ((bh / 6) + 30));
+        ctx.clearRect(x, (chip.y - (bh/6)), (bw / 7), ((bh / 6) + (bh/12)));
         ctx.drawImage(chipColor, chip.x, chip.y, chip.width, chip.height);
     }
 }
