@@ -9,7 +9,7 @@
  */
 
 //multiplayer
-var isMultiplayer = false;
+var isMultiplayer = true;
 var AIDelay = 1000;
 
 //board dimensions
@@ -318,7 +318,6 @@ function randomAI() {
     setTimeout(function () {
         var column = Math.floor((Math.random() * 7) + 1);
         dropChip(column);
-        nextTurn();
         isUsersTurn = true;
     }, AIDelay);
 }
