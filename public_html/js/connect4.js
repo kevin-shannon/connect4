@@ -34,6 +34,7 @@ var pos_array;
 var moves = 0;
 var winner = false;
 var once = false;
+var full = false;
 
 //images
 var redchip = new Image(), bluechip = new Image(), board = new Image(), redwins = new Image(), bluewins = new Image(), draw = new Image(), XXX = new Image();
@@ -134,6 +135,17 @@ function dropChip(x) {
             nextTurn();
             winCondition();
             break;
+        }
+    }
+}
+
+function checkFull(x) {
+    for (var j = 6; j > 0; j--) {
+        if (pos_array[x][j] === undefined && winner === false) {
+            full = false;
+        }
+        else {
+            full = true;
         }
     }
 }
@@ -315,9 +327,16 @@ function nextTurn() {
 
 function randomAI() {
     //pick column
-    setTimeout(function () {
-        var column = Math.floor((Math.random() * 7) + 1);
-        dropChip(column);
-        isUsersTurn = true;
-    }, AIDelay);
+    
+    var column = Math.floor((Math.random() * 7) + 1);
+    checkFull(column);
+    if(full === false) {
+        setTimeout(function () {
+            dropChip(column); 
+            isUsersTurn = true;
+        }, AIDelay);
+    }
+    else {
+        randomAI();
+    }
 }
