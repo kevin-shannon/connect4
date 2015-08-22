@@ -94,9 +94,52 @@ function main() {
     isUsersTurn = true;
 }
 
+function click(e) {
+    if (isUsersTurn === false) {
+        return false;
+    }
+
+    //drop the chip where the user clicked
+    var offset = $(this).offset();
+    var xPos = (e.pageX - offset.left);
+    for (var i = 1; i < 8; i++) {
+        if (((i - 1) * (bw / 7)) < xPos && xPos < ((i) * (bw / 7))) {
+            //if the chip drop was successful
+            if (dropChip(i)) {
+                afterChipDropped();
+            }
+        }
+    }
+}
+
 function afterChipDropped() {
     winCondition();
     nextTurn();
+}
+
+function nextTurn() {
+    //advance moves
+    moves++;
+
+    //if this is a multiplayer games and every other turn
+    if (isMultiplayer === true && moves % 2 === 1 && winner === false) {
+        isUsersTurn = false;
+        randomAI();
+    }
+}
+
+function dropChip(x) {
+    //for loop that checks array starting at bottom of board which is at 6 going up to 1
+    for (var j = 6; j > 0; j--) {
+        //the position in the array will be undefined when there is an open space to drop the chip
+        if (pos_array[x][j] === undefined && winner === false) {
+            drawChip(x, j);
+            return true;
+            break;
+        }
+    }
+    //chip wasn't successfully dropped
+    return false;
 }
 
 function drawChip(x, y) {
@@ -152,20 +195,7 @@ function drawChip(x, y) {
     }
 }
 
-function dropChip(x) {
-    //for loop that checks array starting at bottom of board which is at 6 going up to 1
-    for (var j = 6; j > 0; j--) {
-        //the position in the array will be undefined when there is an open space to drop the chip
-        if (pos_array[x][j] === undefined && winner === false) {
-            drawChip(x, j);
-            return true;
-            break;
-        }
-    }
-    //chip wasn't successfully dropped
-    return false;
-}
-
+//unused
 function checkFull(x) {
     for (var j = 6; j > 0; j--) {
         if (pos_array[x][j] === undefined && winner === false) {
@@ -298,24 +328,6 @@ function drawBoard() {
     ctx2.drawImage(board, 0, 0, bw, bh + (bh / 6));
 }
 
-function click(e) {
-    if (isUsersTurn === false) {
-        return false;
-    }
-
-    //drop the chip where the user clicked
-    var offset = $(this).offset();
-    var xPos = (e.pageX - offset.left);
-    for (var i = 1; i < 8; i++) {
-        if (((i - 1) * (bw / 7)) < xPos && xPos < ((i) * (bw / 7))) {
-            //if the chip drop was successful
-            if (dropChip(i)) {
-                afterChipDropped();
-            }
-        }
-    }
-}
-
 function hoverChip(e) {
     if (isUsersTurn === false) {
         return false;
@@ -343,17 +355,6 @@ function hoverChip(e) {
     if (winner === true && once === false) {
         ctx.clearRect(0, -(bh / 6), bw, (bh / 6));
         once = true;
-    }
-}
-
-function nextTurn() {
-    //advance moves
-    moves++;
-
-    //if this is a multiplayer games and every other turn
-    if (isMultiplayer === true && moves % 2 === 1 && winner === false) {
-        isUsersTurn = false;
-        randomAI();
     }
 }
 
