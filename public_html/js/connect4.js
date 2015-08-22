@@ -129,14 +129,15 @@ function nextTurn() {
     }
 }
 
+//Draws the chip, adds it to the array, returns true if successful
 function dropChip(x) {
     //for loop that checks array starting at bottom of board which is at 6 going up to 1
     for (var j = 6; j > 0; j--) {
         //the position in the array will be undefined when there is an open space to drop the chip
         if (pos_array[x][j] === undefined && winner === false) {
             drawChip(x, j);
+            pos_array[x][j] = currentTurn();
             return true;
-            break;
         }
     }
     //chip wasn't successfully dropped
@@ -149,11 +150,6 @@ function drawChip(x, y) {
     
     //Set the correct color chip to draw
     chipImage = chipColor === "red" ? redchip : bluechip;
-
-    //PUT THE CHIP IN THE ARRAY
-    //THIS IS VERY VERY VERRRRY BAD
-    //SHOULD NOT BE HERE
-    pos_array[x][y] = chipColor;
 
     x = (bw / 7) * (x - 1);
     y = (bh / 6) * (y - 1);
