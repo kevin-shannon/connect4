@@ -305,18 +305,10 @@ function win(i, j, direction) {
 function drawWinBanner(color) {
 
     //choose the correct picture for either red or blue
-    var temp;
-    switch (color) {
-        case "red":
-            temp = redwins;
-            break;
-        case "blue":
-            temp = bluewins;
-            break;
-    }
+    var bannerImage = (color === "red") ? redwins : bluewins;
 
     //draw that sucker
-    ctx.drawImage(temp, (bw / 6), -(bh / 6), (bw / 1.5), (bh / 6));
+    ctx.drawImage(bannerImage, (bw / 6), -(bh / 6), (bw / 1.5), (bh / 6));
 }
 
 function drawWinXs(i, j, direction) {
