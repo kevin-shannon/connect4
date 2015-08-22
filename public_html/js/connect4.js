@@ -9,7 +9,7 @@
  */
 
 //multiplayer
-var isMultiplayer = true;
+var isMultiplayer;
 var AIDelay = 1000;
 
 //board dimensions
@@ -47,7 +47,7 @@ draw.src = "img/draw.png";
 XXX.src = "img/X.png";
 
 //event blocker: when false, click and hover events do not work
-var isUsersTurn;
+var playerCanDropChips;
 
 /*
  * Main Code
@@ -67,7 +67,7 @@ $(document).ready(function () {
     $('canvas').mousemove(hoverChip);
 
     /* New main code */
-    main();
+    start();
 
 });
 
@@ -76,9 +76,9 @@ $(document).ready(function () {
  * Functions
  */
 
-function main() {
+function start() {
     //makes it so the user cannot drop a chip or hover
-    isUsersTurn = false;
+    playerCanDropChips = false;
     //figure out which gamemode the user wants to play
     switch (askGamemode()) {
         case 0: //local mult
@@ -91,11 +91,12 @@ function main() {
             break;
     }
     fillArray();
-    isUsersTurn = true;
+    playerCanDropChips = true;
+    //now we wait for a click event
 }
 
 function click(e) {
-    if (isUsersTurn === false) {
+    if (playerCanDropChips === false) {
         return false;
     }
 
@@ -123,7 +124,7 @@ function nextTurn() {
 
     //if this is a multiplayer games and every other turn
     if (isMultiplayer === true && currentTurn() === "blue" && winner === false) {
-        isUsersTurn = false;
+        playerCanDropChips = false;
         randomAI();
     }
 }
@@ -218,7 +219,7 @@ function Reset() {
     moves = 0;
 
     //restart the game
-    main();
+    start();
 }
 
 function fillArray() {
@@ -277,7 +278,7 @@ function winCondition() {
 function win(i, j, direction) {
     winner = true;
     //this is to make sure that the events are blocked
-    isUsersTurn = true;
+    playerCanDropChips = false;
     //Draw the win pic based on the color of the chip that won after a delay
     setTimeout(drawWinBanner, 500, pos_array[i][j]);
     //delay
@@ -331,7 +332,7 @@ function drawBoard() {
 }
 
 function hoverChip(e) {
-    if (isUsersTurn === false) {
+    if (playerCanDropChips === false) {
         return false;
     }
     var offset = $(this).offset();
@@ -363,7 +364,7 @@ function randomAI() {
             console.log("randomAI man");
         }
         afterChipDropped();
-        isUsersTurn = true;
+        playerCanDropChips = true;
     }, AIDelay);
 }
 
