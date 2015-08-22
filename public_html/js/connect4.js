@@ -94,6 +94,11 @@ function main() {
     isUsersTurn = true;
 }
 
+function afterChipDropped() {
+    winCondition();
+    nextTurn();
+}
+
 function drawChip(x, y) {
     var chipColor = redchip;
     if (moves % 2 === 0) {
@@ -150,13 +155,15 @@ function drawChip(x, y) {
 function dropChip(x) {
     //for loop that checks array starting at bottom of board which is at 6 going up to 1
     for (var j = 6; j > 0; j--) {
+        //the position in the array will be undefined when there is an open space to drop the chip
         if (pos_array[x][j] === undefined && winner === false) {
             drawChip(x, j);
-            nextTurn();
-            winCondition();
+            return true;
             break;
         }
     }
+    //chip wasn't successfully dropped
+    return false;
 }
 
 function checkFull(x) {
@@ -301,7 +308,10 @@ function click(e) {
     var xPos = (e.pageX - offset.left);
     for (var i = 1; i < 8; i++) {
         if (((i - 1) * (bw / 7)) < xPos && xPos < ((i) * (bw / 7))) {
-            dropChip(i);
+            //if the chip drop was successful
+            if (dropChip(i)) {
+                afterChipDropped();
+            }
         }
     }
 }
@@ -348,19 +358,14 @@ function nextTurn() {
 }
 
 function randomAI() {
-    //pick column
-
-    var column = Math.floor((Math.random() * 7) + 1);
-    checkFull(column);
-    if (full === false) {
-        setTimeout(function () {
-            dropChip(column);
-            isUsersTurn = true;
-        }, AIDelay);
-    }
-    else {
-        randomAI();
-    }
+    setTimeout(function () {
+        //will try to drop the chip until successful
+        while (!dropChip(Math.floor((Math.random() * 7) + 1))) {
+            console.log("randomAI man");
+        }
+        afterChipDropped();
+        isUsersTurn = true;
+    }, AIDelay);
 }
 
 function askGamemode() {
