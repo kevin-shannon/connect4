@@ -114,27 +114,25 @@ function click(e) {
         if (((i - 1) * (bw / 7)) < xPos && xPos < ((i) * (bw / 7))) {
             //if the chip drop was successful
             if (dropChip(i)) {
-                afterChipDropped();
+                nextTurn();
             }
         }
     }
 }
 
-function afterChipDropped() {
-    winCondition();
-    //if there's no winner, keep going
-    if (!winner) {
-        nextTurn();
-    }
-}
-
 function nextTurn() {
+    winCondition();
+    //if there's a winner, get outta here
+    if (winner) {
+        return;
+    }
+
     advanceTurn();
     console.log("Turn " + moves + ", " + currentTurn() + "'s turn.");
 
     //give the correct player control based on the gamemode
     switch (gamemode) {
-        case 0: //local mulitplayer
+        case 0: //local multiplayer
             //no control change, stays in control of the mouse
             break;
         case 1: //singleplayer
@@ -371,11 +369,11 @@ function randomAI() {
     setTimeout(function () {
         //will try to drop the chip until successful
         var column = Math.floor((Math.random() * 7) + 1);
-        while (!dropChip(column)){
+        while (!dropChip(column)) {
             console.log("The AI just tried to drop a chip in column " + column + ", which is full. (What an idiot!)");
             column = Math.floor((Math.random() * 7) + 1);
         }
-        afterChipDropped();
+        nextTurn();
     }, AIDelay);
 }
 
