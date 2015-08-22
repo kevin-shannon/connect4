@@ -155,6 +155,7 @@ function dropChip(x) {
     for (var j = 6; j > 0; j--) {
         //the position in the array will be undefined when there is an open space to drop the chip
         if (pos_array[x][j] === undefined && winner === false) {
+            console.log(currentTurn() + " dropped in column " + x);
             drawChip(x, j);
             pos_array[x][j] = currentTurn();
             return true;
@@ -369,8 +370,10 @@ function hoverChip(e) {
 function randomAI() {
     setTimeout(function () {
         //will try to drop the chip until successful
-        while (!dropChip(Math.floor((Math.random() * 7) + 1))) {
-            console.log("The AI just tried to drop a chip in a full column. (What an idiot!)");
+        var column = Math.floor((Math.random() * 7) + 1);
+        while (!dropChip(column)){
+            console.log("The AI just tried to drop a chip in column " + column + ", which is full. (What an idiot!)");
+            column = Math.floor((Math.random() * 7) + 1);
         }
         afterChipDropped();
     }, AIDelay);
