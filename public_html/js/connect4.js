@@ -83,22 +83,22 @@ $(document).ready(function () {
 function start() {
     //makes it so the user cannot drop a chip or hover
     playerCanDropChips = false;
-    
+
     //figure out which gamemode the user wants to play
     gamemode = askGamemode();
-    
+
     //assign colors to players
     assignColors();
-    
+
     //get the pos_array ready for some epic connect4 action
     fillArray();
-    
+
     //start turn one
     nextTurn();
-    
+
     //allow the player to drop chips
     playerCanDropChips = true;
-    
+
     //now we wait for a click event
 }
 
@@ -123,26 +123,26 @@ function click(e) {
 function afterChipDropped() {
     winCondition();
     //if there's no winner, keep going
-    if (!winner){
+    if (!winner) {
         nextTurn();
     }
 }
 
-function nextTurn() {  
+function nextTurn() {
     advanceTurn();
     console.log("Turn " + moves + ", " + currentTurn() + "'s turn.");
-    
+
     //give the correct player control based on the gamemode
-    switch (gamemode){
+    switch (gamemode) {
         case 0: //local mulitplayer
             //no control change, stays in control of the mouse
             break;
         case 1: //singleplayer
-            if (currentTurn() === playersColor){
+            if (currentTurn() === playersColor) {
                 playerCanDropChips = true;
             } else {
                 playerCanDropChips = false;
-                
+
                 //remember, randomAI is non-blocking because it is in a timeout
                 randomAI();
             }
@@ -167,7 +167,7 @@ function dropChip(x) {
 function drawChip(x, y) {
     var chipImage = new Image();
     var chipColor = currentTurn();
-    
+
     //Set the correct color chip to draw
     chipImage = chipColor === "red" ? redchip : bluechip;
 
@@ -347,7 +347,7 @@ function hoverChip(e) {
     var offset = $(this).offset();
     var xPos = (e.pageX - offset.left);
     var image = new Image();
-    
+
     //Set the correct color chip to draw
     image = currentTurn() === "red" ? redchip : bluechip;
 
@@ -396,13 +396,13 @@ function askGamemode() {
 }
 
 //returns who's turn it is now
-function advanceTurn(){
+function advanceTurn() {
     moves++;
     return currentTurn();
 }
 
-function assignColors(){
-    switch (gamemode){
+function assignColors() {
+    switch (gamemode) {
         case 0: //local mulitplayer
             //doesn't matter because it won't be checked in nextTurn
             break;
