@@ -13,8 +13,8 @@ var isMultiplayer = true;
 var AIDelay = 1000;
 
 //board dimensions
-var bw = $(window).width()/2.5;   // returns height of browser viewport
-var bh = $(window).width()*12/35;  // returns width of browser viewport
+var bw = $(window).width() / 2.5;   // returns height of browser viewport
+var bh = $(window).width() * 12 / 35;  // returns width of browser viewport
 
 //canvases
 var canvas = $('<canvas/>').attr({
@@ -65,10 +65,10 @@ $(document).ready(function () {
 
     //called when the mouse moves across the canvas
     $('canvas').mousemove(hoverChip);
-    
+
     /* New main code */
     main();
-    
+
 });
 
 
@@ -76,11 +76,11 @@ $(document).ready(function () {
  * Functions
  */
 
-function main(){
+function main() {
     //makes it so the user cannot drop a chip or hover
     isUsersTurn = false;
     //figure out which gamemode the user wants to play
-    switch (askGamemode()){
+    switch (askGamemode()) {
         case 0: //local mult
             isMultiplayer = false;
             break;
@@ -127,7 +127,7 @@ function drawChip(x, y) {
     function animate(chip, canvas, ctx, startTime) {
         // update
         var time = (new Date()).getTime() - startTime;
-        var a = bh*1.7;
+        var a = bh * 1.7;
         // pixels / second
         var newY = (a * Math.pow(time / 1000, 2) - (bh / 6));
         if (newY < y) {
@@ -142,13 +142,13 @@ function drawChip(x, y) {
         }
 
         // clear
-        ctx.clearRect(x, (chip.y - (bh/6)), (bw / 7), ((bh / 6) + (bh/12)));
+        ctx.clearRect(x, (chip.y - (bh / 6)), (bw / 7), ((bh / 6) + (bh / 12)));
         ctx.drawImage(chipColor, chip.x, chip.y, chip.width, chip.height);
     }
 }
 
 function dropChip(x) {
-//for loop that checks array starting at bottom of board which is at 6 going up to 1
+    //for loop that checks array starting at bottom of board which is at 6 going up to 1
     for (var j = 6; j > 0; j--) {
         if (pos_array[x][j] === undefined && winner === false) {
             drawChip(x, j);
@@ -177,7 +177,7 @@ function Reset() {
     winner = false;
     once = false;
     moves = 0;
-    
+
     //restart the game
     main();
 }
@@ -191,7 +191,7 @@ function fillArray() {
 
 //[columns][rows]
 function winCondition() {
-//horizontal
+    //horizontal
     for (var i = 1; i < 5; i++) {
         for (var j = 1; j < 7; j++) {
             if (pos_array[i][j] !== undefined && pos_array[i][j] === pos_array[i + 1][j] && pos_array[i][j] === pos_array[i + 2][j] && pos_array[i][j] === pos_array[i + 3][j]) {
@@ -200,7 +200,7 @@ function winCondition() {
         }
     }
 
-//vertical
+    //vertical
     for (var i = 1; i < 8; i++) {
         for (var j = 1; j < 4; j++) {
             if (pos_array[i][j] !== undefined && pos_array[i][j] === pos_array[i][j + 1] && pos_array[i][j] === pos_array[i][j + 2] && pos_array[i][j] === pos_array[i][j + 3]) {
@@ -208,7 +208,7 @@ function winCondition() {
             }
         }
     }
-// /diagonals
+    // /diagonals
     for (var i = 1; i < 5; i++) {
         for (var j = 4; j < 7; j++) {
             if (pos_array[i][j] !== undefined && pos_array[i][j] === pos_array[i + 1][j - 1] && pos_array[i][j] === pos_array[i + 2][j - 2] && pos_array[i][j] === pos_array[i + 3][j - 3]) {
@@ -216,7 +216,7 @@ function winCondition() {
             }
         }
     }
-// \diagonals
+    // \diagonals
     for (var i = 1; i < 5; i++) {
         for (var j = 1; j < 4; j++) {
             if (pos_array[i][j] !== undefined && pos_array[i][j] === pos_array[i + 1][j + 1] && pos_array[i][j] === pos_array[i + 2][j + 2] && pos_array[i][j] === pos_array[i + 3][j + 3]) {
@@ -224,9 +224,9 @@ function winCondition() {
             }
         }
     }
-// tie
+    // tie
     if (moves === 42 && winner === false) {
-//manual win event instead of using win function
+        //manual win event instead of using win function
         winner = true;
         setTimeout(function () {
             ctx.drawImage(draw, (3 * bw / 10), -(bh / 6), (bw / 2.5), (bh / 6));
@@ -247,7 +247,7 @@ function win(i, j, direction) {
 
 function drawWinBanner(color) {
 
-//choose the correct picture for either red or blue
+    //choose the correct picture for either red or blue
     var temp;
     switch (color) {
         case "red":
@@ -258,14 +258,14 @@ function drawWinBanner(color) {
             break;
     }
 
-//draw that sucker
+    //draw that sucker
     ctx.drawImage(temp, (bw / 6), -(bh / 6), (bw / 1.5), (bh / 6));
 }
 
 function drawWinXs(i, j, direction) {
-//repeat four times because it's connect FOUR
+    //repeat four times because it's connect FOUR
     for (var n = 1; n < 5; n++) {
-//draw the X
+        //draw the X
         ctx.drawImage(XXX, (bw / 7) * (i - 1), (bh / 6) * (j - 1), (bw / 7), (bh / 6));
         //change the coordinate position based on which direction the win was
         switch (direction) {
@@ -349,12 +349,12 @@ function nextTurn() {
 
 function randomAI() {
     //pick column
-    
+
     var column = Math.floor((Math.random() * 7) + 1);
     checkFull(column);
-    if(full === false) {
+    if (full === false) {
         setTimeout(function () {
-            dropChip(column); 
+            dropChip(column);
             isUsersTurn = true;
         }, AIDelay);
     }
