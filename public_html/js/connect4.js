@@ -122,7 +122,7 @@ function nextTurn() {
     moves++;
 
     //if this is a multiplayer games and every other turn
-    if (isMultiplayer === true && moves % 2 === 1 && winner === false) {
+    if (isMultiplayer === true && currentTurn() === "blue" && winner === false) {
         isUsersTurn = false;
         randomAI();
     }
@@ -143,15 +143,17 @@ function dropChip(x) {
 }
 
 function drawChip(x, y) {
-    var chipColor = redchip;
-    if (moves % 2 === 0) {
-        color = "red";
-        chipColor = redchip;
-    } else {
-        color = "blue";
-        chipColor = bluechip;
-    }
-    pos_array[x][y] = color;
+    var chipImage = new Image();
+    var chipColor = currentTurn();
+    
+    //Set the correct color chip to draw
+    chipImage = chipColor === "red" ? redchip : bluechip;
+
+    //PUT THE CHIP IN THE ARRAY
+    //THIS IS VERY VERY VERRRRY BAD
+    //SHOULD NOT BE HERE
+    pos_array[x][y] = chipColor;
+
     x = (bw / 7) * (x - 1);
     y = (bh / 6) * (y - 1);
     var chip = {
@@ -191,7 +193,7 @@ function drawChip(x, y) {
 
         // clear
         ctx.clearRect(x, (chip.y - (bh / 6)), (bw / 7), ((bh / 6) + (bh / 12)));
-        ctx.drawImage(chipColor, chip.x, chip.y, chip.width, chip.height);
+        ctx.drawImage(chipImage, chip.x, chip.y, chip.width, chip.height);
     }
 }
 
@@ -335,13 +337,9 @@ function hoverChip(e) {
     var offset = $(this).offset();
     var xPos = (e.pageX - offset.left);
     var image = new Image();
-    //checks which color's turn it is
-    if (moves % 2 === 0) {
-        image.src = "img/bestchipred.png";
-    }
-    else {
-        image.src = "img/bestchipblue.png";
-    }
+    
+    //Set the correct color chip to draw
+    image = currentTurn() === "red" ? redchip : bluechip;
 
     //draw the image of the chip to be dropped
     for (var i = 1; i < 8; i++) {
@@ -367,6 +365,15 @@ function randomAI() {
         afterChipDropped();
         isUsersTurn = true;
     }, AIDelay);
+}
+
+function currentTurn() {
+    if (moves % 2 === 0) {
+        return "red";
+    }
+    else {
+        return "blue";
+    }
 }
 
 function askGamemode() {
