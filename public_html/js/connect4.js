@@ -13,8 +13,8 @@ var isMultiplayer = true;
 var AIDelay = 1000;
 
 //board dimensions
-var bw = $(window).width()/2.5;   // returns height of browser viewport
-var bh = $(window).width()*12/35;  // returns width of browser viewport
+var bw = $(window).width() / 2.5;   // returns height of browser viewport
+var bh = $(window).width() * 12 / 35;  // returns width of browser viewport
 
 //canvases
 var canvas = $('<canvas/>').attr({
@@ -30,11 +30,14 @@ var canvas2 = $('<canvas/>').attr({
 var ctx2 = canvas2.get(0).getContext("2d");
 
 //logic globals (these are bad practice and will probably have to be replaced)
+var score_array;
 var pos_array;
 var moves = 0;
 var winner = false;
 var once = false;
 var full = false;
+var check = false;
+var FUCK = 0;
 
 //images
 var redchip = new Image(), bluechip = new Image(), board = new Image(), redwins = new Image(), bluewins = new Image(), draw = new Image(), XXX = new Image();
@@ -107,7 +110,7 @@ function drawChip(x, y) {
     function animate(chip, canvas, ctx, startTime) {
         // update
         var time = (new Date()).getTime() - startTime;
-        var a = bh*1.7;
+        var a = bh * 1.7;
         // pixels / second
         var newY = (a * Math.pow(time / 1000, 2) - (bh / 6));
         if (newY < y) {
@@ -122,7 +125,7 @@ function drawChip(x, y) {
         }
 
         // clear
-        ctx.clearRect(x, (chip.y - (bh/6)), (bw / 7), ((bh / 6) + (bh/12)));
+        ctx.clearRect(x, (chip.y - (bh / 6)), (bw / 7), ((bh / 6) + (bh / 12)));
         ctx.drawImage(chipColor, chip.x, chip.y, chip.width, chip.height);
     }
 }
@@ -131,9 +134,11 @@ function dropChip(x) {
 //for loop that checks array starting at bottom of board which is at 6 going up to 1
     for (var j = 6; j > 0; j--) {
         if (pos_array[x][j] === undefined && winner === false) {
-            drawChip(x, j);
-            nextTurn();
-            winCondition();
+            if (check === false) {
+                drawChip(x, j);
+                nextTurn();
+            }
+                winCondition();
             break;
         }
     }
@@ -165,6 +170,7 @@ function fillArray() {
     for (var i = 1; i < 8; i++) {
         pos_array[i] = new Array(6);
     }
+    score_array = new Array(7);
 }
 
 //[columns][rows]
@@ -173,7 +179,12 @@ function winCondition() {
     for (var i = 1; i < 5; i++) {
         for (var j = 1; j < 7; j++) {
             if (pos_array[i][j] !== undefined && pos_array[i][j] === pos_array[i + 1][j] && pos_array[i][j] === pos_array[i + 2][j] && pos_array[i][j] === pos_array[i + 3][j]) {
-                win(i, j, "h");
+                if (check === false) {
+                    win(i, j, "h");
+                }
+                else {
+                    Fuck = i;
+                }
             }
         }
     }
@@ -182,7 +193,12 @@ function winCondition() {
     for (var i = 1; i < 8; i++) {
         for (var j = 1; j < 4; j++) {
             if (pos_array[i][j] !== undefined && pos_array[i][j] === pos_array[i][j + 1] && pos_array[i][j] === pos_array[i][j + 2] && pos_array[i][j] === pos_array[i][j + 3]) {
-                win(i, j, "v");
+                if (check === false) {
+                    win(i, j, "v");
+                }
+                else {
+                    Fuck = i;
+                }
             }
         }
     }
@@ -190,7 +206,12 @@ function winCondition() {
     for (var i = 1; i < 5; i++) {
         for (var j = 4; j < 7; j++) {
             if (pos_array[i][j] !== undefined && pos_array[i][j] === pos_array[i + 1][j - 1] && pos_array[i][j] === pos_array[i + 2][j - 2] && pos_array[i][j] === pos_array[i + 3][j - 3]) {
-                win(i, j, "//");
+                if (check === false) {
+                    win(i, j, "//");
+                }
+                else {
+                    Fuck = i;
+                }
             }
         }
     }
@@ -198,7 +219,12 @@ function winCondition() {
     for (var i = 1; i < 5; i++) {
         for (var j = 1; j < 4; j++) {
             if (pos_array[i][j] !== undefined && pos_array[i][j] === pos_array[i + 1][j + 1] && pos_array[i][j] === pos_array[i + 2][j + 2] && pos_array[i][j] === pos_array[i + 3][j + 3]) {
-                win(i, j, "\\");
+                if (check === false) {
+                    win(i, j, "\\");
+                }
+                else {
+                    Fuck = i;
+                }
             }
         }
     }
@@ -321,18 +347,18 @@ function nextTurn() {
     //if this is a multiplayer games and every other turn
     if (isMultiplayer === true && moves % 2 === 1 && winner === false) {
         isUsersTurn = false;
-        randomAI();
+        smartAI();
     }
 }
 
 function randomAI() {
     //pick column
-    
+
     var column = Math.floor((Math.random() * 7) + 1);
     checkFull(column);
-    if(full === false) {
+    if (full === false) {
         setTimeout(function () {
-            dropChip(column); 
+            dropChip(column);
             isUsersTurn = true;
         }, AIDelay);
     }
@@ -340,3 +366,28 @@ function randomAI() {
         randomAI();
     }
 }
+
+function smartAI() {
+    var depth = 1;
+    for (var c = 0; c < depth; c++) {
+        console.log("depth");
+        check = true;
+        for (var x = 1; x < 8; x++) {
+            dropChip(x);
+            if(FUCK > 0) {
+                score_array[FUCK] = 1000;
+                check = false;
+                dropChip(FUCK);
+                isUsersTurn = true;
+                console.log("if");
+            }
+            else {
+                score_array[FUCK] = 0;
+                dropChip(1);
+                console.log("else");
+            }
+        }
+        console.log(score_array);
+    }
+}
+
