@@ -12,6 +12,11 @@
 var gamemode;
 var AIDelay = 1000;
 
+//online multiplayer
+var peer;
+var connection;
+
+//colors
 var startingColor = "red";
 var playersColor;
 var opponentsColor;
@@ -86,6 +91,12 @@ function start() {
 
     //figure out which gamemode the user wants to play
     gamemode = askGamemode();
+    console.log("Gamemode " + gamemode + " selected.");
+
+    //if the gamemode is online multiplayer, let's set that up
+    if (gamemode === 2 || gamemode === 3) {
+        setUpOnlineMultiplayer();
+    }
 
     //assign colors to players
     assignColors();
@@ -95,9 +106,6 @@ function start() {
 
     //start turn one
     nextTurn();
-
-    //allow the player to drop chips
-    playerCanDropChips = true;
 
     //now we wait for a click event
 }
@@ -114,6 +122,9 @@ function click(e) {
         if (((i - 1) * (bw / 7)) < xPos && xPos < ((i) * (bw / 7))) {
             //if the chip drop was successful
             if (dropChip(i)) {
+                if (gamemode === 2 || gamemode === 3) {
+                    sendMove(i);
+                }
                 nextTurn();
             }
         }
@@ -133,7 +144,7 @@ function nextTurn() {
     //give the correct player control based on the gamemode
     switch (gamemode) {
         case 0: //local multiplayer
-            //no control change, stays in control of the mouse
+            playerCanDropChips === true;
             break;
         case 1: //singleplayer
             if (currentTurn() === playersColor) {
@@ -144,6 +155,29 @@ function nextTurn() {
                 //remember, randomAI is non-blocking because it is in a timeout
                 randomAI();
             }
+            break;
+        case 2: //p2p host
+            if (currentTurn() === playersColor) {
+                playerCanDropChips = true;
+            } else {
+                playerCanDropChips = false;
+
+                //remember, randomAI is non-blocking because it is in a timeout
+                multiplayerTurn();
+            }
+            break;
+        case 3: //p2p opponent
+            console.log(playersColor);
+            console.log(currentTurn());
+            if (currentTurn() === playersColor) {
+                playerCanDropChips = true;
+            } else {
+                playerCanDropChips = false;
+                console.log("hi");
+                //remember, randomAI is non-blocking because it is in a timeout
+                multiplayerTurn();
+            }
+            break;
     }
 }
 
@@ -153,7 +187,7 @@ function dropChip(x) {
     for (var j = 6; j > 0; j--) {
         //the position in the array will be undefined when there is an open space to drop the chip
         if (pos_array[x][j] === undefined && winner === false) {
-            console.log(currentTurn() + " dropped in column " + x);
+            console.log(currentTurn().charAt(0).toUpperCase() + currentTurn().slice(1) + " dropped in column " + x);
             drawChip(x, j);
             pos_array[x][j] = currentTurn();
             return true;
@@ -387,12 +421,18 @@ function currentTurn() {
 }
 
 function askGamemode() {
-    if (confirm("Press OK for singleplayer or cancel for local multiplayer") === true) {
+    if (confirm("Press OK for singleplayer or cancel for multiplayer")) {
         //singleplayer/AI
         return 1;
-    } else {
+    } else if (confirm("Press OK to play on this computer, otherwise cancel to play online")) {
         //local multiplayer
         return 0;
+    } else if (confirm("Press OK to host a game, otherwise cancel to join a game")) {
+        //online host
+        return 2;
+    } else {
+        //online join
+        return 3;
     }
 }
 
@@ -412,8 +452,53 @@ function assignColors() {
             opponentsColor = "blue";
             break;
         case 2: //p2p host
+            playersColor = "red";
+            opponentsColor = "blue";
             break;
         case 3: //p2p opponent
+            playersColor = "blue";
+            opponentsColor = "red";
             break;
     }
+}
+
+function setUpOnlineMultiplayer() {
+    var peerNum = Math.floor(Math.random() * 900) + 100;
+    console.log("Peer id: " + peerNum);
+    peer = new Peer(peerNum, {key: '5pl4l5zh7rqqia4i'});
+
+    if (gamemode === 2) {
+        //start new game
+        alert("Your game number is " + peerNum);
+        peer.on('connection', function (conn) {
+            connection = conn;
+            openConnection();
+        });
+    } else { //gamemode === 3
+        //join game
+        var gameNum = window.prompt("Enter an game number to join");
+        connection = peer.connect(gameNum);
+        openConnection();
+    }
+}
+
+function multiplayerTurn() {
+    connection.on('data', function (data) {
+        if (currentTurn() === opponentsColor) {
+            console.log("Received " + data + " from peer");
+            dropChip(data);
+            nextTurn();
+        }
+    });
+}
+
+function sendMove(data) {
+    console.log("Sent " + data + " to peer");
+    connection.send(data);
+}
+
+function openConnection() {
+    connection.on('open', function () {
+        console.log("Connection open");
+    });
 }
