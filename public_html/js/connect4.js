@@ -46,15 +46,13 @@ bluewins.src = "img/bluewins.png";
 draw.src = "img/draw.png";
 XXX.src = "img/X.png";
 
-//event blocker
-var isUsersTurn = true;
+//event blocker: when false, click and hover events do not work
+var isUsersTurn;
 
 /*
  * Main Code
  */
 
-//Prepare the array for the glorious connect 4
-fillArray();
 
 //Draw the board upon load
 $(window).load(drawBoard);
@@ -67,12 +65,34 @@ $(document).ready(function () {
 
     //called when the mouse moves across the canvas
     $('canvas').mousemove(hoverChip);
+    
+    /* New main code */
+    main();
+    
 });
 
 
 /*
  * Functions
  */
+
+function main(){
+    //makes it so the user cannot drop a chip or hover
+    isUsersTurn = false;
+    //figure out which gamemode the user wants to play
+    switch (askGamemode()){
+        case 0: //local mult
+            isMultiplayer = false;
+            break;
+        case 1: //singleplayer
+            isMultiplayer = true;
+            break;
+        case 2: //p2p multiplayer (not implemented)
+            break;
+    }
+    fillArray();
+    isUsersTurn = true;
+}
 
 function drawChip(x, y) {
     var chipColor = redchip;
@@ -157,7 +177,9 @@ function Reset() {
     winner = false;
     once = false;
     moves = 0;
-    isUsersTurn = true;
+    
+    //restart the game
+    main();
 }
 
 function fillArray() {
@@ -338,5 +360,15 @@ function randomAI() {
     }
     else {
         randomAI();
+    }
+}
+
+function askGamemode() {
+    if (confirm("Press OK for singleplayer or cancel for local multiplayer") === true) {
+        //singleplayer/AI
+        return 1;
+    } else {
+        //local multiplayer
+        return 0;
     }
 }
