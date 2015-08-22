@@ -8,9 +8,13 @@
  * Variable declarations
  */
 
-//multiplayer
-var isMultiplayer;
+//gamemode (local multiplayer: 0, singleplayer: 1, p2p host: 2, p2p opponent: 3)
+var gamemode;
 var AIDelay = 1000;
+
+var startingColor = "red";
+var playersColor;
+var opponentsColor;
 
 //board dimensions
 var bw = $(window).width() / 2.5;   // returns height of browser viewport
@@ -79,19 +83,22 @@ $(document).ready(function () {
 function start() {
     //makes it so the user cannot drop a chip or hover
     playerCanDropChips = false;
+    
     //figure out which gamemode the user wants to play
-    switch (askGamemode()) {
-        case 0: //local mult
-            isMultiplayer = false;
-            break;
-        case 1: //singleplayer
-            isMultiplayer = true;
-            break;
-        case 2: //p2p multiplayer (not implemented)
-            break;
-    }
+    gamemode = askGamemode();
+    
+    //assign colors to players
+    assignColors();
+    
+    //get the pos_array ready for some epic connect4 action
     fillArray();
+    
+    //start turn one
+    nextTurn();
+    
+    //allow the player to drop chips
     playerCanDropChips = true;
+    
     //now we wait for a click event
 }
 
@@ -100,7 +107,7 @@ function click(e) {
         return false;
     }
 
-    //drop the chip where the user clicked
+    //determine where the chip was dropped
     var offset = $(this).offset();
     var xPos = (e.pageX - offset.left);
     for (var i = 1; i < 8; i++) {
@@ -115,17 +122,30 @@ function click(e) {
 
 function afterChipDropped() {
     winCondition();
-    nextTurn();
+    //if there's no winner, keep going
+    if (!winner){
+        nextTurn();
+    }
 }
 
-function nextTurn() {
-    //advance moves
-    moves++;
-
-    //if this is a multiplayer games and every other turn
-    if (isMultiplayer === true && currentTurn() === "blue" && winner === false) {
-        playerCanDropChips = false;
-        randomAI();
+function nextTurn() {  
+    advanceTurn();
+    console.log("Turn " + moves + ", " + currentTurn() + "'s turn.");
+    
+    //give the correct player control based on the gamemode
+    switch (gamemode){
+        case 0: //local mulitplayer
+            //no control change, stays in control of the mouse
+            break;
+        case 1: //singleplayer
+            if (currentTurn() === playersColor){
+                playerCanDropChips = true;
+            } else {
+                playerCanDropChips = false;
+                
+                //remember, randomAI is non-blocking because it is in a timeout
+                randomAI();
+            }
     }
 }
 
@@ -273,6 +293,7 @@ function winCondition() {
 //i and j are the coord of the first chip in the winning four
 function win(i, j, direction) {
     winner = true;
+    console.log(currentTurn() + " wins on turn " + moves);
     //this is to make sure that the events are blocked
     playerCanDropChips = false;
     //Draw the win pic based on the color of the chip that won after a delay
@@ -357,19 +378,18 @@ function randomAI() {
     setTimeout(function () {
         //will try to drop the chip until successful
         while (!dropChip(Math.floor((Math.random() * 7) + 1))) {
-            console.log("randomAI man");
+            console.log("The AI just tried to drop a chip in a full column. (What an idiot!)");
         }
         afterChipDropped();
-        playerCanDropChips = true;
     }, AIDelay);
 }
 
 function currentTurn() {
     if (moves % 2 === 0) {
-        return "red";
+        return startingColor === "red" ? "blue" : "red";
     }
     else {
-        return "blue";
+        return startingColor;
     }
 }
 
@@ -380,5 +400,27 @@ function askGamemode() {
     } else {
         //local multiplayer
         return 0;
+    }
+}
+
+//returns who's turn it is now
+function advanceTurn(){
+    moves++;
+    return currentTurn();
+}
+
+function assignColors(){
+    switch (gamemode){
+        case 0: //local mulitplayer
+            //doesn't matter because it won't be checked in nextTurn
+            break;
+        case 1: //singleplayer
+            playersColor = "red";
+            opponentsColor = "blue";
+            break;
+        case 2: //p2p host
+            break;
+        case 3: //p2p opponent
+            break;
     }
 }
