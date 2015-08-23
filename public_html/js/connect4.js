@@ -42,8 +42,6 @@ var ctx2 = canvas2.get(0).getContext("2d");
 var pos_array;
 var moves = 0;
 var winner = false;
-var once = false;
-var full = false;
 
 //images
 var redchip = new Image(), bluechip = new Image(), board = new Image(), redwins = new Image(), bluewins = new Image(), draw = new Image(), XXX = new Image();
@@ -97,6 +95,8 @@ function start() {
     if (gamemode === 2 || gamemode === 3) {
         setUpOnlineMultiplayer();
     }
+
+    drawChip(3, 3, "red");
 
     //assign colors to players
     assignColors();
@@ -159,17 +159,14 @@ function nextTurn() {
         case 2: //p2p host
             if (currentTurn() === playersColor) {
                 //for first turn, openConnection function sets it to true
-                playerCanDropChips = connection.open ? true : false;
+                playerCanDropChips = connection.open;
             } else {
                 playerCanDropChips = false;
 
-                //remember, randomAI is non-blocking because it is in a timeout
                 multiplayerTurn();
             }
             break;
         case 3: //p2p opponent
-            console.log(playersColor);
-            console.log(currentTurn());
             if (currentTurn() === playersColor) {
                 playerCanDropChips = true;
             } else {
@@ -189,7 +186,7 @@ function dropChip(x) {
         //the position in the array will be undefined when there is an open space to drop the chip
         if (pos_array[x][j] === undefined && winner === false) {
             console.log(currentTurn().charAt(0).toUpperCase() + currentTurn().slice(1) + " dropped in column " + x);
-            drawChip(x, j);
+            drawChip(x, j, currentTurn());
             pos_array[x][j] = currentTurn();
             return true;
         }
@@ -198,9 +195,8 @@ function dropChip(x) {
     return false;
 }
 
-function drawChip(x, y) {
+function drawChip(x, y, chipColor) {
     var chipImage = new Image();
-    var chipColor = currentTurn();
 
     //Set the correct color chip to draw
     chipImage = chipColor === "red" ? redchip : bluechip;
@@ -248,24 +244,12 @@ function drawChip(x, y) {
     }
 }
 
-//unused
-function checkFull(x) {
-    for (var j = 6; j > 0; j--) {
-        if (pos_array[x][j] === undefined && winner === false) {
-            full = false;
-        }
-        else {
-            full = true;
-        }
-    }
-}
 
 function Reset() {
     pos_array.length = 0;
     ctx.clearRect(0, -(bh / 6), bw, bh + (bh / 6));
     fillArray();
     winner = false;
-    once = false;
     moves = 0;
 
     //end connection
@@ -398,12 +382,6 @@ function hoverChip(e) {
             ctx.drawImage(image, ((i - 1) * (bw / 7)), -(bh / 6), (bw / 7), (bh / 6));
         }
     }
-
-    //clear all draws of hover chips
-    if (winner === true && once === false) {
-        ctx.clearRect(0, -(bh / 6), bw, (bh / 6));
-        once = true;
-    }
 }
 
 function randomAI() {
@@ -507,6 +485,6 @@ function sendMove(data) {
 function openConnection() {
     connection.on('open', function () {
         console.log("Connection open");
-        playerCanDropChips = currentTurn() === playersColor ? true : false;
+        playerCanDropChips = currentTurn() === playersColor;
     });
 }
