@@ -78,6 +78,9 @@ $(document).ready(function () {
     //run reset function when button is clicked
     $('#reset').click(Reset());
 
+    //join game popup
+    $('#join').popup({on: 'hover'});
+
     //makes it so the user cannot drop a chip or hover
     playerCanDropChips = false;
 
