@@ -144,7 +144,8 @@ function nextTurn() {
     //give the correct player control based on the gamemode
     switch (gamemode) {
         case 0: //local multiplayer
-            playerCanDropChips === true;
+            //for first turn, openConnection function sets it to true
+            playerCanDropChips = connection.open ? true : false;
             break;
         case 1: //singleplayer
             if (currentTurn() === playersColor) {
@@ -267,6 +268,12 @@ function Reset() {
     once = false;
     moves = 0;
 
+    //end connection
+    if (gamemode === 2 || gamemode === 3){
+        peer.destroy();
+        connection.on('close');
+    }
+    
     //restart the game
     start();
 }
@@ -500,5 +507,6 @@ function sendMove(data) {
 function openConnection() {
     connection.on('open', function () {
         console.log("Connection open");
+        playerCanDropChips = currentTurn() === playersColor ? true : false;
     });
 }
