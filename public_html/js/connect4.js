@@ -78,9 +78,6 @@ $(document).ready(function () {
     //run reset function when button is clicked
     $('#reset').click(Reset());
 
-    //join game popup
-    $('#join').popup({on: 'hover'});
-
     //makes it so the user cannot drop a chip or hover
     playerCanDropChips = false;
 
@@ -100,10 +97,11 @@ function start(gm) {
     //figure out which gamemode the user wants to play
     console.log("Gamemode " + gamemode + " selected.");
 
-    //if the gamemode is online multiplayer, let's set that up
-    if (gamemode === 2 || gamemode === 3) {
-        setUpOnlineMultiplayer();
-    }
+    /*
+     //if the gamemode is online multiplayer, let's set that up
+     if (gamemode === 2 || gamemode === 3) {
+     setUpOnlineMultiplayer();
+     }*/
 
     //assign colors to players
     assignColors();
@@ -475,24 +473,32 @@ function assignColors() {
     }
 }
 
-function setUpOnlineMultiplayer() {
+function setUpOnline() {
     var peerNum = Math.floor(Math.random() * 900) + 100;
     console.log("Peer id: " + peerNum);
     peer = new Peer(peerNum, {key: '5pl4l5zh7rqqia4i'});
+    return peerNum;
+}
 
-    if (gamemode === 2) {
-        //start new game
-        alert("Your game number is " + peerNum);
-        peer.on('connection', function (conn) {
-            connection = conn;
-            openConnection();
-        });
-    } else { //gamemode === 3
-        //join game
-        var gameNum = window.prompt("Enter an game number to join");
-        connection = peer.connect(gameNum);
+function hostOnlineGame() {
+    var peerNum = setUpOnline();
+
+    //start new game
+    alert("Your game number is " + peerNum);
+    peer.on('connection', function (conn) {
+        connection = conn;
         openConnection();
-    }
+        goToStart(2);
+    });
+}
+
+function joinOnlineGame(gameNum) {
+    setUpOnline();
+
+    //join game
+    //var gameNum = window.prompt("Enter an game number to join");
+    connection = peer.connect(gameNum);
+    openConnection();
 }
 
 function multiplayerTurn() {
@@ -541,18 +547,33 @@ function gamemodeSelector() {
     });
 
     $("#host").click(function () {
-        goToStart(2);
+        hostOnlineGame();
+        //goToStart is called within hostOnlineGame
     });
 
-    $("#join").click(function () {
+    //join game popup
+    $('#join').popup({
+        popup: $('#joinpop'),
+        on: 'click',
+        closeable: true
+    });
+
+    $("#joinbut").click(function () {
+        //get the game number from the input box in the popup and send
+        //it to the join online game function
+        var gn = $('#joinin').val();
+        console.log(gn);
+        joinOnlineGame(gn);
+        $('#joinbut').popup('destroy');
         goToStart(3);
     });
-    function goToStart(gm) {
-        $("#single").unbind("click");
-        $("#local").unbind("click");
-        $("#host").unbind("click");
-        $("#join").unbind("click");
-        $("#popup").css("visibility", "hidden");
-        start(gm);
-    }
+}
+
+function goToStart(gm) {
+    $("#single").unbind("click");
+    $("#local").unbind("click");
+    $("#host").unbind("click");
+    //$("#join").unbind("click");
+    $("#popup").css("visibility", "hidden");
+    start(gm);
 }
