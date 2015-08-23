@@ -169,7 +169,7 @@ function nextTurn() {
         case 2: //p2p host
             if (currentTurn() === playersColor) {
                 //for first turn, openConnection function sets it to true
-                if (connection.open === undefined) {
+                if (connection === undefined) {
                     playerCanDropChips = false;
                 } else {
                     playerCanDropChips = true;
