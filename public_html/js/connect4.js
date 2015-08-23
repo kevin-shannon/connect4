@@ -110,10 +110,10 @@ function start(gm) {
 
     //unblur background
     blurBackground(false);
-    
+
     //activate reset button
     resetButtonActive = true;
-    
+
     //start turn one
     nextTurn();
 
@@ -169,7 +169,11 @@ function nextTurn() {
         case 2: //p2p host
             if (currentTurn() === playersColor) {
                 //for first turn, openConnection function sets it to true
-                playerCanDropChips = connection.open;
+                if (connection.open === undefined) {
+                    playerCanDropChips = false;
+                } else {
+                    playerCanDropChips = true;
+                }
             } else {
                 playerCanDropChips = false;
 
@@ -258,9 +262,9 @@ function Reset() {
     if (resetButtonActive === false) {
         return false;
     }
-    
+
     console.log("Resetting game");
-    
+
     pos_array.length = 0;
     ctx.clearRect(0, -(bh / 6), bw, bh + (bh / 6));
     fillArray();
@@ -519,6 +523,7 @@ function blurBackground(tf) {
 }
 
 function gamemodeSelector() {
+    var selectingGamemode = true;
     blurBackground(true);
     $("#popup").css("visibility", "visible");
     $("#single").click(function () {
@@ -537,6 +542,10 @@ function gamemodeSelector() {
         goToStart(3);
     });
     function goToStart(gm) {
+        $("#single").unbind("click");
+        $("#local").unbind("click");
+        $("#host").unbind("click");
+        $("#join").unbind("click");
         $("#popup").css("visibility", "hidden");
         start(gm);
     }
