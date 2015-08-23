@@ -275,8 +275,12 @@ function Reset() {
 
     //end connection
     if (gamemode === 2 || gamemode === 3) {
-        peer.destroy();
-        connection.on('close');
+        try {
+            peer.destroy();
+            connection.on('close');
+        } catch (err) {
+            console.log(err.toString());
+        }
     }
 
     //restart the game
