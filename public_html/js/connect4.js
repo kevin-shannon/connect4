@@ -96,8 +96,6 @@ function start() {
         setUpOnlineMultiplayer();
     }
 
-    drawChip(3, 3, "red");
-
     //assign colors to players
     assignColors();
 
