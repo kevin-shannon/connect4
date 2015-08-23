@@ -1,5 +1,15 @@
 body {
-    background-color: white;
+    /* Permalink - use to edit and share this gradient: <a href="http://colorzilla.com/gradient-editor/#3a94c1+0,ffffff+25,ffffff+75,3a94c1+100" target="_blank" rel="noreferrer" style="cursor:help;display:inline !important;">http://colorzilla.com/gradient-editor/#3a94c1+0,ffffff+25,ffffff+75,3a94c1+100</a> */
+    //fuck older browsers
+    //background: #3a94c1; /* Old browsers */
+    background: -moz-linear-gradient(left,  #3a94c1 0%, #ffffff 25%, #ffffff 75%, #3a94c1 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, right top, color-stop(0%,#3a94c1), color-stop(25%,#ffffff), color-stop(75%,#ffffff), color-stop(100%,#3a94c1)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(left,  #3a94c1 0%,#ffffff 25%,#ffffff 75%,#3a94c1 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(left,  #3a94c1 0%,#ffffff 25%,#ffffff 75%,#3a94c1 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(left,  #3a94c1 0%,#ffffff 25%,#ffffff 75%,#3a94c1 100%); /* IE10+ */
+    background: linear-gradient(right,  #3a94c1 0%,#ffffff 25%,#ffffff 75%,#3a94c1 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3a94c1', endColorstr='#3a94c1',GradientType=1 ); /* IE6-9 */
+
 }
 
 canvas {
