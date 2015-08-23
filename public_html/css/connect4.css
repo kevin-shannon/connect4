@@ -27,22 +27,35 @@ canvas {
 
 #popup {
     //display: none;
+    z-index:1002;
     position: absolute;
     margin-left: auto;
     margin-right: auto;
     left: 0;
     right: 0;
     top: 23%;
-    width: 20%;
-    height: 31%;
-    padding: 16px;
-    background-color: #dbdbdb;
+    width: 40%;
+    height: 24%;
+    background-color: white;
     border-radius: 25px;
-    z-index:1002;
+    border: 8px solid black;
+    padding: 16px;
     font-family: "cartoonist_kooky";
     color: #2c88db;
     font-size: 20px;
     visibility: hidden;
+}
+
+#titlebox {
+    //background-color: yellow;
+    //width: 15%;
+    //height: 25%;
+    //margin-left: auto;
+    //margin-right: auto;
+}
+
+#play {
+    margin-top: 15px;
 }
 
 @font-face { font-family: cartoonist_kooky; src: url('cartoonist_kooky.ttf'); } 
