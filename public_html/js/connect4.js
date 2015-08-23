@@ -29,13 +29,13 @@ var bh = $(window).width() * 12 / 35;  // returns width of browser viewport
 var canvas = $('<canvas/>').attr({
     width: bw,
     height: bh + (bh / 6)
-}).appendTo('body');
+}).appendTo('#game');
 var ctx = canvas.get(0).getContext("2d");
 ctx.translate(0, (bw / 7));
 var canvas2 = $('<canvas/>').attr({
     width: bw,
     height: bw
-}).appendTo('body');
+}).appendTo('#game');
 var ctx2 = canvas2.get(0).getContext("2d");
 
 //logic globals (these are bad practice and will probably have to be replaced)
@@ -83,9 +83,10 @@ $(document).ready(function () {
  * Functions
  */
 
-function start() {
+function start() { 
     //makes it so the user cannot drop a chip or hover
     playerCanDropChips = false;
+    blurBackground(true);
 
     //figure out which gamemode the user wants to play
     gamemode = askGamemode();
@@ -101,7 +102,10 @@ function start() {
 
     //get the pos_array ready for some epic connect4 action
     fillArray();
-
+    
+    //unblur background
+    blurBackground(false);
+    
     //start turn one
     nextTurn();
 
@@ -485,4 +489,16 @@ function openConnection() {
         console.log("Connection open");
         playerCanDropChips = currentTurn() === playersColor;
     });
+}
+
+function blurBackground(tf) {
+    if (tf) {
+        $("#game").css("-webkit-filter", "blur(2px)");
+        $("#game").css("-moz-filter", "blur(2px)");
+        $("#game").css("filter", "blur(2px)");
+    } else {
+        $("#game").css("-webkit-filter", "blur(0px)");
+        $("#game").css("-moz-filter", "blur(0px)");
+        $("#game").css("filter", "blur(0px)");
+    }
 }

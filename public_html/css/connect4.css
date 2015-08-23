@@ -9,7 +9,6 @@ body {
     background: -ms-linear-gradient(left,  #3a94c1 0%,#ffffff 25%,#ffffff 75%,#3a94c1 100%); /* IE10+ */
     background: linear-gradient(right,  #3a94c1 0%,#ffffff 25%,#ffffff 75%,#3a94c1 100%); /* W3C */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3a94c1', endColorstr='#3a94c1',GradientType=1 ); /* IE6-9 */
-
 }
 
 canvas {
@@ -20,6 +19,11 @@ canvas {
     right: 0;
 }
 
+#game {
+    -webkit-filter: blur(0px); 
+    -moz-filter: blur(0px); 
+    filter: blur(0px); 
+}
 @font-face { font-family: cartoonist_kooky; src: url('cartoonist_kooky.ttf'); } 
 
 #reset {
@@ -101,3 +105,4 @@ canvas {
     -webkit-box-shadow: inset rgba(0,0,0,.3) 0px 5px 10px;
     -moz-box-shadow: inset rgba(0,0,0,.3) 0px 5px 10px;
 }
+
