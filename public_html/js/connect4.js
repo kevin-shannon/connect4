@@ -523,7 +523,6 @@ function blurBackground(tf) {
 }
 
 function gamemodeSelector() {
-    var selectingGamemode = true;
     blurBackground(true);
     $("#popup").css("visibility", "visible");
     $("#single").click(function () {
