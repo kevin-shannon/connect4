@@ -144,8 +144,7 @@ function nextTurn() {
     //give the correct player control based on the gamemode
     switch (gamemode) {
         case 0: //local multiplayer
-            //for first turn, openConnection function sets it to true
-            playerCanDropChips = connection.open ? true : false;
+            playerCanDropChips = true;
             break;
         case 1: //singleplayer
             if (currentTurn() === playersColor) {
@@ -159,7 +158,8 @@ function nextTurn() {
             break;
         case 2: //p2p host
             if (currentTurn() === playersColor) {
-                playerCanDropChips = true;
+                //for first turn, openConnection function sets it to true
+                playerCanDropChips = connection.open ? true : false;
             } else {
                 playerCanDropChips = false;
 
@@ -269,11 +269,11 @@ function Reset() {
     moves = 0;
 
     //end connection
-    if (gamemode === 2 || gamemode === 3){
+    if (gamemode === 2 || gamemode === 3) {
         peer.destroy();
         connection.on('close');
     }
-    
+
     //restart the game
     start();
 }
