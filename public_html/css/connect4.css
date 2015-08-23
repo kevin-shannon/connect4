@@ -24,6 +24,11 @@ canvas {
     -moz-filter: blur(0px); 
     filter: blur(0px); 
 }
+
+#ui {
+    z-index:3;
+}
+
 @font-face { font-family: cartoonist_kooky; src: url('cartoonist_kooky.ttf'); } 
 
 #reset {

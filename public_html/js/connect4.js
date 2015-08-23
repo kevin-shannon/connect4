@@ -72,10 +72,30 @@ $(document).ready(function () {
 
     //called when the mouse moves across the canvas
     $('canvas').mousemove(hoverChip);
-
-    /* New main code */
-    start();
-
+    
+    //makes it so the user cannot drop a chip or hover
+    playerCanDropChips = false;
+    blurBackground(true);
+    
+    $("#single").click(function(){
+        gamemode = 1;
+        start();
+    });
+    
+    $("#local").click(function(){
+        gamemode = 0;
+        start();
+    });
+    
+    $("#host").click(function(){
+        gamemode = 2;
+        start();
+    });
+    
+    $("#join").click(function(){
+        gamemode = 3;
+        start();
+    });
 });
 
 
@@ -83,13 +103,8 @@ $(document).ready(function () {
  * Functions
  */
 
-function start() { 
-    //makes it so the user cannot drop a chip or hover
-    playerCanDropChips = false;
-    blurBackground(true);
-
+function start() {
     //figure out which gamemode the user wants to play
-    gamemode = askGamemode();
     console.log("Gamemode " + gamemode + " selected.");
 
     //if the gamemode is online multiplayer, let's set that up
@@ -102,10 +117,10 @@ function start() {
 
     //get the pos_array ready for some epic connect4 action
     fillArray();
-    
+
     //unblur background
     blurBackground(false);
-    
+
     //start turn one
     nextTurn();
 
