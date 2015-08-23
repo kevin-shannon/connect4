@@ -11,6 +11,7 @@
 //gamemode (local multiplayer: 0, singleplayer: 1, p2p host: 2, p2p opponent: 3)
 var gamemode;
 var AIDelay = 1000;
+var resetButtonActive = false;
 
 //online multiplayer
 var peer;
@@ -74,6 +75,9 @@ $(document).ready(function () {
     //called when the mouse moves across the canvas
     $('canvas').mousemove(hoverChip);
 
+    //run reset function when button is clicked
+    $('#reset').click(Reset());
+
     //makes it so the user cannot drop a chip or hover
     playerCanDropChips = false;
 
@@ -106,7 +110,10 @@ function start(gm) {
 
     //unblur background
     blurBackground(false);
-
+    
+    //activate reset button
+    resetButtonActive = true;
+    
     //start turn one
     nextTurn();
 
@@ -249,11 +256,18 @@ function drawChip(x, y, chipColor) {
 
 
 function Reset() {
+    if (resetButtonActive === false) {
+        return false;
+    }
+    
+    console.log("Resetting game");
+    
     pos_array.length = 0;
     ctx.clearRect(0, -(bh / 6), bw, bh + (bh / 6));
     fillArray();
     winner = false;
     moves = 0;
+    resetButtonActive = false;
 
     //end connection
     if (gamemode === 2 || gamemode === 3) {
