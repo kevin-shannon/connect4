@@ -16,10 +16,11 @@ var AIDelay = 1000;
 var peer;
 var connection;
 
-//colors
+//colors and design
 var startingColor = "red";
 var playersColor;
 var opponentsColor;
+var blur = 4;
 
 //board dimensions
 var bw = $(window).width() / 2.5;   // returns height of browser viewport
@@ -72,30 +73,12 @@ $(document).ready(function () {
 
     //called when the mouse moves across the canvas
     $('canvas').mousemove(hoverChip);
-    
+
     //makes it so the user cannot drop a chip or hover
     playerCanDropChips = false;
-    blurBackground(true);
-    
-    $("#single").click(function(){
-        gamemode = 1;
-        start();
-    });
-    
-    $("#local").click(function(){
-        gamemode = 0;
-        start();
-    });
-    
-    $("#host").click(function(){
-        gamemode = 2;
-        start();
-    });
-    
-    $("#join").click(function(){
-        gamemode = 3;
-        start();
-    });
+
+    //popup the gamemode selector
+    gamemodeSelector();
 });
 
 
@@ -103,7 +86,10 @@ $(document).ready(function () {
  * Functions
  */
 
-function start() {
+function start(gm) {
+    //received gamemode from the selector
+    gamemode = gm;
+
     //figure out which gamemode the user wants to play
     console.log("Gamemode " + gamemode + " selected.");
 
@@ -276,7 +262,7 @@ function Reset() {
     }
 
     //restart the game
-    start();
+    gamemodeSelector();
 }
 
 function fillArray() {
@@ -508,12 +494,36 @@ function openConnection() {
 
 function blurBackground(tf) {
     if (tf) {
-        $("#game").css("-webkit-filter", "blur(2px)");
-        $("#game").css("-moz-filter", "blur(2px)");
-        $("#game").css("filter", "blur(2px)");
+        $("#game").css("-webkit-filter", "blur(" + blur + "px)");
+        $("#game").css("-moz-filter", "blur(" + blur + "px)");
+        $("#game").css("filter", "blur(" + blur + "px)");
     } else {
         $("#game").css("-webkit-filter", "blur(0px)");
         $("#game").css("-moz-filter", "blur(0px)");
         $("#game").css("filter", "blur(0px)");
+    }
+}
+
+function gamemodeSelector() {
+    blurBackground(true);
+    $("#popup").css("visibility", "visible");
+    $("#single").click(function () {
+        goToStart(1);
+    });
+
+    $("#local").click(function () {
+        goToStart(0);
+    });
+
+    $("#host").click(function () {
+        goToStart(2);
+    });
+
+    $("#join").click(function () {
+        goToStart(3);
+    });
+    function goToStart(gm) {
+        $("#popup").css("visibility", "hidden");
+        start(gm);
     }
 }
