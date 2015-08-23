@@ -1,26 +1,23 @@
 <!DOCTYPE html>
 <head>
     <title>Connect 4 by Kevin Shannon</title>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.0.8/semantic.min.css">
     <link rel="shortcut icon" type="image/ico" href="img/favicon.ico"/>
     <link rel="stylesheet" type="text/css" href="css/connect4.css">
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.0.8/components/button.min.css">
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.0.8/components/divider.min.css">
 </head>
 <body>
     <div id="popup" style="text-align:center;">
         <div id="titlebox"><img src="http://web-vassets.ea.com/Assets/Richmedia/Image/FullImageLogo/connect-4-logo.png" alt=""></div>
         <div class="ui divider"></div>
-        <div class="ui four buttons">
-            <button id="single" class="ui button">single player</button>
-            <button id="local" class="ui button">local multiplayer</button>
-            <button id="host" class="ui button">host online game</button>
-            <button id="join" class="ui button">join online game</button>
-        </div>
-        <div id="play" class="ui primary button">Play!</div>
+        <button id="single" class="ui primary button">single player</button>
+        <button id="local" class="ui primary button">local multiplayer</button>
+        <button id="host" class="ui primary button">host online game</button>
+        <button id="join" class="ui primary button" data-content="Join Game">join online game</button>
     </div>
     <div id="game">
         <div id="reset" onclick="Reset()"><a class="butt">reset</a></div>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.0.8/semantic.min.js" type="text/javascript"></script>
         <script src="js/peer.js"></script>
         <script src="js/connect4.js"></script>
     </div>
