@@ -549,10 +549,7 @@ function gamemodeSelector() {
         $("#local").unbind("click");
         $("#host").unbind("click");
         $("#join").unbind("click");
-        $("#play").click(function () {
-            $("#popup").css("visibility", "hidden");
-            moves = 0;
-            start(gm);          
-        });
+        $("#popup").css("visibility", "hidden");
+        start(gm);
     }
 }

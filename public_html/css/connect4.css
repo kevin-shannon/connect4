@@ -54,10 +54,6 @@ canvas {
     //margin-right: auto;
 }
 
-#play {
-    margin-top: 15px;
-}
-
 @font-face { font-family: cartoonist_kooky; src: url('cartoonist_kooky.ttf'); } 
 
 #reset {
