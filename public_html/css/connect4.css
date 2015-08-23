@@ -27,16 +27,21 @@ canvas {
 
 #popup {
     //display: none;
-    position: fixed;
-    top: 25%;
-    left: 29%;
-    width: 40%;
-    height: 25%;
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    top: 23%;
+    width: 20%;
+    height: 31%;
     padding: 16px;
-    background-color: #3a94c1;
+    background-color: #dbdbdb;
+    border-radius: 25px;
     z-index:1002;
-    overflow: auto;
-    z-index:3;
+    font-family: "cartoonist_kooky";
+    color: #2c88db;
+    font-size: 20px;
     visibility: hidden;
 }
 
