@@ -181,7 +181,6 @@ function nextTurn() {
                 playerCanDropChips = true;
             } else {
                 playerCanDropChips = false;
-                console.log("hi");
                 //remember, randomAI is non-blocking because it is in a timeout
                 multiplayerTurn();
             }
