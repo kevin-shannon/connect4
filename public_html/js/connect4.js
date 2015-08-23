@@ -266,6 +266,7 @@ function Reset() {
     fillArray();
     winner = false;
     moves = 0;
+    playerCanDropChips = false;
     resetButtonActive = false;
 
     //end connection
