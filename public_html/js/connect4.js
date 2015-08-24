@@ -562,9 +562,12 @@ function gamemodeSelector() {
         //get the game number from the input box in the popup and send
         //it to the join online game function
         var gn = $('#joinin').val();
+        
+        //simulates clicking join online game button to close the popup
+        $('#join').click();
+        
         console.log(gn);
         joinOnlineGame(gn);
-        $('#joinbut').popup('destroy');
         goToStart(3);
     });
 }
