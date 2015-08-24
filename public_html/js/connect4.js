@@ -555,7 +555,8 @@ function gamemodeSelector() {
     $('#join').popup({
         popup: $('#joinpop'),
         on: 'click',
-        closeable: true
+        closeable: true,
+        position: 'bottom center'
     });
 
     $("#joinbut").click(function () {
