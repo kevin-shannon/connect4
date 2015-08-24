@@ -17,6 +17,9 @@ var resetButtonActive = false;
 var peer;
 var connection;
 
+//unblock for school
+var enableUnblock = true;
+
 //colors and design
 var startingColor = "red";
 var playersColor;
@@ -476,7 +479,15 @@ function assignColors() {
 function setUpOnline() {
     var peerNum = Math.floor(Math.random() * 900) + 100;
     console.log("Peer id: " + peerNum);
-    peer = new Peer(peerNum, {key: '5pl4l5zh7rqqia4i'});
+
+    if (enableUnblock) {
+        peer = new Peer(peerNum, {
+            key: '5pl4l5zh7rqqia4i',
+            config: {iceServers: [{url: 'stun:stun.l.google.com:19302'}]}
+        });
+    } else {
+        peer = new Peer(peerNum, {key: '5pl4l5zh7rqqia4i'});
+    }
     return peerNum;
 }
 
@@ -563,10 +574,10 @@ function gamemodeSelector() {
         //get the game number from the input box in the popup and send
         //it to the join online game function
         var gn = $('#joinin').val();
-        
+
         //simulates clicking join online game button to close the popup
         $('#join').click();
-        
+
         console.log(gn);
         joinOnlineGame(gn);
         goToStart(3);
