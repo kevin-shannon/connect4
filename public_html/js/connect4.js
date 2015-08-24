@@ -430,22 +430,6 @@ function currentTurn() {
     }
 }
 
-function askGamemode() {
-    if (confirm("Press OK for singleplayer or cancel for multiplayer")) {
-        //singleplayer/AI
-        return 1;
-    } else if (confirm("Press OK to play on this computer, otherwise cancel to play online")) {
-        //local multiplayer
-        return 0;
-    } else if (confirm("Press OK to host a game, otherwise cancel to join a game")) {
-        //online host
-        return 2;
-    } else {
-        //online join
-        return 3;
-    }
-}
-
 //returns who's turn it is now
 function advanceTurn() {
     moves++;
@@ -586,7 +570,7 @@ function goToStart(gm) {
     $("#single").unbind("click");
     $("#local").unbind("click");
     $("#host").unbind("click");
-    //$("#join").unbind("click");
+    $("#joinbut").unbind("click");
     $("#popup").css("visibility", "hidden");
     start(gm);
 }
