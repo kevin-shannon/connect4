@@ -482,11 +482,11 @@ function setUpOnline() {
 
     if (enableUnblock) {
         peer = new Peer(peerNum, {
-            key: '5pl4l5zh7rqqia4i',
+            key: 'fe7e2757-bbef-4456-a934-ae93385502b9',
             config: {iceServers: [{url: 'stun:stun.l.google.com:19302'}]}
         });
     } else {
-        peer = new Peer(peerNum, {key: '5pl4l5zh7rqqia4i'});
+        peer = new Peer(peerNum, {key: 'fe7e2757-bbef-4456-a934-ae93385502b9'});
     }
     return peerNum;
 }
