@@ -1,6 +1,6 @@
 
 /*
- *   Connect 4 by Kevin Shannon
+ *   Connect 4 by Kevin Shannon and Tanner Krewson
  */
 
 
@@ -120,7 +120,6 @@ function start(gm) {
 
     //start turn one
     nextTurn();
-
     //now we wait for a click event
 }
 
@@ -434,22 +433,6 @@ function currentTurn() {
     }
 }
 
-function askGamemode() {
-    if (confirm("Press OK for singleplayer or cancel for multiplayer")) {
-        //singleplayer/AI
-        return 1;
-    } else if (confirm("Press OK to play on this computer, otherwise cancel to play online")) {
-        //local multiplayer
-        return 0;
-    } else if (confirm("Press OK to host a game, otherwise cancel to join a game")) {
-        //online host
-        return 2;
-    } else {
-        //online join
-        return 3;
-    }
-}
-
 //returns who's turn it is now
 function advanceTurn() {
     moves++;
@@ -492,10 +475,9 @@ function setUpOnline() {
 }
 
 function hostOnlineGame() {
-    var peerNum = setUpOnline();
 
     //start new game
-    alert("Your game number is " + peerNum);
+    //alert("Your game number is " + peerNum);  
     peer.on('connection', function (conn) {
         connection = conn;
         openConnection();
@@ -531,6 +513,7 @@ function openConnection() {
     connection.on('open', function () {
         console.log("Connection open");
         playerCanDropChips = currentTurn() === playersColor;
+        $('#host').click();
     });
 }
 
@@ -547,6 +530,7 @@ function blurBackground(tf) {
 }
 
 function gamemodeSelector() {
+    var peerNum = setUpOnline();
     blurBackground(true);
     $("#popup").css("visibility", "visible");
     $("#single").click(function () {
@@ -569,6 +553,15 @@ function gamemodeSelector() {
         closeable: true,
         position: 'bottom center'
     });
+    
+    $("#gamenum").html("Your game number is " + peerNum);
+    
+    $('#host').popup({
+        popup: $('#hostpop'),
+        on: 'click',
+        closeable: true,
+        position: 'bottom center'
+    });  
 
     $("#joinbut").click(function () {
         //get the game number from the input box in the popup and send
@@ -588,7 +581,7 @@ function goToStart(gm) {
     $("#single").unbind("click");
     $("#local").unbind("click");
     $("#host").unbind("click");
-    //$("#join").unbind("click");
+    $("#joinbut").unbind("click");
     $("#popup").css("visibility", "hidden");
     start(gm);
 }
