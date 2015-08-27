@@ -17,9 +17,6 @@ var resetButtonActive = false;
 var peer;
 var connection;
 
-//unblock for school
-var enableUnblock = true;
-
 //colors and design
 var startingColor = "red";
 var playersColor;
@@ -462,15 +459,7 @@ function assignColors() {
 function setUpOnline() {
     var peerNum = Math.floor(Math.random() * 900) + 100;
     console.log("Peer id: " + peerNum);
-
-    if (enableUnblock) {
-        peer = new Peer(peerNum, {
-            key: 'fe7e2757-bbef-4456-a934-ae93385502b9',
-            config: {iceServers: [{url: 'stun:stun.l.google.com:19302'}]}
-        });
-    } else {
-        peer = new Peer(peerNum, {key: 'fe7e2757-bbef-4456-a934-ae93385502b9'});
-    }
+    peer = new Peer(peerNum, {key: 'fe7e2757-bbef-4456-a934-ae93385502b9'});
     return peerNum;
 }
 
