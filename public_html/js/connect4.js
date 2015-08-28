@@ -459,7 +459,7 @@ function assignColors() {
 function setUpOnline() {
     var peerNum = Math.floor(Math.random() * 900) + 100;
     console.log("Peer id: " + peerNum);
-    peer = new Peer(peerNum, {key: '5pl4l5zh7rqqia4i'});
+    peer = new Peer(peerNum, {key: 'fe7e2757-bbef-4456-a934-ae93385502b9'});
     return peerNum;
 }
 
@@ -556,10 +556,10 @@ function gamemodeSelector() {
         //get the game number from the input box in the popup and send
         //it to the join online game function
         var gn = $('#joinin').val();
-        
+
         //simulates clicking join online game button to close the popup
         $('#join').click();
-        
+
         console.log(gn);
         joinOnlineGame(gn);
         goToStart(3);
