@@ -16,6 +16,7 @@ var resetButtonActive = false;
 //online multiplayer
 var peer;
 var connection;
+var spectatorConnection;
 
 //colors and design
 var startingColor = "red";
@@ -470,11 +471,15 @@ function hostOnlineGame() {
     peer.on('connection', function (conn) {
         connection = conn;
         openConnection();
+        peer.on('connection', function (conn) {
+            spectatorConnection = conn;
+        });
         goToStart(2);
     });
 }
 
 function joinOnlineGame(gameNum) {
+    //not completely sure if this is necessary
     setUpOnline();
 
     //join game
@@ -496,6 +501,11 @@ function multiplayerTurn() {
 function sendMove(data) {
     console.log("Sent " + data + " to peer");
     connection.send(data);
+}
+
+function sendBoard(array) {
+    console.log("Sent the board to peer");
+    spectatorConnection.send(array);
 }
 
 function openConnection() {
@@ -567,10 +577,47 @@ function gamemodeSelector() {
 }
 
 function goToStart(gm) {
+    closeGamemodeSelector();
+    start(gm);
+}
+
+function closeGamemodeSelector(){
     $("#single").unbind("click");
     $("#local").unbind("click");
     $("#host").unbind("click");
     $("#joinbut").unbind("click");
-    $("#popup").css("visibility", "hidden");
-    start(gm);
+    $("#popup").css("visibility", "hidden"); 
+}
+
+function startSpectatorMode(num){
+    
+    closeGamemodeSelector();
+    playerCanDropChips = false;
+    
+    //not completely sure if this is necessary
+    setUpOnline();
+
+    //join game
+    //var gameNum = window.prompt("Enter an game number to join");
+    spectatorConnection = peer.connect(num);
+    spectatorConnection.on('open', function () {
+        console.log("Spectator connection open");
+        spectatorConnection.on('data', function (data) {
+            redrawBoard(data);
+        });
+    });
+}
+
+function redrawBoard(array){
+    //clear current board
+    ctx.clearRect(0, -(bh / 6), bw, bh + (bh / 6));
+    
+    for (var i = 1; i < 8; i++) {
+        for (var j = 1; j < 7; j++) {
+            if (pos_array[i][j] !== undefined){
+                drawChip(i, j, array[i][j]);
+            }
+        }
+    }
+    
 }
