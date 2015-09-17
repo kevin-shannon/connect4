@@ -107,7 +107,7 @@ function start(gm) {
     assignColors();
 
     //get the pos_array ready for some epic connect4 action
-    fillArray();
+    pos_array = fillArray(pos_array);
 
     //unblur background
     blurBackground(false);
@@ -131,7 +131,7 @@ function click(e) {
     for (var i = 1; i < 8; i++) {
         if (((i - 1) * (bw / 7)) < xPos && xPos < ((i) * (bw / 7))) {
             //if the chip drop was successful
-            if (dropChip(i)) {
+            if (dropChip(i, currentTurn(), pos_array, false)) {
                 if (gamemode === 2 || gamemode === 3) {
                     sendMove(i);
                 }
@@ -142,7 +142,7 @@ function click(e) {
 }
 
 function nextTurn() {
-    winCondition();
+    winCondition(pos_array, false);
     //if there's a winner, get outta here
     if (winner) {
         return;
@@ -193,14 +193,16 @@ function nextTurn() {
 }
 
 //Draws the chip, adds it to the array, returns true if successful
-function dropChip(x) {
+function dropChip(x, color, boardArray, AICheck) {
     //for loop that checks array starting at bottom of board which is at 6 going up to 1
     for (var j = 6; j > 0; j--) {
         //the position in the array will be undefined when there is an open space to drop the chip
-        if (pos_array[x][j] === undefined && winner === false) {
-            console.log(currentTurn().charAt(0).toUpperCase() + currentTurn().slice(1) + " dropped in column " + x);
-            drawChip(x, j, currentTurn());
-            pos_array[x][j] = currentTurn();
+        if (boardArray[x][j] === undefined && winner === false) {
+            if (!AICheck) {
+                console.log(color.charAt(0).toUpperCase() + color.slice(1) + " dropped in column " + x);
+                drawChip(x, j, color);
+            }
+            boardArray[x][j] = color;
             return true;
         }
     }
@@ -267,7 +269,7 @@ function Reset() {
 
     pos_array.length = 0;
     ctx.clearRect(0, -(bh / 6), bw, bh + (bh / 6));
-    fillArray();
+    pos_array = fillArray(pos_array);
     winner = false;
     moves = 0;
     playerCanDropChips = false;
@@ -287,20 +289,25 @@ function Reset() {
     gamemodeSelector();
 }
 
-function fillArray() {
-    pos_array = new Array(7);
+function fillArray(arrayToFill) {
+    arrayToFill = new Array(7);
     for (var i = 1; i < 8; i++) {
-        pos_array[i] = new Array(6);
+        arrayToFill[i] = new Array(6);
     }
+    return arrayToFill;
 }
 
 //[columns][rows]
-function winCondition() {
+//if AICheck is true, a win will not be triggered
+//this is for AI
+function winCondition(boardArray, AICheck) {
     //horizontal
     for (var i = 1; i < 5; i++) {
         for (var j = 1; j < 7; j++) {
-            if (pos_array[i][j] !== undefined && pos_array[i][j] === pos_array[i + 1][j] && pos_array[i][j] === pos_array[i + 2][j] && pos_array[i][j] === pos_array[i + 3][j]) {
-                win(i, j, "h");
+            if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j] && boardArray[i][j] === boardArray[i + 2][j] && boardArray[i][j] === boardArray[i + 3][j]) {
+                if (!AICheck)
+                    win(i, j, "h");
+                return true;
             }
         }
     }
@@ -308,24 +315,30 @@ function winCondition() {
     //vertical
     for (var i = 1; i < 8; i++) {
         for (var j = 1; j < 4; j++) {
-            if (pos_array[i][j] !== undefined && pos_array[i][j] === pos_array[i][j + 1] && pos_array[i][j] === pos_array[i][j + 2] && pos_array[i][j] === pos_array[i][j + 3]) {
-                win(i, j, "v");
+            if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i][j + 1] && boardArray[i][j] === boardArray[i][j + 2] && boardArray[i][j] === boardArray[i][j + 3]) {
+                if (!AICheck)
+                    win(i, j, "v");
+                return true;
             }
         }
     }
     // /diagonals
     for (var i = 1; i < 5; i++) {
         for (var j = 4; j < 7; j++) {
-            if (pos_array[i][j] !== undefined && pos_array[i][j] === pos_array[i + 1][j - 1] && pos_array[i][j] === pos_array[i + 2][j - 2] && pos_array[i][j] === pos_array[i + 3][j - 3]) {
-                win(i, j, "//");
+            if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j - 1] && boardArray[i][j] === boardArray[i + 2][j - 2] && boardArray[i][j] === boardArray[i + 3][j - 3]) {
+                if (!AICheck)
+                    win(i, j, "//");
+                return true;
             }
         }
     }
     // \diagonals
     for (var i = 1; i < 5; i++) {
         for (var j = 1; j < 4; j++) {
-            if (pos_array[i][j] !== undefined && pos_array[i][j] === pos_array[i + 1][j + 1] && pos_array[i][j] === pos_array[i + 2][j + 2] && pos_array[i][j] === pos_array[i + 3][j + 3]) {
-                win(i, j, "\\");
+            if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j + 1] && boardArray[i][j] === boardArray[i + 2][j + 2] && boardArray[i][j] === boardArray[i + 3][j + 3]) {
+                if (!AICheck)
+                    win(i, j, "\\");
+                return true;
             }
         }
     }
@@ -413,7 +426,7 @@ function randomAI() {
     setTimeout(function() {
         //will try to drop the chip until successful
         var column = Math.floor((Math.random() * 7) + 1);
-        while (!dropChip(column)) {
+        while (!dropChip(column, currentTurn(), pos_array, false)) {
             console.log("The AI just tried to drop a chip in column " + column + ", which is full. (What an idiot!)");
             column = Math.floor((Math.random() * 7) + 1);
         }
@@ -487,7 +500,7 @@ function multiplayerTurn() {
     connection.on('data', function(data) {
         if (currentTurn() === opponentsColor) {
             console.log("Received " + data + " from peer");
-            dropChip(data);
+            dropChip(data, currentTurn(), pos_array, false);
             nextTurn();
         }
     });
