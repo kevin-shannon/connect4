@@ -107,7 +107,7 @@ function start(gm) {
     assignColors();
 
     //get the pos_array ready for some epic connect4 action
-    pos_array = fillArray(pos_array);
+    pos_array = fillArray();
 
     //unblur background
     blurBackground(false);
@@ -269,7 +269,7 @@ function Reset() {
 
     pos_array.length = 0;
     ctx.clearRect(0, -(bh / 6), bw, bh + (bh / 6));
-    pos_array = fillArray(pos_array);
+    pos_array = fillArray();
     winner = false;
     moves = 0;
     playerCanDropChips = false;
@@ -289,7 +289,7 @@ function Reset() {
     gamemodeSelector();
 }
 
-function fillArray(arrayToFill) {
+function fillArray() {
     arrayToFill = new Array(7);
     for (var i = 1; i < 8; i++) {
         arrayToFill[i] = new Array(6);
