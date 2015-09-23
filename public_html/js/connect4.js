@@ -67,7 +67,7 @@ var playerCanDropChips;
 $(window).load(drawBoard);
 
 //Ran when the site is fully loaded
-$(document).ready(function() {
+$(document).ready(function () {
 
     //Ran when user clicks on the canvas
     $('canvas').click(click);
@@ -226,9 +226,9 @@ function drawChip(x, y, chipColor) {
     };
     var startTime = (new Date()).getTime();
 
-    window.requestAnimFrame = (function(callback) {
+    window.requestAnimFrame = (function (callback) {
         return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
-                function(callback) {
+                function (callback) {
                     window.setTimeout(callback, 1000 / 60);
                 };
     })();
@@ -245,7 +245,7 @@ function drawChip(x, y, chipColor) {
         if (newY < y) {
             chip.y = newY;
             // request new frame
-            requestAnimFrame(function() {
+            requestAnimFrame(function () {
                 animate(chip, canvas, ctx, startTime);
             });
         }
@@ -346,7 +346,7 @@ function winCondition(boardArray, AICheck) {
     if (moves === 42 && winner === false) {
         //manual win event instead of using win function
         winner = true;
-        setTimeout(function() {
+        setTimeout(function () {
             ctx.drawImage(draw, (3 * bw / 10), -(bh / 6), (bw / 2.5), (bh / 6));
         }, 500);
     }
@@ -423,7 +423,7 @@ function hoverChip(e) {
 }
 
 function randomAI() {
-    setTimeout(function() {
+    setTimeout(function () {
         //will try to drop the chip until successful
         var column = Math.floor((Math.random() * 7) + 1);
         while (!dropChip(column, currentTurn(), pos_array, false)) {
@@ -480,7 +480,7 @@ function hostOnlineGame() {
 
     //start new game
     //alert("Your game number is " + peerNum);  
-    peer.on('connection', function(conn) {
+    peer.on('connection', function (conn) {
         connection = conn;
         openConnection();
         goToStart(2);
@@ -497,7 +497,7 @@ function joinOnlineGame(gameNum) {
 }
 
 function multiplayerTurn() {
-    connection.on('data', function(data) {
+    connection.on('data', function (data) {
         if (currentTurn() === opponentsColor) {
             console.log("Received " + data + " from peer");
             dropChip(data, currentTurn(), pos_array, false);
@@ -512,7 +512,7 @@ function sendMove(data) {
 }
 
 function openConnection() {
-    connection.on('open', function() {
+    connection.on('open', function () {
         console.log("Connection open");
         playerCanDropChips = currentTurn() === playersColor;
         $('#host').click();
@@ -535,15 +535,15 @@ function gamemodeSelector() {
     var peerNum = setUpOnline();
     blurBackground(true);
     $("#popup").css("visibility", "visible");
-    $("#single").click(function() {
+    $("#single").click(function () {
         goToStart(1);
     });
 
-    $("#local").click(function() {
+    $("#local").click(function () {
         goToStart(0);
     });
 
-    $("#host").click(function() {
+    $("#host").click(function () {
         hostOnlineGame();
         //goToStart is called within hostOnlineGame
     });
@@ -565,7 +565,7 @@ function gamemodeSelector() {
         position: 'bottom center'
     });
 
-    $("#joinbut").click(function() {
+    $("#joinbut").click(function () {
         //get the game number from the input box in the popup and send
         //it to the join online game function
         var gn = $('#joinin').val();
