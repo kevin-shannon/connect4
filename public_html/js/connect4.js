@@ -438,23 +438,19 @@ function winningMoveAI() {
     setTimeout(function () {
         //the column we will drop into, defaults to random unless we find a better move
         var column = Math.floor((Math.random() * 7) + 1);
-        //trying each column
-        for (i = 1; i <= 7; i++) {
-            //copy actual array to our temporary array
-            //var aiArray = pos_array;
-            var aiArray = pos_array.map(function (arr) {
-                return arr.slice();
-            });
-            //if our drop into the temporary array is successful, this is true
-            var dropChipSuccessful = dropChip(i, currentTurn(), aiArray, true);
-            //if our drop caused our ai to win, this will be true
-            var isWinningMove = winCondition(aiArray, true);
-            if (dropChipSuccessful && isWinningMove) {
-                //we'll drop the chip there
-                column = i;
-                //get outta here cause we already won!
-                break;
+
+        var potentialWinningMove = willCauseWin(pos_array, currentTurn());
+
+        //if there's no winning move, let's check to see if we can block the other player
+        if (potentialWinningMove === -1) {
+            var potentialBlockingMove = willCauseWin(pos_array, oppositeOfCurrentTurn());
+            //if there is a blocking move, let's do that
+            if (potentialBlockingMove !== -1) {
+                column = potentialBlockingMove;
             }
+        } else {
+            //we have a winning move! let's drop there
+            column = potentialWinningMove;
         }
 
         //not completely necessary, but whatever
@@ -466,8 +462,40 @@ function winningMoveAI() {
     }, AIDelay);
 }
 
+//returns -1 if no winning move found
+function willCauseWin(actualArray, color) {
+    //trying each column
+    for (i = 1; i <= 7; i++) {
+        //copy actual array to our temporary array
+        //var aiArray = pos_array;
+        var aiArray = actualArray.map(function (arr) {
+            return arr.slice();
+        });
+        //if our drop into the temporary array is successful, this is true
+        var dropChipSuccessful = dropChip(i, color, aiArray, true);
+        //if our drop caused our ai to win, this will be true
+        var isWinningMove = winCondition(aiArray, true);
+        if (dropChipSuccessful && isWinningMove) {
+            //we'll drop the chip there
+            return i;
+            //get outta here cause we already won!
+            break;
+        }
+    }
+    return -1;
+}
+
 function currentTurn() {
     if (moves % 2 === 0) {
+        return startingColor === "red" ? "blue" : "red";
+    }
+    else {
+        return startingColor;
+    }
+}
+
+function oppositeOfCurrentTurn() {
+    if (moves % 2 === 1) {
         return startingColor === "red" ? "blue" : "red";
     }
     else {
