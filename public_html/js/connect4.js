@@ -163,7 +163,7 @@ function nextTurn() {
                 playerCanDropChips = false;
 
                 //remember, randomAI is non-blocking because it is in a timeout
-                randomAI();
+                winningMoveAI();
             }
             break;
         case 2: //p2p host
@@ -426,6 +426,38 @@ function randomAI() {
     setTimeout(function () {
         //will try to drop the chip until successful
         var column = Math.floor((Math.random() * 7) + 1);
+        while (!dropChip(column, currentTurn(), pos_array, false)) {
+            console.log("The AI just tried to drop a chip in column " + column + ", which is full. (What an idiot!)");
+            column = Math.floor((Math.random() * 7) + 1);
+        }
+        nextTurn();
+    }, AIDelay);
+}
+
+function winningMoveAI() {
+    setTimeout(function () {
+        //the column we will drop into, defaults to random unless we find a better move
+        var column = Math.floor((Math.random() * 7) + 1);
+        //trying each column
+        for (i = 1; i <= 7; i++) {
+            //copy actual array to our temporary array
+            //var aiArray = pos_array;
+            var aiArray = pos_array.map(function (arr) {
+                return arr.slice();
+            });
+            //if our drop into the temporary array is successful, this is true
+            var dropChipSuccessful = dropChip(i, currentTurn(), aiArray, true);
+            //if our drop caused our ai to win, this will be true
+            var isWinningMove = winCondition(aiArray, true);
+            if (dropChipSuccessful && isWinningMove) {
+                //we'll drop the chip there
+                column = i;
+                //get outta here cause we already won!
+                break;
+            }
+        }
+
+        //not completely necessary, but whatever
         while (!dropChip(column, currentTurn(), pos_array, false)) {
             console.log("The AI just tried to drop a chip in column " + column + ", which is full. (What an idiot!)");
             column = Math.floor((Math.random() * 7) + 1);
