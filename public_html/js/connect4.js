@@ -67,7 +67,7 @@ var playerCanDropChips;
 $(window).load(drawBoard);
 
 //Ran when the site is fully loaded
-$(document).ready(function() {
+$(document).ready(function () {
 
     //Ran when user clicks on the canvas
     $('canvas').click(click);
@@ -107,7 +107,7 @@ function start(gm) {
     assignColors();
 
     //get the pos_array ready for some epic connect4 action
-    fillArray();
+    pos_array = fillArray();
 
     //unblur background
     blurBackground(false);
@@ -131,7 +131,7 @@ function click(e) {
     for (var i = 1; i < 8; i++) {
         if (((i - 1) * (bw / 7)) < xPos && xPos < ((i) * (bw / 7))) {
             //if the chip drop was successful
-            if (dropChip(i)) {
+            if (dropChip(i, currentTurn(), pos_array, false)) {
                 if (gamemode === 2 || gamemode === 3) {
                     sendMove(i);
                 }
@@ -142,7 +142,7 @@ function click(e) {
 }
 
 function nextTurn() {
-    winCondition();
+    winCondition(pos_array, false);
     //if there's a winner, get outta here
     if (winner) {
         return;
@@ -163,7 +163,7 @@ function nextTurn() {
                 playerCanDropChips = false;
 
                 //remember, randomAI is non-blocking because it is in a timeout
-                randomAI();
+                winningMoveAI();
             }
             break;
         case 2: //p2p host
@@ -193,14 +193,16 @@ function nextTurn() {
 }
 
 //Draws the chip, adds it to the array, returns true if successful
-function dropChip(x) {
+function dropChip(x, color, boardArray, AICheck) {
     //for loop that checks array starting at bottom of board which is at 6 going up to 1
     for (var j = 6; j > 0; j--) {
         //the position in the array will be undefined when there is an open space to drop the chip
-        if (pos_array[x][j] === undefined && winner === false) {
-            console.log(currentTurn().charAt(0).toUpperCase() + currentTurn().slice(1) + " dropped in column " + x);
-            drawChip(x, j, currentTurn());
-            pos_array[x][j] = currentTurn();
+        if (boardArray[x][j] === undefined && winner === false) {
+            if (!AICheck) {
+                console.log(color.charAt(0).toUpperCase() + color.slice(1) + " dropped in column " + x);
+                drawChip(x, j, color);
+            }
+            boardArray[x][j] = color;
             return true;
         }
     }
@@ -224,9 +226,9 @@ function drawChip(x, y, chipColor) {
     };
     var startTime = (new Date()).getTime();
 
-    window.requestAnimFrame = (function(callback) {
+    window.requestAnimFrame = (function (callback) {
         return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
-                function(callback) {
+                function (callback) {
                     window.setTimeout(callback, 1000 / 60);
                 };
     })();
@@ -243,7 +245,7 @@ function drawChip(x, y, chipColor) {
         if (newY < y) {
             chip.y = newY;
             // request new frame
-            requestAnimFrame(function() {
+            requestAnimFrame(function () {
                 animate(chip, canvas, ctx, startTime);
             });
         }
@@ -267,7 +269,7 @@ function Reset() {
 
     pos_array.length = 0;
     ctx.clearRect(0, -(bh / 6), bw, bh + (bh / 6));
-    fillArray();
+    pos_array = fillArray();
     winner = false;
     moves = 0;
     playerCanDropChips = false;
@@ -288,19 +290,24 @@ function Reset() {
 }
 
 function fillArray() {
-    pos_array = new Array(7);
+    arrayToFill = new Array(7);
     for (var i = 1; i < 8; i++) {
-        pos_array[i] = new Array(6);
+        arrayToFill[i] = new Array(6);
     }
+    return arrayToFill;
 }
 
 //[columns][rows]
-function winCondition() {
+//if AICheck is true, a win will not be triggered
+//this is for AI
+function winCondition(boardArray, AICheck) {
     //horizontal
     for (var i = 1; i < 5; i++) {
         for (var j = 1; j < 7; j++) {
-            if (pos_array[i][j] !== undefined && pos_array[i][j] === pos_array[i + 1][j] && pos_array[i][j] === pos_array[i + 2][j] && pos_array[i][j] === pos_array[i + 3][j]) {
-                win(i, j, "h");
+            if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j] && boardArray[i][j] === boardArray[i + 2][j] && boardArray[i][j] === boardArray[i + 3][j]) {
+                if (!AICheck)
+                    win(i, j, "h");
+                return true;
             }
         }
     }
@@ -308,24 +315,30 @@ function winCondition() {
     //vertical
     for (var i = 1; i < 8; i++) {
         for (var j = 1; j < 4; j++) {
-            if (pos_array[i][j] !== undefined && pos_array[i][j] === pos_array[i][j + 1] && pos_array[i][j] === pos_array[i][j + 2] && pos_array[i][j] === pos_array[i][j + 3]) {
-                win(i, j, "v");
+            if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i][j + 1] && boardArray[i][j] === boardArray[i][j + 2] && boardArray[i][j] === boardArray[i][j + 3]) {
+                if (!AICheck)
+                    win(i, j, "v");
+                return true;
             }
         }
     }
     // /diagonals
     for (var i = 1; i < 5; i++) {
         for (var j = 4; j < 7; j++) {
-            if (pos_array[i][j] !== undefined && pos_array[i][j] === pos_array[i + 1][j - 1] && pos_array[i][j] === pos_array[i + 2][j - 2] && pos_array[i][j] === pos_array[i + 3][j - 3]) {
-                win(i, j, "//");
+            if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j - 1] && boardArray[i][j] === boardArray[i + 2][j - 2] && boardArray[i][j] === boardArray[i + 3][j - 3]) {
+                if (!AICheck)
+                    win(i, j, "//");
+                return true;
             }
         }
     }
     // \diagonals
     for (var i = 1; i < 5; i++) {
         for (var j = 1; j < 4; j++) {
-            if (pos_array[i][j] !== undefined && pos_array[i][j] === pos_array[i + 1][j + 1] && pos_array[i][j] === pos_array[i + 2][j + 2] && pos_array[i][j] === pos_array[i + 3][j + 3]) {
-                win(i, j, "\\");
+            if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j + 1] && boardArray[i][j] === boardArray[i + 2][j + 2] && boardArray[i][j] === boardArray[i + 3][j + 3]) {
+                if (!AICheck)
+                    win(i, j, "\\");
+                return true;
             }
         }
     }
@@ -333,7 +346,7 @@ function winCondition() {
     if (moves === 42 && winner === false) {
         //manual win event instead of using win function
         winner = true;
-        setTimeout(function() {
+        setTimeout(function () {
             ctx.drawImage(draw, (3 * bw / 10), -(bh / 6), (bw / 2.5), (bh / 6));
         }, 500);
     }
@@ -410,10 +423,42 @@ function hoverChip(e) {
 }
 
 function randomAI() {
-    setTimeout(function() {
+    setTimeout(function () {
         //will try to drop the chip until successful
         var column = Math.floor((Math.random() * 7) + 1);
-        while (!dropChip(column)) {
+        while (!dropChip(column, currentTurn(), pos_array, false)) {
+            console.log("The AI just tried to drop a chip in column " + column + ", which is full. (What an idiot!)");
+            column = Math.floor((Math.random() * 7) + 1);
+        }
+        nextTurn();
+    }, AIDelay);
+}
+
+function winningMoveAI() {
+    setTimeout(function () {
+        //the column we will drop into, defaults to random unless we find a better move
+        var column = Math.floor((Math.random() * 7) + 1);
+        //trying each column
+        for (i = 1; i <= 7; i++) {
+            //copy actual array to our temporary array
+            //var aiArray = pos_array;
+            var aiArray = pos_array.map(function (arr) {
+                return arr.slice();
+            });
+            //if our drop into the temporary array is successful, this is true
+            var dropChipSuccessful = dropChip(i, currentTurn(), aiArray, true);
+            //if our drop caused our ai to win, this will be true
+            var isWinningMove = winCondition(aiArray, true);
+            if (dropChipSuccessful && isWinningMove) {
+                //we'll drop the chip there
+                column = i;
+                //get outta here cause we already won!
+                break;
+            }
+        }
+
+        //not completely necessary, but whatever
+        while (!dropChip(column, currentTurn(), pos_array, false)) {
             console.log("The AI just tried to drop a chip in column " + column + ", which is full. (What an idiot!)");
             column = Math.floor((Math.random() * 7) + 1);
         }
@@ -467,7 +512,7 @@ function hostOnlineGame() {
 
     //start new game
     //alert("Your game number is " + peerNum);  
-    peer.on('connection', function(conn) {
+    peer.on('connection', function (conn) {
         connection = conn;
         openConnection();
         goToStart(2);
@@ -484,10 +529,10 @@ function joinOnlineGame(gameNum) {
 }
 
 function multiplayerTurn() {
-    connection.on('data', function(data) {
+    connection.on('data', function (data) {
         if (currentTurn() === opponentsColor) {
             console.log("Received " + data + " from peer");
-            dropChip(data);
+            dropChip(data, currentTurn(), pos_array, false);
             nextTurn();
         }
     });
@@ -499,7 +544,7 @@ function sendMove(data) {
 }
 
 function openConnection() {
-    connection.on('open', function() {
+    connection.on('open', function () {
         console.log("Connection open");
         playerCanDropChips = currentTurn() === playersColor;
         $('#host').click();
@@ -522,15 +567,15 @@ function gamemodeSelector() {
     var peerNum = setUpOnline();
     blurBackground(true);
     $("#popup").css("visibility", "visible");
-    $("#single").click(function() {
+    $("#single").click(function () {
         goToStart(1);
     });
 
-    $("#local").click(function() {
+    $("#local").click(function () {
         goToStart(0);
     });
 
-    $("#host").click(function() {
+    $("#host").click(function () {
         hostOnlineGame();
         //goToStart is called within hostOnlineGame
     });
@@ -552,7 +597,7 @@ function gamemodeSelector() {
         position: 'bottom center'
     });
 
-    $("#joinbut").click(function() {
+    $("#joinbut").click(function () {
         //get the game number from the input box in the popup and send
         //it to the join online game function
         var gn = $('#joinin').val();
