@@ -10,7 +10,7 @@
 
 //gamemode (local multiplayer: 0, singleplayer: 1, p2p host: 2, p2p opponent: 3)
 var gamemode;
-var AIDelay = 1000;
+var AIDelay = 500;
 var resetButtonActive = false;
 
 //online multiplayer
@@ -82,7 +82,9 @@ $(document).ready(function () {
     playerCanDropChips = false;
 
     //popup the gamemode selector
-    gamemodeSelector();
+    //gamemodeSelector();
+    
+    start(4);
 });
 
 
@@ -188,6 +190,9 @@ function nextTurn() {
                 //remember, randomAI is non-blocking because it is in a timeout
                 multiplayerTurn();
             }
+            break;
+        case 4: //ai v ai
+            winningMoveAI();
             break;
     }
 }
