@@ -437,7 +437,7 @@ function randomAI() {
 function winningMoveAI() {
     setTimeout(function () {
         //not completely necessary, but whatever
-        while (!dropChip(bestPossibleMove(), currentTurn(), pos_array, false)) {
+        while (!dropChip(bestPossibleMove(pos_array), currentTurn(), pos_array, false)) {
             console.log("The AI just tried to drop a chip in column " + column + ", which is full. (What an idiot!)");
             column = Math.floor((Math.random() * 7) + 1);
         }
@@ -445,13 +445,19 @@ function winningMoveAI() {
     }, AIDelay);
 }
 
-function bestPossibleMove() {
+function bestPossibleMove(boardArray) {
+    /*
+     * Order of importance:
+     *  -winning move
+     *  -blocking move
+     *  -random move while avoiding setting the next player up to win
+     */
     //the column we will drop into will be random unless we find a better move
-    var potentialWinningMove = willCauseWin(pos_array, currentTurn());
+    var potentialWinningMove = willCauseWin(boardArray, currentTurn());
 
     //if there's no winning move, let's check to see if we can block the other player
     if (potentialWinningMove === -1) {
-        var potentialBlockingMove = willCauseWin(pos_array, oppositeOfCurrentTurn());
+        var potentialBlockingMove = willCauseWin(boardArray, oppositeOfCurrentTurn());
         //if there is a blocking move, let's do that
         if (potentialBlockingMove !== -1) {
             return potentialBlockingMove;
@@ -460,16 +466,48 @@ function bestPossibleMove() {
         //we have a winning move! let's drop there
         return potentialWinningMove;
     }
-    return Math.floor((Math.random() * 7) + 1);
+
+    //for every column current color can drop in, we will check if it will cause the other player to win
+    var avoid = new Array(7);
+    for (var i = 1; i <= 7; i++) {
+        var testingArray = copyArray(boardArray);
+        //if the column is not full
+        if (dropChip(i, currentTurn(), testingArray, true)) {
+            //check to see if the opponent has a winning move due to the drop we just made
+            var opponentWinningMoveColumn = willCauseWin(testingArray, oppositeOfCurrentTurn());
+            //if the opponent does have a winning move, take note of that in our array
+            if (opponentWinningMoveColumn !== -1) {
+                console.log(oppositeOfCurrentTurn() + ' will win by dropping in column ' + opponentWinningMoveColumn);
+                console.log('   if ' + currentTurn() + ' drops in column ' + i);
+                avoid[i] = true;
+            } else {
+                avoid[i] = false;
+            }
+        }
+    }
+
+    //pick a random move, making sure to avoid columns found above
+    //POTENTIAL BUG: WHAT IF ALL COLUMNS ARE TO BE AVOIDED
+    //because this is going to loop forever until it finds a move
+    //what if the random function never gives one of the numbers 1 through 7
+    //because its random
+    //2spooky4me
+    while (true) {
+        var potentialMove = Math.floor((Math.random() * 7) + 1);
+        //if we shouldn't avoid this particular move, then let's do it!
+        if (!avoid[potentialMove]) {
+            return potentialMove;
+        }
+    }
 }
 
 //returns -1 if no winning move found
-function willCauseWin(actualArray, color) {
+function willCauseWin(boardArray, color) {
     //trying each column
-    for (i = 1; i <= 7; i++) {
+    for (var i = 1; i <= 7; i++) {
         //copy actual array to our temporary array
         //var aiArray = pos_array;
-        var aiArray = copyArray(pos_array);
+        var aiArray = copyArray(boardArray);
         //if our drop into the temporary array is successful, this is true
         var dropChipSuccessful = dropChip(i, color, aiArray, true);
         //if our drop caused our ai to win, this will be true
