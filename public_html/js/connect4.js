@@ -437,7 +437,8 @@ function randomAI() {
 function winningMoveAI() {
     setTimeout(function () {
         //not completely necessary, but whatever
-        while (!dropChip(bestPossibleMove(pos_array), currentTurn(), pos_array, false)) {
+        var column = bestPossibleMove(pos_array);
+        while (!dropChip(column, currentTurn(), pos_array, false)) {
             console.log("The AI just tried to drop a chip in column " + column + ", which is full. (What an idiot!)");
             column = Math.floor((Math.random() * 7) + 1);
         }
@@ -460,10 +461,12 @@ function bestPossibleMove(boardArray) {
         var potentialBlockingMove = willCauseWin(boardArray, oppositeOfCurrentTurn());
         //if there is a blocking move, let's do that
         if (potentialBlockingMove !== -1) {
+            console.log("Blocking move found at " + potentialBlockingMove);
             return potentialBlockingMove;
         }
     } else {
         //we have a winning move! let's drop there
+        console.log("Winning move found at " + potentialWinningMove);
         return potentialWinningMove;
     }
 
@@ -477,8 +480,8 @@ function bestPossibleMove(boardArray) {
             var opponentWinningMoveColumn = willCauseWin(testingArray, oppositeOfCurrentTurn());
             //if the opponent does have a winning move, take note of that in our array
             if (opponentWinningMoveColumn !== -1) {
-                console.log(oppositeOfCurrentTurn() + ' will win by dropping in column ' + opponentWinningMoveColumn);
-                console.log('   if ' + currentTurn() + ' drops in column ' + i);
+                console.log(oppositeOfCurrentTurn() + ' will win by dropping in column ' 
+                        + opponentWinningMoveColumn + ' if ' + currentTurn() + ' drops in column ' + i);
                 avoid[i] = true;
             } else {
                 avoid[i] = false;
