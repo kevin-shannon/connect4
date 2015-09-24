@@ -436,30 +436,31 @@ function randomAI() {
 
 function winningMoveAI() {
     setTimeout(function () {
-        //the column we will drop into, defaults to random unless we find a better move
-        var column = Math.floor((Math.random() * 7) + 1);
-
-        var potentialWinningMove = willCauseWin(pos_array, currentTurn());
-
-        //if there's no winning move, let's check to see if we can block the other player
-        if (potentialWinningMove === -1) {
-            var potentialBlockingMove = willCauseWin(pos_array, oppositeOfCurrentTurn());
-            //if there is a blocking move, let's do that
-            if (potentialBlockingMove !== -1) {
-                column = potentialBlockingMove;
-            }
-        } else {
-            //we have a winning move! let's drop there
-            column = potentialWinningMove;
-        }
-
         //not completely necessary, but whatever
-        while (!dropChip(column, currentTurn(), pos_array, false)) {
+        while (!dropChip(bestPossibleMove(), currentTurn(), pos_array, false)) {
             console.log("The AI just tried to drop a chip in column " + column + ", which is full. (What an idiot!)");
             column = Math.floor((Math.random() * 7) + 1);
         }
         nextTurn();
     }, AIDelay);
+}
+
+function bestPossibleMove() {
+    //the column we will drop into will be random unless we find a better move
+    var potentialWinningMove = willCauseWin(pos_array, currentTurn());
+
+    //if there's no winning move, let's check to see if we can block the other player
+    if (potentialWinningMove === -1) {
+        var potentialBlockingMove = willCauseWin(pos_array, oppositeOfCurrentTurn());
+        //if there is a blocking move, let's do that
+        if (potentialBlockingMove !== -1) {
+            return potentialBlockingMove;
+        }
+    } else {
+        //we have a winning move! let's drop there
+        return potentialWinningMove;
+    }
+    return Math.floor((Math.random() * 7) + 1);
 }
 
 //returns -1 if no winning move found
