@@ -468,9 +468,7 @@ function willCauseWin(actualArray, color) {
     for (i = 1; i <= 7; i++) {
         //copy actual array to our temporary array
         //var aiArray = pos_array;
-        var aiArray = actualArray.map(function (arr) {
-            return arr.slice();
-        });
+        var aiArray = copyArray(pos_array);
         //if our drop into the temporary array is successful, this is true
         var dropChipSuccessful = dropChip(i, color, aiArray, true);
         //if our drop caused our ai to win, this will be true
@@ -483,6 +481,12 @@ function willCauseWin(actualArray, color) {
         }
     }
     return -1;
+}
+
+function copyArray(arrayToCopy) {
+    return arrayToCopy.map(function (arr) {
+        return arr.slice();
+    });
 }
 
 function currentTurn() {
