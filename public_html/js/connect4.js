@@ -189,6 +189,9 @@ function nextTurn() {
                 multiplayerTurn();
             }
             break;
+        case 4: //ai vs ai
+            winningMoveAI();
+            break;
     }
 }
 
@@ -661,6 +664,13 @@ function gamemodeSelector() {
         closeable: true,
         position: 'bottom center'
     });
+    
+    $('#aivsai').popup({
+        popup: $('#aipop'),
+        on: 'click',
+        closeable: true,
+        position: 'bottom center'
+    });
 
     $("#gamenum").html("Your game number is " + peerNum);
 
@@ -682,6 +692,18 @@ function gamemodeSelector() {
         console.log(gn);
         joinOnlineGame(gn);
         goToStart(3);
+    });
+    
+    $("#aibut").click(function () {
+        //get the delay from the input box in the popup and send
+        //it to the join online game function
+        var aid = $('#aiin').val();
+
+        //simulates clicking join online game button to close the popup
+        $('#aivsai').click();
+
+        AIDelay = aid;
+        goToStart(4);
     });
 }
 

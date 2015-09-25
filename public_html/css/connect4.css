@@ -48,6 +48,10 @@ canvas {
     visibility: hidden;
 }
 
+#gamemodebuttons {
+    line-height: 250%; 
+}
+
 #titlebox {
     //background-color: yellow;
     //width: 15%;
