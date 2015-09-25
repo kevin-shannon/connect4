@@ -34,8 +34,10 @@ canvas {
     left: 0;
     right: 0;
     top: 23%;
-    width: 30%;
-    height: 30%;
+    min-width: 30%;
+    width: 641px;
+    min-height: 30%;
+    height: 221px;
     background-color: white;
     border-radius: 25px;
     border: 8px solid black;
