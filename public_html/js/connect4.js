@@ -286,7 +286,7 @@ function Reset() {
             peer.destroy();
             connection.on('close');
         } catch (err) {
-            console.log(err.toString());
+            console.log("error closing connection");
         }
     }
 
@@ -497,7 +497,7 @@ function bestPossibleMove(boardArray) {
             var opponentWinningMoveColumn = willCauseWin(testingArray, oppositeOfCurrentTurn());
             //if the opponent does have a winning move, take note of that in our array
             if (opponentWinningMoveColumn !== -1) {
-                console.log(oppositeOfCurrentTurn() + ' will win by dropping in column ' 
+                console.log(oppositeOfCurrentTurn() + ' will win by dropping in column '
                         + opponentWinningMoveColumn + ' if ' + currentTurn() + ' drops in column ' + i);
                 avoid[i] = true;
             } else {
@@ -677,7 +677,7 @@ function gamemodeSelector() {
         closeable: true,
         position: 'bottom center'
     });
-    
+
     $('#aivsai').popup({
         popup: $('#aipop'),
         on: 'click',
@@ -706,7 +706,7 @@ function gamemodeSelector() {
         joinOnlineGame(gn);
         goToStart(3);
     });
-    
+
     $("#aibut").click(function () {
         //get the delay from the input box in the popup and send
         //it to the join online game function
