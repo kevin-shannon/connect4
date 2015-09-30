@@ -306,13 +306,14 @@ function fillArray() {
 //if AICheck is true, a win will not be triggered
 //this is for AI
 function winCondition(boardArray, AICheck) {
+    var victory = false;
     //horizontal
     for (var i = 1; i < 5; i++) {
         for (var j = 1; j < 7; j++) {
             if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j] && boardArray[i][j] === boardArray[i + 2][j] && boardArray[i][j] === boardArray[i + 3][j]) {
                 if (!AICheck)
                     win(i, j, "h");
-                return true;
+                victory = true;
             }
         }
     }
@@ -323,7 +324,7 @@ function winCondition(boardArray, AICheck) {
             if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i][j + 1] && boardArray[i][j] === boardArray[i][j + 2] && boardArray[i][j] === boardArray[i][j + 3]) {
                 if (!AICheck)
                     win(i, j, "v");
-                return true;
+                victory = true;
             }
         }
     }
@@ -333,7 +334,7 @@ function winCondition(boardArray, AICheck) {
             if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j - 1] && boardArray[i][j] === boardArray[i + 2][j - 2] && boardArray[i][j] === boardArray[i + 3][j - 3]) {
                 if (!AICheck)
                     win(i, j, "//");
-                return true;
+                victory = true;
             }
         }
     }
@@ -343,9 +344,12 @@ function winCondition(boardArray, AICheck) {
             if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j + 1] && boardArray[i][j] === boardArray[i + 2][j + 2] && boardArray[i][j] === boardArray[i + 3][j + 3]) {
                 if (!AICheck)
                     win(i, j, "\\");
-                return true;
+                victory = true;
             }
         }
+    }
+    if (victory === true) {
+        return true;
     }
     // tie
     if (moves === 42 && winner === false) {
