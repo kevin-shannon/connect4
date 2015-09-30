@@ -42,6 +42,8 @@ var ctx2 = canvas2.get(0).getContext("2d");
 
 //logic globals (these are bad practice and will probably have to be replaced)
 var pos_array;
+var possible = new Array(7);
+var avoid = new Array(7);
 var moves = 0;
 var winner = false;
 
@@ -445,6 +447,19 @@ function winningMoveAI() {
     }, AIDelay);
 }
 
+function possiblemoves(boardArray) {
+    possible = new Array(7);
+    for (var i = 1; i < 8; i++) {
+        var testingArray = copyArray(boardArray);
+        if (dropChip(i, currentTurn(), testingArray, true)) {
+            possible[i] = true;
+        }
+        else {
+            possible[i] = false;
+        }
+    }
+}
+
 function bestPossibleMove(boardArray) {
     /*
      * Order of importance:
@@ -468,7 +483,6 @@ function bestPossibleMove(boardArray) {
     }
 
     //for every column current color can drop in, we will check if it will cause the other player to win
-    var avoid = new Array(7);
     for (var i = 1; i <= 7; i++) {
         var testingArray = copyArray(boardArray);
         //if the column is not full
@@ -487,15 +501,14 @@ function bestPossibleMove(boardArray) {
     }
 
     //pick a random move, making sure to avoid columns found above
-    //POTENTIAL BUG: WHAT IF ALL COLUMNS ARE TO BE AVOIDED
-    //because this is going to loop forever until it finds a move
-    //what if the random function never gives one of the numbers 1 through 7
-    //because its random
-    //2spooky4me
     while (true) {
+        possiblemoves(pos_array);
+        var is_same = possible.length === avoid.length && possible.every(function (element, index) {
+            return element === avoid[index];
+        });
         var potentialMove = Math.floor((Math.random() * 7) + 1);
         //if we shouldn't avoid this particular move, then let's do it!
-        if (!avoid[potentialMove]) {
+        if (!avoid[potentialMove] || is_same === true) {
             return potentialMove;
         }
     }
