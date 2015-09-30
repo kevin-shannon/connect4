@@ -9,25 +9,39 @@
     <div id="popup" style="text-align:center;">
         <div id="titlebox"><img src="img/connect-4-logo.png" alt=""></div>
         <div class="ui divider"></div>
-        <button id="single" class="ui primary button">single player</button>
-        <button id="local" class="ui primary button">local multiplayer</button>
-        <button id="host" class="ui primary button">host online game</button>
-        <button id="join" class="ui primary button" title="Join game">join online game</button>
-        <div id="joinpop" class="ui popup">
-            <div class="ui divided equal width relaxed center aligned choice grid" style="display: flex;">
-                <div class="framework column">
-                    <h4 class="ui center aligned header">Enter game number:</h4>
-                    <div class="ui input">
-                        <input id="joinin" type="text" placeholder="Game number">
+        <div id="gamemodebuttons">
+            <button id="single" class="ui primary button">single player</button>
+            <button id="local" class="ui primary button">local multiplayer</button>
+            <button id="aivsai" class="ui primary button">ai vs ai</button></br>
+            <button id="host" class="ui primary button">host online game</button>
+            <button id="join" class="ui primary button" title="Join game">join online game</button>
+            <div id="joinpop" class="ui popup">
+                <div class="ui divided equal width relaxed center aligned choice grid" style="display: flex;">
+                    <div class="framework column">
+                        <h4 class="ui center aligned header">Enter game number:</h4>
+                        <div class="ui input">
+                            <input id="joinin" type="text" placeholder="Game number">
+                        </div>
+                        <div id="joinbut" class="ui primary fluid button">Play</div>
                     </div>
-                    <div id="joinbut" class="ui primary fluid button">Play</div>
                 </div>
             </div>
-        </div>
-        <div id="hostpop" class="ui popup">
-            <div class="ui divided equal width relaxed center aligned choice grid" style="display: flex;">
-                <div class="framework column">
-                    <h4 id="gamenum" class="ui center aligned header"></h4>
+            <div id="hostpop" class="ui popup">
+                <div class="ui divided equal width relaxed center aligned choice grid" style="display: flex;">
+                    <div class="framework column">
+                        <h4 id="gamenum" class="ui center aligned header"></h4>
+                    </div>
+                </div>
+            </div>
+            <div id="aipop" class="ui popup">
+                <div class="ui divided equal width relaxed center aligned choice grid" style="display: flex;">
+                    <div class="framework column">
+                        <h4 class="ui center aligned header">Enter AI delay:</h4>
+                        <div class="ui input">
+                            <input id="aiin" type="text" placeholder="milliseconds">
+                        </div>
+                        <div id="aibut" class="ui primary fluid button">Play</div>
+                    </div>
                 </div>
             </div>
         </div>
