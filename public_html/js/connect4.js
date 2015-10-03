@@ -146,7 +146,7 @@ function click(e) {
 function nextTurn() {
     winCondition(pos_array, false);
     //if there's a winner, get outta here
-    if (winner) {
+    if (winner || resetButtonActive === false) {
         return;
     }
 
@@ -242,6 +242,10 @@ function drawChip(x, y, chipColor) {
     animate(chip, canvas, ctx, startTime);
 
     function animate(chip, canvas, ctx, startTime) {
+        if (resetButtonActive === false) {
+            ctx.clearRect(0, -(bh / 6), bw, bh + (bh / 6));
+            return;
+        }
         // update
         var time = (new Date()).getTime() - startTime;
         var a = bh * 1.7;
@@ -475,7 +479,7 @@ function possiblemoves(boardArray) {
             counter++;
         }
     }
-    if (counter === 7){
+    if (counter === 7) {
         return false;
     }
 }
