@@ -677,6 +677,7 @@ function gamemodeSelector() {
     var peerNum = setUpOnline();
     blurBackground(true);
     $("#popup").css("visibility", "visible");
+    $("#reset").css("visibility", "hidden");
     $("#single").click(function () {
         goToStart(1);
     });
@@ -747,5 +748,6 @@ function goToStart(gm) {
     $("#joinbut").unbind("click");
     $("#aibut").unbind("click");
     $("#popup").css("visibility", "hidden");
+    $("#reset").css("visibility", "visible");
     start(gm);
 }
