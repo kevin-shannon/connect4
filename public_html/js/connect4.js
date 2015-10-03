@@ -279,6 +279,7 @@ function Reset() {
     moves = 0;
     playerCanDropChips = false;
     resetButtonActive = false;
+    AIDelay = 1000;
 
     //end connection
     if (gamemode === 2 || gamemode === 3) {
@@ -352,8 +353,9 @@ function winCondition(boardArray, AICheck) {
         return true;
     }
     // tie
-    if (moves === 42 && winner === false) {
+    if (possiblemoves(pos_array) === false && winner === false) {
         //manual win event instead of using win function
+        console.log("the game is a draw");
         winner = true;
         setTimeout(function () {
             ctx.drawImage(draw, (3 * bw / 10), -(bh / 6), (bw / 2.5), (bh / 6));
@@ -447,15 +449,21 @@ function winningMoveAI() {
     setTimeout(function () {
         //not completely necessary, but whatever
         var column = bestPossibleMove(pos_array);
-        while (!dropChip(column, currentTurn(), pos_array, false)) {
-            console.log("The AI just tried to drop a chip in column " + column + ", which is full. (What an idiot!)");
-            column = Math.floor((Math.random() * 7) + 1);
+        if (winner === false) {
+            while (!dropChip(column, currentTurn(), pos_array, false)) {
+                console.log("The AI just tried to drop a chip in column " + column + ", which is full. (What an idiot!)");
+                column = Math.floor((Math.random() * 7) + 1);
+            }
+        }
+        else {
+            return;
         }
         nextTurn();
     }, AIDelay);
 }
 
 function possiblemoves(boardArray) {
+    var counter = 0;
     possible = new Array(7);
     for (var i = 1; i < 8; i++) {
         var testingArray = copyArray(boardArray);
@@ -464,7 +472,11 @@ function possiblemoves(boardArray) {
         }
         else {
             possible[i] = false;
+            counter++;
         }
+    }
+    if (counter === 7){
+        return false;
     }
 }
 
@@ -729,6 +741,7 @@ function goToStart(gm) {
     $("#local").unbind("click");
     $("#host").unbind("click");
     $("#joinbut").unbind("click");
+    $("#aibut").unbind("click");
     $("#popup").css("visibility", "hidden");
     start(gm);
 }
