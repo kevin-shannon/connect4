@@ -467,7 +467,7 @@ function winningMoveAI() {
         if (winner === false) {
             while (!dropChip(column, currentTurn(), pos_array, false)) {
                 console.log("The AI just tried to drop a chip in column " + column + ", which is full. (What an idiot!)");
-                column = Math.floor((Math.random() * 7) + 1);
+                column = bestPossibleMove(pos_array);
             }
         }
         else {
