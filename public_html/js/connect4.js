@@ -385,11 +385,16 @@ function drawWinBanner(color) {
     var bannerImage = (color === "red") ? redwins : bluewins;
 
     //draw that sucker
-    ctx.drawImage(bannerImage, (bw / 6), -(bh / 6), (bw / 1.5), (bh / 6));
+    if (resetButtonActive === true) {
+        ctx.drawImage(bannerImage, (bw / 6), -(bh / 6), (bw / 1.5), (bh / 6));
+    }
 }
 
 function drawWinXs(i, j, direction) {
     //repeat four times because it's connect FOUR
+    if (resetButtonActive === false) {
+        return;
+    }
     for (var n = 1; n < 5; n++) {
         //draw the X
         ctx.drawImage(XXX, (bw / 7) * (i - 1), (bh / 6) * (j - 1), (bw / 7), (bh / 6));
