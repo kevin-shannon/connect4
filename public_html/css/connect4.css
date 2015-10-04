@@ -37,12 +37,10 @@ canvas {
     min-width: 30%;
     width: 641px;
     min-height: 30%;
-    height: 221px;
     background-color: white;
     border-radius: 25px;
     border: 8px solid black;
     padding: 16px;
-    font-family: "cartoonist_kooky";
     color: #2c88db;
     font-size: 20px;
     visibility: hidden;

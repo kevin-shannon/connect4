@@ -24,8 +24,14 @@ var opponentsColor;
 var blur = 4;
 
 //board dimensions
-var bw = $(window).width() / 2.5;   // returns height of browser viewport
-var bh = $(window).width() * 12 / 35;  // returns width of browser viewport
+if ($(window).width() < $(window).height()) {
+    var bw = $(window).width() / 1.5;   
+    var bh = $(window).width() * 4 / 7;
+}
+else {
+    var bw = $(window).width() / 2.5;   // sets board width
+    var bh = $(window).width() * 12 / 35;  // sets board height
+}
 
 //canvases
 var canvas = $('<canvas/>').attr({
