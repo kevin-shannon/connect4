@@ -25,7 +25,7 @@ var blur = 4;
 
 //board dimensions
 if ($(window).width() < $(window).height()) {
-    var bw = $(window).width() / 1.5;   
+    var bw = $(window).width() / 1.5;
     var bh = $(window).width() * 4 / 7;
 }
 else {
@@ -276,10 +276,22 @@ function drawChip(x, y, chipColor) {
 
 
 function Reset() {
+
+    //if the button is somehow displayed even though it shouldn't be
+    //make sure reset doesn't run?? -Tanner
     if (resetButtonActive === false) {
         return false;
     }
 
+    resetBoard();
+
+    closeConnection();
+
+    //restart the game
+    gamemodeSelector();
+}
+
+function resetBoard() {
     console.log("Resetting game");
 
     pos_array.length = 0;
@@ -290,19 +302,6 @@ function Reset() {
     playerCanDropChips = false;
     resetButtonActive = false;
     AIDelay = 1000;
-
-    //end connection
-    if (gamemode === 2 || gamemode === 3) {
-        try {
-            peer.destroy();
-            connection.on('close');
-        } catch (err) {
-            console.log("error closing connection");
-        }
-    }
-
-    //restart the game
-    gamemodeSelector();
 }
 
 function fillArray() {
@@ -670,6 +669,17 @@ function openConnection() {
         playerCanDropChips = currentTurn() === playersColor;
         $('#host').click();
     });
+}
+
+function closeConnection() {
+    if (gamemode === 2 || gamemode === 3) {
+        try {
+            peer.destroy();
+            connection.on('close');
+        } catch (err) {
+            console.log("error closing connection");
+        }
+    }
 }
 
 function blurBackground(tf) {
