@@ -153,6 +153,11 @@ function nextTurn() {
     winCondition(pos_array, false);
     //if there's a winner, get outta here
     if (winner || resetButtonActive === false) {
+        //to check if they want to play again
+        if (gamemode === 2 || gamemode === 3){
+            console.log("checking if they want to play again");
+            multiplayerTurn();
+        }
         return;
     }
 
@@ -289,6 +294,16 @@ function Reset() {
 
     //restart the game
     gamemodeSelector();
+}
+
+function PlayAgain(shouldTellOtherPlayer) {
+    resetBoard();
+    
+    //if it recieves a 0 it will reset the game
+    if (shouldTellOtherPlayer){
+        sendMove(0);
+    }
+    start(gamemode);
 }
 
 function resetBoard() {
@@ -650,6 +665,10 @@ function joinOnlineGame(gameNum) {
 
 function multiplayerTurn() {
     connection.on('data', function (data) {
+        if (data === 0){
+            PlayAgain(false);
+            return;
+        }
         if (currentTurn() === opponentsColor) {
             console.log("Received " + data + " from peer");
             dropChip(data, currentTurn(), pos_array, false);
