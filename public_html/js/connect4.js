@@ -16,6 +16,7 @@ var resetButtonActive = false;
 //online multiplayer
 var peer;
 var connection;
+var wantToPlayAgain = false;
 
 //colors and design
 var startingColor = "red";
@@ -153,11 +154,6 @@ function nextTurn() {
     winCondition(pos_array, false);
     //if there's a winner, get outta here
     if (winner || resetButtonActive === false) {
-        //to check if they want to play again
-        if (gamemode === 2 || gamemode === 3){
-            console.log("checking if they want to play again");
-            multiplayerTurn();
-        }
         return;
     }
 
@@ -296,13 +292,35 @@ function Reset() {
     gamemodeSelector();
 }
 
-function PlayAgain(shouldTellOtherPlayer) {
-    resetBoard();
-    
-    //if it recieves a 0 it will reset the game
-    if (shouldTellOtherPlayer){
+function askToPlayAgain() {
+    wantToPlayAgain = true;
+    console.log("sending 0 from ask");
+    sendMove(0);
+}
+
+function receivePlayAgainRequest(){
+    //if wantToPlayAgain is true, then this means both players want to play
+    //      again and we can start the new game.
+    //else we will ask the player if they want to play again, and if they do,
+    //      we will play.
+    if (wantToPlayAgain){
+        playAgain();
+    } else {
+        //TODO: ask the player to respond to the request from their oppenent to
+        //      player again.
+        //if they say yes:
+        console.log("sending 0 from receive");
         sendMove(0);
+        playAgain();
     }
+}
+
+function playAgain() {
+    console.log("Playing again");
+    //resetting this variable for next time
+    wantToPlayAgain = false;
+    
+    resetBoard();
     start(gamemode);
 }
 
@@ -665,15 +683,17 @@ function joinOnlineGame(gameNum) {
 
 function multiplayerTurn() {
     connection.on('data', function (data) {
-        if (data === 0){
-            PlayAgain(false);
+        console.log("Received " + data + " from peer");
+        //0 is sent when a player wants to play again and the game has been won
+        if (data === 0 && winner){
+            receivePlayAgainRequest();
             return;
         }
         if (currentTurn() === opponentsColor) {
-            console.log("Received " + data + " from peer");
             dropChip(data, currentTurn(), pos_array, false);
             nextTurn();
         }
+        connection.on('data', function (data) {});
     });
 }
 
