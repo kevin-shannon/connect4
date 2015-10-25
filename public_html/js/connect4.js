@@ -298,12 +298,12 @@ function askToPlayAgain() {
     sendMove(0);
 }
 
-function receivePlayAgainRequest(){
+function receivePlayAgainRequest() {
     //if wantToPlayAgain is true, then this means both players want to play
     //      again and we can start the new game.
     //else we will ask the player if they want to play again, and if they do,
     //      we will play.
-    if (wantToPlayAgain){
+    if (wantToPlayAgain) {
         playAgain();
     } else {
         //TODO: ask the player to respond to the request from their oppenent to
@@ -319,7 +319,7 @@ function playAgain() {
     console.log("Playing again");
     //resetting this variable for next time
     wantToPlayAgain = false;
-    
+
     resetBoard();
     start(gamemode);
 }
@@ -415,6 +415,16 @@ function win(i, j, direction) {
     setTimeout(drawWinBanner, 500, pos_array[i][j]);
     //delay
     setTimeout(drawWinXs, 1000, i, j, direction);
+    if (gamemode === 2 || gamemode === 3) {
+        setTimeout(function () {
+            $("#playpop").css("visibility", "visible");
+            $("#play").click(function () {
+                askToPlayAgain();
+                $("#play").unbind("click");
+                $("#playpop").css("visibility", "hidden");
+            });
+        }, 1500);
+    }
 }
 
 function drawWinBanner(color) {
@@ -685,7 +695,7 @@ function multiplayerTurn() {
     connection.on('data', function (data) {
         console.log("Received " + data + " from peer");
         //0 is sent when a player wants to play again and the game has been won
-        if (data === 0 && winner){
+        if (data === 0 && winner) {
             receivePlayAgainRequest();
             return;
         }
@@ -693,7 +703,6 @@ function multiplayerTurn() {
             dropChip(data, currentTurn(), pos_array, false);
             nextTurn();
         }
-        connection.on('data', function (data) {});
     });
 }
 

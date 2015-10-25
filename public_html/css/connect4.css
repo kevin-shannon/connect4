@@ -26,7 +26,6 @@ canvas {
 }
 
 #popup {
-    //display: none;
     z-index:1002;
     position: absolute;
     margin-left: auto;
@@ -46,16 +45,28 @@ canvas {
     visibility: hidden;
 }
 
-#gamemodebuttons {
-    line-height: 250%; 
+#playpop {
+    z-index:1001;
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    top: 25%;
+    min-width: 10%;
+    min-height: 7%;
+    width: 200px;
+    background-color: white;
+    border-radius: 15px;
+    border: 4px solid black;
+    padding: 16px;
+    color: #2c88db;
+    font-size: 20px;
+    visibility: hidden;
 }
 
-#titlebox {
-    //background-color: yellow;
-    //width: 15%;
-    //height: 25%;
-    //margin-left: auto;
-    //margin-right: auto;
+#gamemodebuttons {
+    line-height: 250%; 
 }
 
 @font-face { font-family: cartoonist_kooky; src: url('cartoonist_kooky.ttf'); } 
