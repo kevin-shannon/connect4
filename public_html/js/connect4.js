@@ -16,6 +16,7 @@ var resetButtonActive = false;
 //online multiplayer
 var peer;
 var connection;
+var wantToPlayAgain = false;
 
 //colors and design
 var startingColor = "red";
@@ -25,7 +26,7 @@ var blur = 4;
 
 //board dimensions
 if ($(window).width() < $(window).height()) {
-    var bw = $(window).width() / 1.5;   
+    var bw = $(window).width() / 1.5;
     var bh = $(window).width() * 4 / 7;
 }
 else {
@@ -276,10 +277,54 @@ function drawChip(x, y, chipColor) {
 
 
 function Reset() {
+
+    //if the button is somehow displayed even though it shouldn't be
+    //make sure reset doesn't run?? -Tanner
     if (resetButtonActive === false) {
         return false;
     }
 
+    resetBoard();
+
+    closeConnection();
+
+    //restart the game
+    gamemodeSelector();
+}
+
+function askToPlayAgain() {
+    wantToPlayAgain = true;
+    console.log("sending 0 from ask");
+    sendMove(0);
+}
+
+function receivePlayAgainRequest() {
+    //if wantToPlayAgain is true, then this means both players want to play
+    //      again and we can start the new game.
+    //else we will ask the player if they want to play again, and if they do,
+    //      we will play.
+    if (wantToPlayAgain) {
+        playAgain();
+    } else {
+        //TODO: ask the player to respond to the request from their oppenent to
+        //      player again.
+        //if they say yes:
+        console.log("sending 0 from receive");
+        sendMove(0);
+        playAgain();
+    }
+}
+
+function playAgain() {
+    console.log("Playing again");
+    //resetting this variable for next time
+    wantToPlayAgain = false;
+
+    resetBoard();
+    start(gamemode);
+}
+
+function resetBoard() {
     console.log("Resetting game");
 
     pos_array.length = 0;
@@ -290,19 +335,6 @@ function Reset() {
     playerCanDropChips = false;
     resetButtonActive = false;
     AIDelay = 1000;
-
-    //end connection
-    if (gamemode === 2 || gamemode === 3) {
-        try {
-            peer.destroy();
-            connection.on('close');
-        } catch (err) {
-            console.log("error closing connection");
-        }
-    }
-
-    //restart the game
-    gamemodeSelector();
 }
 
 function fillArray() {
@@ -383,6 +415,16 @@ function win(i, j, direction) {
     setTimeout(drawWinBanner, 500, pos_array[i][j]);
     //delay
     setTimeout(drawWinXs, 1000, i, j, direction);
+    if (gamemode === 2 || gamemode === 3) {
+        setTimeout(function () {
+            $("#playpop").css("visibility", "visible");
+            $("#play").click(function () {
+                askToPlayAgain();
+                $("#play").unbind("click");
+                $("#playpop").css("visibility", "hidden");
+            });
+        }, 1500);
+    }
 }
 
 function drawWinBanner(color) {
@@ -651,8 +693,13 @@ function joinOnlineGame(gameNum) {
 
 function multiplayerTurn() {
     connection.on('data', function (data) {
+        console.log("Received " + data + " from peer");
+        //0 is sent when a player wants to play again and the game has been won
+        if (data === 0 && winner) {
+            receivePlayAgainRequest();
+            return;
+        }
         if (currentTurn() === opponentsColor) {
-            console.log("Received " + data + " from peer");
             dropChip(data, currentTurn(), pos_array, false);
             nextTurn();
         }
@@ -670,6 +717,17 @@ function openConnection() {
         playerCanDropChips = currentTurn() === playersColor;
         $('#host').click();
     });
+}
+
+function closeConnection() {
+    if (gamemode === 2 || gamemode === 3) {
+        try {
+            peer.destroy();
+            connection.on('close');
+        } catch (err) {
+            console.log("error closing connection");
+        }
+    }
 }
 
 function blurBackground(tf) {
