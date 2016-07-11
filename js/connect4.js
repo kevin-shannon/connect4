@@ -774,13 +774,24 @@ function openConnection() {
           });
         }
     });
+
+    connection.on('close', function () {
+      //make sure that the person who clicked the reset button doesn't
+      //  get this message
+      if (resetButtonActive) {
+        console.log('Connection lost');
+        popupConnectionLost();
+
+        Reset();
+      }
+    });
 }
 
 function closeConnection() {
     if (gamemode === 2 || gamemode === 3) {
         try {
             peer.destroy();
-            connection.on('close');
+            connection.close();
             isMultiplayerTurnEventInPlace = false;
         } catch (err) {
             console.log("error closing connection");
@@ -881,4 +892,8 @@ function goToStart(gm) {
 
 function popupPlayerName(name) {
     alert('You are now playing with ' + name + '.');
+}
+
+function popupConnectionLost() {
+    alert('Your opponent ended the match.')
 }
