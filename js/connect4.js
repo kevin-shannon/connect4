@@ -157,6 +157,11 @@ function click(e) {
         return false;
     }
 
+    //if this is online multiplayer, make sure the connection is open
+    if ((gamemode === 2 || gamemode === 3) && !connection.open) {
+        return false;
+    }
+
     //determine where the chip was dropped
     var offset = $(this).offset();
     var xPos = (e.pageX - offset.left);
