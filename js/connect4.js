@@ -25,6 +25,7 @@ var urlParams;
 //gamemode (local multiplayer: 0, singleplayer: 1, p2p host: 2, p2p opponent: 3)
 var gamemode;
 var AIDelay = 1000;
+var maxMillisecondsToAnimateChipDropping = 100;
 var resetButtonActive = false;
 
 //online multiplayer
@@ -234,14 +235,14 @@ function nextTurn() {
 }
 
 //Draws the chip, adds it to the array, returns true if successful
-function dropChip(x, color, boardArray, AICheck) {
+function dropChip(x, color, boardArray, AICheck, noAnimation) {
     //for loop that checks array starting at bottom of board which is at 6 going up to 1
     for (var j = 6; j > 0; j--) {
         //the position in the array will be undefined when there is an open space to drop the chip
         if (boardArray[x][j] === undefined && winner === false) {
             if (!AICheck) {
                 console.log(color.charAt(0).toUpperCase() + color.slice(1) + " dropped in column " + x);
-                drawChip(x, j, color);
+                drawChip(x, j, color, noAnimation);
             }
             boardArray[x][j] = color;
             return true;
@@ -251,7 +252,7 @@ function dropChip(x, color, boardArray, AICheck) {
     return false;
 }
 
-function drawChip(x, y, chipColor) {
+function drawChip(x, y, chipColor, noAnimation) {
     var chipImage = new Image();
 
     //Set the correct color chip to draw
@@ -267,40 +268,46 @@ function drawChip(x, y, chipColor) {
     };
     var startTime = (new Date()).getTime();
 
-    window.requestAnimFrame = (function (callback) {
-        return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
-                function (callback) {
+    if (!noAnimation) {
+        window.requestAnimFrame = (function (callback) {
+            return window.requestAnimationFrame
+                || window.webkitRequestAnimationFrame
+                || window.mozRequestAnimationFrame
+                || window.oRequestAnimationFrame
+                || window.msRequestAnimationFrame
+                || function (callback) {
                     window.setTimeout(callback, 1000 / 60);
                 };
-    })();
+        })();
 
-    //initial call, and recurs until the chip drops all the way
-    animate(chip, canvas, ctx, startTime);
+        //initial call, and recurs until the chip drops all the way
+        animate(chip, canvas, ctx, startTime);
 
-    function animate(chip, canvas, ctx, startTime) {
-        if (resetButtonActive === false) {
-            ctx.clearRect(0, -(bh / 6), bw, bh + (bh / 6));
-            return;
+        function animate(chip, canvas, ctx, startTime) {
+            if (resetButtonActive === false) {
+                ctx.clearRect(0, -(bh / 6), bw, bh + (bh / 6));
+                return;
+            }
+            // update
+            var time = (new Date()).getTime() - startTime;
+            var a = bh * 1.7;
+            // pixels / second
+            var newY = (a * Math.pow(time / 1000, 2) - (bh / 6));
+            if (newY < y) {
+                chip.y = newY;
+                // request new frame
+                requestAnimFrame(function () {
+                    animate(chip, canvas, ctx, startTime);
+                });
+            }
+            else {
+                chip.y = y;
+            }
+            ctx.clearRect(x, (chip.y - (bh / 6)), (bw / 7), ((bh / 6) + (bh / 12)));
+            ctx.drawImage(chipImage, chip.x, chip.y, chip.width, chip.height);
         }
-        // update
-        var time = (new Date()).getTime() - startTime;
-        var a = bh * 1.7;
-        // pixels / second
-        var newY = (a * Math.pow(time / 1000, 2) - (bh / 6));
-        if (newY < y) {
-            chip.y = newY;
-            // request new frame
-            requestAnimFrame(function () {
-                animate(chip, canvas, ctx, startTime);
-            });
-        }
-        else {
-            chip.y = y;
-        }
-
-        // clear
-        ctx.clearRect(x, (chip.y - (bh / 6)), (bw / 7), ((bh / 6) + (bh / 12)));
-        ctx.drawImage(chipImage, chip.x, chip.y, chip.width, chip.height);
+    } else {
+        ctx.drawImage(chipImage, chip.x, y, chip.width, chip.height);
     }
 }
 
@@ -544,10 +551,12 @@ function randomAI() {
 
 function winningMoveAI() {
     setTimeout(function () {
+        //decide chip dropping animation should play
+        var shouldNotAnimate = AIDelay <= maxMillisecondsToAnimateChipDropping;
         //not completely necessary, but whatever
         var column = bestPossibleMove(pos_array);
         if (winner === false) {
-            while (!dropChip(column, currentTurn(), pos_array, false)) {
+            while (!dropChip(column, currentTurn(), pos_array, false, shouldNotAnimate)) {
                 console.log("The AI just tried to drop a chip in column " + column + ", which is full. (What an idiot!)");
                 column = bestPossibleMove(pos_array);
             }
