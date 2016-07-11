@@ -31,6 +31,7 @@ var resetButtonActive = false;
 var peer;
 var connection;
 var wantToPlayAgain = false;
+var isMultiplayerTurnEventInPlace = false;
 
 //colors and design
 var startingColor = "red";
@@ -731,6 +732,8 @@ function joinOnlineGame(gameNum) {
 }
 
 function multiplayerTurn() {
+  //prevent duplicates
+  if (!isMultiplayerTurnEventInPlace) {
     connection.on('data', function (data) {
         console.log("Received " + data + " from peer");
         //0 is sent when a player wants to play again and the game has been won
@@ -741,6 +744,8 @@ function multiplayerTurn() {
             nextTurn();
         }
     });
+    isMultiplayerTurnEventInPlace = true;
+  }
 }
 
 function sendMove(data) {
@@ -761,6 +766,7 @@ function closeConnection() {
         try {
             peer.destroy();
             connection.on('close');
+            isMultiplayerTurnEventInPlace = false;
         } catch (err) {
             console.log("error closing connection");
         }
