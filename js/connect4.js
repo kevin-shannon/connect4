@@ -340,11 +340,24 @@ function receivePlayAgainRequest() {
 
 function playAgain() {
     console.log("Playing again");
+
+    hidePlayAgainPopup();
+
     //resetting this variable for next time
     wantToPlayAgain = false;
 
     resetBoard();
     start(gamemode);
+}
+
+function showPlayAgainPopup(functionToRunOnClick) {
+  $("#playpop").css("visibility", "visible");
+  $("#play").click(functionToRunOnClick);
+}
+
+function hidePlayAgainPopup() {
+  $("#play").unbind("click");
+  $("#playpop").css("visibility", "hidden");
 }
 
 function resetBoard() {
@@ -440,11 +453,9 @@ function win(i, j, direction) {
     setTimeout(drawWinXs, 1000, i, j, direction);
     if (gamemode === 2 || gamemode === 3) {
         setTimeout(function () {
-            $("#playpop").css("visibility", "visible");
-            $("#play").click(function () {
+            showPlayAgainPopup(function () {
                 askToPlayAgain();
-                $("#play").unbind("click");
-                $("#playpop").css("visibility", "hidden");
+                hidePlayAgainPopup();
             });
         }, 1500);
     }
@@ -720,9 +731,7 @@ function multiplayerTurn() {
         //0 is sent when a player wants to play again and the game has been won
         if (data === 0 && winner) {
             receivePlayAgainRequest();
-            return;
-        }
-        if (currentTurn() === opponentsColor) {
+        } else if (currentTurn() === opponentsColor) {
             dropChip(data, currentTurn(), pos_array, false);
             nextTurn();
         }
