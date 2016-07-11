@@ -758,6 +758,21 @@ function openConnection() {
         console.log("Connection open");
         playerCanDropChips = currentTurn() === playersColor;
         $('#host').click();
+
+        //tell the opponent our name
+        if (gamemode === 3 && urlParams.name) {
+          sendMove('name:' + urlParams.name);
+        }
+
+        //set up to receive name from opponent if we're the host
+        if (gamemode === 2) {
+          connection.on('data', function (data) {
+              if (typeof data === 'string' && data.startsWith('name:')) {
+                  var opponentName = data.split(':')[1];
+                  popupPlayerName(opponentName);
+              }
+          });
+        }
     });
 }
 
@@ -862,4 +877,8 @@ function goToStart(gm) {
     $("#popup").css("visibility", "hidden");
     $("#reset").css("visibility", "visible");
     start(gm);
+}
+
+function popupPlayerName(name) {
+    alert('You are now playing with ' + name + '.');
 }
