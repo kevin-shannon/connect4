@@ -8,6 +8,20 @@
  * Variable declarations
  */
 
+//get the url parameters
+var urlParams;
+(window.onpopstate = function () {
+    var match,
+        pl     = /\+/g,  // Regex for replacing addition symbol with a space
+        search = /([^&=]+)=?([^&]*)/g,
+        decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
+        query  = window.location.search.substring(1);
+
+    urlParams = {};
+    while (match = search.exec(query))
+       urlParams[decode(match[1])] = decode(match[2]);
+})();
+
 //gamemode (local multiplayer: 0, singleplayer: 1, p2p host: 2, p2p opponent: 3)
 var gamemode;
 var AIDelay = 1000;
@@ -90,8 +104,17 @@ $(document).ready(function () {
     //makes it so the user cannot drop a chip or hover
     playerCanDropChips = false;
 
-    //popup the gamemode selector
-    gamemodeSelector();
+    //check if a match id has been passed
+    if (urlParams.host && urlParams.host.length === 40) {
+      setUpOnline(urlParams.host);
+      hostOnlineGame();
+    } else if (urlParams.join && urlParams.join.length === 40) {
+      joinOnlineGame(urlParams.join);
+      goToStart(3);
+    } else {
+      //popup the gamemode selector
+      gamemodeSelector();
+    }
 });
 
 
@@ -664,8 +687,8 @@ function assignColors() {
     }
 }
 
-function setUpOnline() {
-    var peerNum = Math.floor(Math.random() * 900) + 100;
+function setUpOnline(forcedPeerNum) {
+    var peerNum = forcedPeerNum || Math.floor(Math.random() * 900) + 100;
     console.log("Peer id: " + peerNum);
     peer = new Peer(peerNum, {key: 'fe7e2757-bbef-4456-a934-ae93385502b9'});
     return peerNum;
@@ -674,7 +697,7 @@ function setUpOnline() {
 function hostOnlineGame() {
 
     //start new game
-    //alert("Your game number is " + peerNum);  
+    //alert("Your game number is " + peerNum);
     peer.on('connection', function (conn) {
         connection = conn;
         openConnection();
