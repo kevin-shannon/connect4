@@ -25,7 +25,7 @@ var urlParams;
 //gamemode (local multiplayer: 0, singleplayer: 1, p2p host: 2, p2p opponent: 3)
 var gamemode;
 var AIDelay = 1000;
-var maxMillisecondsToAnimateChipDropping = 100;
+var maxMillisecondsToAnimateChipDropping = 120;
 var resetButtonActive = false;
 
 //online multiplayer
