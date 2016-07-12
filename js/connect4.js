@@ -321,8 +321,8 @@ function Reset() {
     }
 
     resetBoard();
-
     closeConnection();
+    hidePlayAgainPopup();
 
     //restart the game
     gamemodeSelector();
