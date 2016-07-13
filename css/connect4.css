@@ -165,3 +165,25 @@ canvas {
   left: 250px;
   visibility: hidden;
 }
+
+#redVic {
+  position: absolute;
+  font-family: "cartoonist_kooky";
+  font-size: 100px;
+  color: #FFFFFF;
+  visibility: hidden;
+  -webkit-text-stroke: 3px black;
+  text-align: center;
+  vertical-align: middle;
+}
+
+#blueVic {
+  position: absolute;
+  font-family: "cartoonist_kooky";
+  font-size: 100px;
+  color: #FFFFFF;
+  visibility: hidden;
+  -webkit-text-stroke: 3px black;
+  text-align: center;
+  vertical-align: middle;
+}

@@ -69,6 +69,8 @@ var possible = new Array(7);
 var avoid = new Array(7);
 var moves = 0;
 var winner = false;
+var redVictories = 0;
+var blueVictories = 0;
 
 //images
 var redchip = new Image(), bluechip = new Image(), board = new Image(), redwins = new Image(), bluewins = new Image(), draw = new Image(), XXX = new Image();
@@ -128,17 +130,26 @@ function start(gm) {
     //received gamemode from the selector
     gamemode = gm;
 
+    //sets postion of indicator tiles
     $("#redturnIn").css('left', ($(window).width()/10) + 'px');
     $("#blueturnIn").css('left', ($(window).width()/6) + 'px');
     $("#redturnIn").css('top', ($(window).height()/6) + 'px');
     $("#blueturnIn").css('top', ($(window).height()/6) + 'px');
+    //sets size of indicator tiles
     $("#redturnIn").css('height', (bh/6) + 'px');
     $("#blueturnIn").css('height', (bh/6) + 'px');
     $("#redturnIn").css('width', (bw/7) + 'px');
     $("#blueturnIn").css('width', (bw/7) + 'px');
+    //makes tiles visable once gamplay has commensed
     $("#redturnIn").css('visibility', 'visible');
     $("#blueturnIn").css('visibility', 'visible');
-
+    $("#redVic").css('visibility', 'visible');
+    $("#blueVic").css('visibility', 'visible');
+    //sets size of win counter text
+    $("#redVic").css('left', ($(window).width()/10)+ (bh/20) + 'px');
+    $("#blueVic").css('left', ($(window).width()/6)+ (bh/20) + 'px');
+    $("#redVic").css('top', ($(window).height()/6)  + 'px');
+    $("#blueVic").css('top', ($(window).height()/6) + 'px');
     //figure out which gamemode the user wants to play
     console.log("Gamemode " + gamemode + " selected.");
 
@@ -340,8 +351,10 @@ function Reset() {
         return false;
     }
 
-    $("#redturnIn").css('visibility', '');
+    $("#redturnIn").css('visibility', 'hidden');
     $("#blueturnIn").css('visibility', 'hidden');
+    $("#redVic").css('visibility', 'hidden');
+    $("#blueVic").css('visibility', 'hidden');
 
     resetBoard();
     closeConnection();
@@ -481,6 +494,7 @@ function winCondition(boardArray, AICheck) {
 function win(i, j, direction) {
     winner = true;
     console.log(currentTurn() + " wins on turn " + moves);
+    winAdder(currentTurn());
     //this is to make sure that the events are blocked
     playerCanDropChips = false;
     //Draw the win pic based on the color of the chip that won after a delay
@@ -495,6 +509,19 @@ function win(i, j, direction) {
             });
         }, 1500);
     }
+}
+
+function winAdder(color){
+  if (color === "red"){
+    redVictories++;
+    console.log(redVictories);
+    $("#redVic").text(redVictories);
+  }
+  else{
+    blueVictories++;
+    console.log(blueVictories);
+    $("#blueVic").text(blueVictories);
+  }
 }
 
 function drawWinBanner(color) {
