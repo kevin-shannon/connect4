@@ -145,11 +145,11 @@ function start(gm) {
     $("#blueturnIn").css('visibility', 'visible');
     $("#redVic").css('visibility', 'visible');
     $("#blueVic").css('visibility', 'visible');
-    //sets size of win counter text
-    $("#redVic").css('left', ($(window).width()/10)+ (bh/20) + 'px');
-    $("#blueVic").css('left', ($(window).width()/6)+ (bh/20) + 'px');
-    $("#redVic").css('top', ($(window).height()/6)  + 'px');
-    $("#blueVic").css('top', ($(window).height()/6) + 'px');
+    //sets postion of win counter text
+    $("#redVic").css('left', ($(window).width()/10) + (bw/24) + 'px');
+    $("#blueVic").css('left', ($(window).width()/6) + (bw/24) + 'px');
+    $("#redVic").css('top', ($(window).height()/6) + (bh/96)  + 'px');
+    $("#blueVic").css('top', ($(window).height()/6) + (bh/96) + 'px');
     //figure out which gamemode the user wants to play
     console.log("Gamemode " + gamemode + " selected.");
 

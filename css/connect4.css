@@ -169,7 +169,7 @@ canvas {
 #redVic {
   position: absolute;
   font-family: "cartoonist_kooky";
-  font-size: 100px;
+  font-size: 4vw;
   color: #FFFFFF;
   visibility: hidden;
   -webkit-text-stroke: 3px black;
@@ -180,7 +180,7 @@ canvas {
 #blueVic {
   position: absolute;
   font-family: "cartoonist_kooky";
-  font-size: 100px;
+  font-size: 4vw;
   color: #FFFFFF;
   visibility: hidden;
   -webkit-text-stroke: 3px black;
