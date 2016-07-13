@@ -128,6 +128,14 @@ function start(gm) {
     //received gamemode from the selector
     gamemode = gm;
 
+    $("#redturnIn").css('left', ($(window).width()/10) + 'px');
+    $("#blueturnIn").css('left', ($(window).width()/6) + 'px');
+    $("#redturnIn").css('top', ($(window).height()/6) + 'px');
+    $("#blueturnIn").css('top', ($(window).height()/6) + 'px');
+    $("#redturnIn").css('height', (bh/6) + 'px');
+    $("#blueturnIn").css('height', (bh/6) + 'px');
+    $("#redturnIn").css('width', (bw/7) + 'px');
+    $("#blueturnIn").css('width', (bw/7) + 'px');
     $("#redturnIn").css('visibility', 'visible');
     $("#blueturnIn").css('visibility', 'visible');
 
