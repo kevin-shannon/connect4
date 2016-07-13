@@ -128,6 +128,9 @@ function start(gm) {
     //received gamemode from the selector
     gamemode = gm;
 
+    $("#redturnIn").css('visibility', 'visible');
+    $("#blueturnIn").css('visibility', 'visible');
+
     //figure out which gamemode the user wants to play
     console.log("Gamemode " + gamemode + " selected.");
 
@@ -189,6 +192,15 @@ function nextTurn() {
 
     advanceTurn();
     console.log("Turn " + moves + ", " + currentTurn() + "'s turn.");
+
+    if (currentTurn() === "red") {
+      $("#redturnIn").css('WebkitFilter', 'grayscale(0%) opacity(100%) blur(0px)');
+      $("#blueturnIn").css('WebkitFilter', 'grayscale(50%) opacity(70%) blur(2px)');
+    }
+    else {
+      $("#redturnIn").css('WebkitFilter', 'grayscale(50%) opacity(70%) blur(2px)');
+      $("#blueturnIn").css('WebkitFilter', 'grayscale(0%) opacity(100%) blur(0px)');
+    }
 
     //give the correct player control based on the gamemode
     switch (gamemode) {
@@ -319,6 +331,9 @@ function Reset() {
     if (resetButtonActive === false) {
         return false;
     }
+
+    $("#redturnIn").css('visibility', '');
+    $("#blueturnIn").css('visibility', 'hidden');
 
     resetBoard();
     closeConnection();
@@ -810,11 +825,11 @@ function closeConnection() {
 
 function blurBackground(tf) {
     if (tf) {
-        $("#game").css("-webkit-filter", "blur(" + blur + "px)");
+        $("#game").css("WebkitFilter", "blur(" + blur + "px)");
         $("#game").css("-moz-filter", "blur(" + blur + "px)");
         $("#game").css("filter", "blur(" + blur + "px)");
     } else {
-        $("#game").css("-webkit-filter", "blur(0px)");
+        $("#game").css("WebkitFilter", "blur(0px)");
         $("#game").css("-moz-filter", "blur(0px)");
         $("#game").css("filter", "blur(0px)");
     }

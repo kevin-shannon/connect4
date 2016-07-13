@@ -20,9 +20,9 @@ canvas {
 }
 
 #game {
-    -webkit-filter: blur(0px); 
-    -moz-filter: blur(0px); 
-    filter: blur(0px); 
+    -webkit-filter: blur(0px);
+    -moz-filter: blur(0px);
+    filter: blur(0px);
 }
 
 #popup {
@@ -66,14 +66,14 @@ canvas {
 }
 
 #gamemodebuttons {
-    line-height: 250%; 
+    line-height: 250%;
 }
 
-@font-face { font-family: cartoonist_kooky; src: url('cartoonist_kooky.ttf'); } 
+@font-face { font-family: cartoonist_kooky; src: url('cartoonist_kooky.ttf'); }
 
 #reset {
     width: 300px;
-    height: 100px;  
+    height: 100px;
     border-bottom: 2px solid #eee;
 
     background-image: -webkit-linear-gradient(top, #fcee21, #ddd000 80%);
@@ -82,8 +82,8 @@ canvas {
     background-image: -o-linear-gradient(top, #fcee21, #ddd000 80%);
     background-image: linear-gradient(top, #fcee21, #ddd000 80%);
 
-    -moz-border-radius: 15px;  
-    -webkit-border-radius: 15px;  
+    -moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
     border-radius: 15px;
 
     box-shadow: inset rgba(70,70,0,0.14) 0px 5px 6px ;
@@ -109,9 +109,9 @@ canvas {
     text-align: center;
     padding-top: 33px;
 
-    -moz-border-radius: 15px;  
-    -webkit-border-radius: 15px;  
-    border-radius: 15px;  
+    -moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
+    border-radius: 15px;
 
     background-image: -webkit-linear-gradient(top, #2c88db, #2571b6 70%, #2165a1 100%);
     background-image: -moz-linear-gradient(top, #2c88db, #2571b6 70%, #2165a1 100%);
@@ -123,11 +123,11 @@ canvas {
     background-color: #2c88db;
     background-repeat: no-repeat;
 
-    -webkit-box-shadow: rgba(0,0,0,.4) 0 3px 6px;  
-    -moz-box-shadow: rgba(0,0,0,.4) 0 3px 6px;  
+    -webkit-box-shadow: rgba(0,0,0,.4) 0 3px 6px;
+    -moz-box-shadow: rgba(0,0,0,.4) 0 3px 6px;
     box-shadow: rgba(0,0,0,.4) 0 3px 6px;
 
-    -webkit-user-select: none; /* Chrome/Safari */        
+    -webkit-user-select: none; /* Chrome/Safari */
     -moz-user-select: none; /* Firefox */
     -ms-user-select: none; /* IE10+ */
 }
@@ -135,15 +135,15 @@ canvas {
 .butt:hover {
     background-position: 0 0px;
     color: #3d0b68;
-    -webkit-box-shadow: rgba(0,0,0,.2) 0 3px 8px;  
-    -moz-box-shadow: rgba(0,0,0,.2) 0 3px 8px;  
+    -webkit-box-shadow: rgba(0,0,0,.2) 0 3px 8px;
+    -moz-box-shadow: rgba(0,0,0,.2) 0 3px 8px;
     box-shadow: rgba(0,0,0,.2) 0 3px 8px;
 }
 
 .butt:active {
     width: 274px;
     height: 80px;
-    margin: .5px 0 0 3px;   
+    margin: .5px 0 0 3px;
     border-bottom: 1px solid #fff;
     font-size: 65px;
     color: #3d0e66;
@@ -152,3 +152,16 @@ canvas {
     -moz-box-shadow: inset rgba(0,0,0,.3) 0px 5px 10px;
 }
 
+#redturnIn {
+  position: absolute;
+  top: 300px;
+  left: 300px;
+  visibility: hidden;
+}
+
+#blueturnIn {
+  position: absolute;
+  top: 300px;
+  left: 450px;
+  visibility: hidden;
+}
