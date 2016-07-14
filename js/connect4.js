@@ -351,6 +351,8 @@ function Reset() {
         return false;
     }
 
+    AIDelay = 1000;
+
     redVictories = 0;
     blueVictories = 0;
     $("#redVic").text(redVictories);
