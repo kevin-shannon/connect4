@@ -512,21 +512,28 @@ function win(i, j, direction) {
 }
 
 function displayPlay() {
-  setTimeout(function () {
-    if (gamemode === 2 || gamemode === 3) {
-      showPlayAgainPopup(function () {
-          askToPlayAgain();
-          hidePlayAgainPopup();
-        });
+  var shouldAutoPlayAgain = $('#aivsaicb').checkbox('is checked');
+
+  if (shouldAutoPlayAgain && gamemode === 4) {
+    resetBoard();
+    start(gamemode);
+  } else {
+    setTimeout(function () {
+      if (gamemode === 2 || gamemode === 3) {
+        showPlayAgainPopup(function () {
+            askToPlayAgain();
+            hidePlayAgainPopup();
+          });
+        }
+      else {
+        showPlayAgainPopup(function () {
+            resetBoard();
+            start(gamemode);
+            hidePlayAgainPopup();
+          });
       }
-    else {
-      showPlayAgainPopup(function () {
-          resetBoard();
-          start(gamemode);
-          hidePlayAgainPopup();
-        });
-    }
-  }, 1000);
+    }, 1000);
+  }
 }
 
 function winAdder(color){
