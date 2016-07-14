@@ -998,5 +998,5 @@ function popupPlayerName(name) {
 }
 
 function popupConnectionLost() {
-    alert('Your opponent ended the match.')
+    alert('Your opponent ended the match.');
 }
