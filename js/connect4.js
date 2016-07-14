@@ -351,6 +351,11 @@ function Reset() {
         return false;
     }
 
+    redVictories = 0;
+    blueVictories = 0;
+    $("#redVic").text(redVictories);
+    $("#blueVic").text(redVictories);
+
     $("#redturnIn").css('visibility', 'hidden');
     $("#blueturnIn").css('visibility', 'hidden');
     $("#redVic").css('visibility', 'hidden');
@@ -419,7 +424,6 @@ function resetBoard() {
     moves = 0;
     playerCanDropChips = false;
     resetButtonActive = false;
-    AIDelay = 1000;
 }
 
 function fillArray() {
@@ -487,6 +491,7 @@ function winCondition(boardArray, AICheck) {
         setTimeout(function () {
             ctx.drawImage(draw, (3 * bw / 10), -(bh / 6), (bw / 2.5), (bh / 6));
         }, 500);
+        displayPlay();
     }
 }
 
@@ -501,14 +506,25 @@ function win(i, j, direction) {
     setTimeout(drawWinBanner, 500, pos_array[i][j]);
     //delay
     setTimeout(drawWinXs, 1000, i, j, direction);
+    displayPlay();
+}
+
+function displayPlay() {
+  setTimeout(function () {
     if (gamemode === 2 || gamemode === 3) {
-        setTimeout(function () {
-            showPlayAgainPopup(function () {
-                askToPlayAgain();
-                hidePlayAgainPopup();
-            });
-        }, 1500);
+      showPlayAgainPopup(function () {
+          askToPlayAgain();
+          hidePlayAgainPopup();
+        });
+      }
+    else {
+      showPlayAgainPopup(function () {
+          resetBoard();
+          start(gamemode);
+          hidePlayAgainPopup();
+        });
     }
+  }, 1000);
 }
 
 function winAdder(color){
