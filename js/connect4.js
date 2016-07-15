@@ -150,6 +150,9 @@ function start(gm) {
     $("#blueVic").css('left', ($(window).width()/6) + (bw/24) + 'px');
     $("#redVic").css('top', ($(window).height()/6) + (bh/96)  + 'px');
     $("#blueVic").css('top', ($(window).height()/6) + (bh/96) + 'px');
+    //sizes the loading animation
+    $("#LoadingAnimation").css('height', (bh/6) + 'px');
+    $("#LoadingAnimation").css('width', (bw/7) + 'px');
     //figure out which gamemode the user wants to play
     console.log("Gamemode " + gamemode + " selected.");
 
@@ -362,6 +365,7 @@ function Reset() {
     $("#blueturnIn").css('visibility', 'hidden');
     $("#redVic").css('visibility', 'hidden');
     $("#blueVic").css('visibility', 'hidden');
+    $("#LoadingAnimation").css('visibility', 'hidden');
 
     resetBoard();
     closeConnection();
@@ -811,6 +815,7 @@ function joinOnlineGame(gameNum) {
 
     //join game
     //var gameNum = window.prompt("Enter an game number to join");
+    $("#LoadingAnimation").css('visibility', 'visible');
     connection = peer.connect(gameNum);
     peer.on('error', function(err) {
       if(err.type === 'peer-unavailable') {
@@ -846,6 +851,7 @@ function sendMove(data) {
 function openConnection() {
     connection.on('open', function () {
         console.log("Connection open");
+        $("#LoadingAnimation").css('visibility', 'hidden');
         playerCanDropChips = currentTurn() === playersColor;
         $('#host').click();
 

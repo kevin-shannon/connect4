@@ -156,6 +156,13 @@ canvas {
   visibility: hidden;
 }
 
+#LoadingAnimation {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  visibility: hidden;
+}
+
 #redVic {
   position: absolute;
   font-family: "cartoonist_kooky";
