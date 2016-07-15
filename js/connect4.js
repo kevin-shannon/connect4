@@ -153,6 +153,9 @@ function start(gm) {
     //sizes the loading animation
     $("#LoadingAnimation").css('height', (bh/6) + 'px');
     $("#LoadingAnimation").css('width', (bw/7) + 'px');
+    //postions play again button
+    $("#playpop").css('right', ($(window).width()/10) + 'px');
+    $("#playpop").css('top', ($(window).height()/5) + 'px');
     //figure out which gamemode the user wants to play
     console.log("Gamemode " + gamemode + " selected.");
 
