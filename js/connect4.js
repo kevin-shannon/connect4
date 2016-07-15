@@ -812,6 +812,12 @@ function joinOnlineGame(gameNum) {
     //join game
     //var gameNum = window.prompt("Enter an game number to join");
     connection = peer.connect(gameNum);
+    peer.on('error', function(err) {
+      if(err.type === 'peer-unavailable') {
+        Reset();
+        alert('Game does not exist.');
+      }
+    });
     openConnection();
 }
 
