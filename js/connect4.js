@@ -806,7 +806,7 @@ function hostOnlineGame() {
 
     //start new game
     //alert("Your game number is " + peerNum);
-    if( $("#popup").is(":visible") == false) {
+    if($('#popup').css('visibility') === "hidden") {
       $("#LoadingAnimation").css('visibility', 'visible');
     }
     peer.on('connection', function (conn) {
