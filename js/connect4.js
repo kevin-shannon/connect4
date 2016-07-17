@@ -806,11 +806,9 @@ function hostOnlineGame() {
 
     //start new game
     //alert("Your game number is " + peerNum);
-    $("#popup").find('img').each(function(){
-      if($(this).is(':hidden')){
-        $("#LoadingAnimation").css('visibility', 'visible');
-      }
-    });
+    if( $("#popup").is(":visible") == false) {
+      $("#LoadingAnimation").css('visibility', 'visible');
+    }
     peer.on('connection', function (conn) {
         connection = conn;
         openConnection();
