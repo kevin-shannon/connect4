@@ -140,7 +140,7 @@ function start(gm) {
     $("#blueturnIn").css('height', (bh/6) + 'px');
     $("#redturnIn").css('width', (bw/7) + 'px');
     $("#blueturnIn").css('width', (bw/7) + 'px');
-    //makes tiles visable once gamplay has commensed
+    //makes tiles visible once gamplay has commensed
     $("#redturnIn").css('visibility', 'visible');
     $("#blueturnIn").css('visibility', 'visible');
     $("#redVic").css('visibility', 'visible');
@@ -806,6 +806,11 @@ function hostOnlineGame() {
 
     //start new game
     //alert("Your game number is " + peerNum);
+    $("#popup").find('img').each(function(){
+      if($(this).is(':hidden')){
+        $("#LoadingAnimation").css('visibility', 'visible');
+      }
+    });
     peer.on('connection', function (conn) {
         connection = conn;
         openConnection();
