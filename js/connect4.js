@@ -745,6 +745,225 @@ function willCauseWin(boardArray, color) {
     return -1;
 }
 
+function boardScore(boardArray, color) {
+  var redscore = 0;
+  var bluescore = 0;
+  var score = 0;
+  var three = threeInRows(boardArray);
+  var redThreeInRows = three.redCount;
+  var blueThreeInRows = three.blueCount;
+  var two = threeInRows(boardArray);
+  var redTwoInRows = two.redCount;
+  var blueTwoInRows = two.blueCount;
+  var mid = middleScorer(boardArray, color);
+  var redMid = mid.redCount;
+  var blueMid = mid.blueCount;
+  if (winCondition(boardArray, true) === true && currentTurn() === "red" && "red" === color){
+    score = Number.POSITIVE_INFINITY;
+  }
+  else if (winCondition(boardArray, true) === true && currentTurn() === "red" && "red" != color) {
+    score = Number.NEGATIVE_INFINITY;
+  }
+  else if (winCondition(boardArray, true) === true && currentTurn() === "blue" && "blue" === color){
+    score = Number.POSITIVE_INFINITY;
+  }
+  else if (winCondition(boardArray, true) === true && currentTurn() === "blue" && "blue" != color) {
+    score = Number.NEGATIVE_INFINITY;
+  }
+  else {
+    redscore += 200 * redThreeInRows + 50 * redTwoInRows + redMid;
+    bluescore += 200 * blueThreeInRows +  50 * blueTwoInRows + blueMid;
+    if (color === "red") {
+      score = redscore - bluescore;
+    }
+    else {
+      score = bluescore - redscore;
+    }
+  }
+  console.log(score);
+  return score;
+}
+
+function threeInRows(boardArray){
+  var redCounter = 0;
+  var blueCounter = 0;
+  //horizontal
+  for (var i = 1; i < 6; i++) {
+      for (var j = 1; j < 7; j++) {
+          if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j] && boardArray[i][j] === boardArray[i + 2][j]) {
+            if (boardArray[i][j] === "red"){
+              redCounter++;
+            }
+            else {
+              blueCounter++;
+            }
+          }
+      }
+  }
+
+  //vertical
+  for (var i = 1; i < 8; i++) {
+      for (var j = 1; j < 5; j++) {
+          if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i][j + 1] && boardArray[i][j] === boardArray[i][j + 2]) {
+            if (boardArray[i][j] === "red"){
+              redCounter++;
+            }
+            else {
+              blueCounter++;
+            }
+          }
+      }
+  }
+  // /diagonals
+  for (var i = 1; i < 6; i++) {
+      for (var j = 3; j < 7; j++) {
+          if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j - 1] && boardArray[i][j] === boardArray[i + 2][j - 2]) {
+            if (boardArray[i][j] === "red"){
+              redCounter++;
+            }
+            else {
+              blueCounter++;
+            }
+          }
+      }
+  }
+  // \diagonals
+  for (var i = 1; i < 6; i++) {
+      for (var j = 1; j < 5; j++) {
+          if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j + 1] && boardArray[i][j] === boardArray[i + 2][j + 2]) {
+            if (boardArray[i][j] === "red"){
+              redCounter++;
+            }
+            else {
+              blueCounter++;
+            }
+          }
+      }
+  }
+
+  return {
+    redCount: redCounter,
+    blueCount: blueCounter
+  };
+}
+
+function twoInRows(boardArray){
+  var redCounter = 0;
+  var blueCounter = 0;
+  //horizontal
+  for (var i = 1; i < 7; i++) {
+      for (var j = 1; j < 7; j++) {
+          if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j]) {
+            if (boardArray[i][j] === "red"){
+              redCounter++;
+            }
+            else {
+              blueCounter++;
+            }
+          }
+      }
+  }
+
+  //vertical
+  for (var i = 1; i < 8; i++) {
+      for (var j = 1; j < 6; j++) {
+          if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i][j + 1]) {
+            if (boardArray[i][j] === "red"){
+              redCounter++;
+            }
+            else {
+              blueCounter++;
+            }
+          }
+      }
+  }
+  // /diagonals
+  for (var i = 1; i < 7; i++) {
+      for (var j = 2; j < 7; j++) {
+          if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j - 1]) {
+            if (boardArray[i][j] === "red"){
+              redCounter++;
+            }
+            else {
+              blueCounter++;
+            }
+          }
+      }
+  }
+  // \diagonals
+  for (var i = 1; i < 7; i++) {
+      for (var j = 1; j < 6; j++) {
+          if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j + 1]) {
+            if (boardArray[i][j] === "red"){
+              redCounter++;
+            }
+            else {
+              blueCounter++;
+            }
+          }
+      }
+  }
+
+  return {
+    redCount: redCounter,
+    blueCount: blueCounter
+  };
+}
+
+function middleScorer(boardArray) {
+  var redCounter = 0;
+  var blueCounter = 0;
+  for (var i = 1; i <= boardArray[1].length; i++) {
+    //this fucking blows
+    if (boardArray[4][i] === "red") {
+      redCounter += 50;
+    }
+    if (boardArray[4][i] === "blue") {
+      blueCounter += 50;
+    }
+    if (boardArray[3][i] === "red") {
+      redCounter += 20;
+    }
+    if (boardArray[5][i] === "red") {
+      redCounter += 20;
+    }
+    if (boardArray[3][i] === "blue") {
+      blueCounter += 20;
+    }
+    if (boardArray[5][i] === "blue") {
+      blueCounter += 20;
+    }
+    if (boardArray[2][i] === "red") {
+      redCounter += 10;
+    }
+    if (boardArray[6][i] === "red") {
+      redCounter += 10;
+    }
+    if (boardArray[2][i] === "blue") {
+      blueCounter += 10;
+    }
+    if (boardArray[6][i] === "blue") {
+      blueCounter += 10;
+    }
+    if (boardArray[1][i] === "red") {
+      redCounter += 5;
+    }
+    if (boardArray[7][i] === "red") {
+      redCounter += 5;
+    }
+    if (boardArray[1][i] === "blue") {
+      blueCounter += 5;
+    }
+    if (boardArray[7][i] === "blue") {
+      blueCounter += 5;
+    }
+  }
+    return {
+      redCount: redCounter,
+      blueCount: blueCounter
+    };
+}
+
 function copyArray(arrayToCopy) {
     return arrayToCopy.map(function (arr) {
         return arr.slice();
