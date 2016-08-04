@@ -276,7 +276,7 @@ function dropChip(x, color, boardArray, AICheck, noAnimation) {
     //for loop that checks array starting at bottom of board which is at 6 going up to 1
     for (var j = 6; j > 0; j--) {
         //the position in the array will be undefined when there is an open space to drop the chip
-        if (boardArray[x][j] === undefined && winner === false) {
+        if (boardArray[x][j] === undefined && !winCondition(boardArray, AICheck)) {
             if (!AICheck) {
                 console.log(color.charAt(0).toUpperCase() + color.slice(1) + " dropped in column " + x);
                 drawChip(x, j, color, noAnimation);
@@ -448,13 +448,14 @@ function fillArray() {
 //this is for AI
 function winCondition(boardArray, AICheck) {
     var victory = false;
+    var color;
     //horizontal
     for (var i = 1; i < 5; i++) {
         for (var j = 1; j < 7; j++) {
             if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j] && boardArray[i][j] === boardArray[i + 2][j] && boardArray[i][j] === boardArray[i + 3][j]) {
-                if (!AICheck)
-                    win(i, j, "h");
-                victory = true;
+              if (!AICheck)
+                win(i, j, "h");
+              victory = boardArray[i][j]
             }
         }
     }
@@ -465,7 +466,7 @@ function winCondition(boardArray, AICheck) {
             if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i][j + 1] && boardArray[i][j] === boardArray[i][j + 2] && boardArray[i][j] === boardArray[i][j + 3]) {
                 if (!AICheck)
                     win(i, j, "v");
-                victory = true;
+                victory = boardArray[i][j]
             }
         }
     }
@@ -475,7 +476,7 @@ function winCondition(boardArray, AICheck) {
             if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j - 1] && boardArray[i][j] === boardArray[i + 2][j - 2] && boardArray[i][j] === boardArray[i + 3][j - 3]) {
                 if (!AICheck)
                     win(i, j, "//");
-                victory = true;
+                victory = boardArray[i][j]
             }
         }
     }
@@ -485,15 +486,12 @@ function winCondition(boardArray, AICheck) {
             if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j + 1] && boardArray[i][j] === boardArray[i + 2][j + 2] && boardArray[i][j] === boardArray[i + 3][j + 3]) {
                 if (!AICheck)
                     win(i, j, "\\");
-                victory = true;
+                victory = boardArray[i][j]
             }
         }
     }
-    if (victory === true) {
-        return true;
-    }
     // tie
-    if (possiblemoves(pos_array) === false && winner === false) {
+    if (moves === 42 && winner === false && !AICheck) {
         //manual win event instead of using win function
         console.log("the game is a draw");
         winner = true;
@@ -502,6 +500,7 @@ function winCondition(boardArray, AICheck) {
         }, 500);
         displayPlay();
     }
+    return victory;
 }
 
 //i and j are the coord of the first chip in the winning four
@@ -636,11 +635,11 @@ function winningMoveAI() {
         //decide chip dropping animation should play
         var shouldNotAnimate = AIDelay <= maxMillisecondsToAnimateChipDropping;
         //not completely necessary, but whatever
-        var column = bestPossibleMove(pos_array);
+        var column = makeTree(pos_array, 5, currentTurn(), currentTurn()) + 1;
         if (winner === false) {
             while (!dropChip(column, currentTurn(), pos_array, false, shouldNotAnimate)) {
                 console.log("The AI just tried to drop a chip in column " + column + ", which is full. (What an idiot!)");
-                column = bestPossibleMove(pos_array);
+                column = Math.floor((Math.random() * 7) + 1);
             }
         }
         else {
@@ -665,6 +664,9 @@ function possiblemoves(boardArray) {
     }
     if (counter === 7) {
         return false;
+    }
+    else {
+      return 7 - counter;
     }
 }
 
@@ -758,16 +760,13 @@ function boardScore(boardArray, color) {
   var mid = middleScorer(boardArray, color);
   var redMid = mid.redCount;
   var blueMid = mid.blueCount;
-  if (winCondition(boardArray, true) === true && currentTurn() === "red" && "red" === color){
+  if (winCondition(boardArray, true) === color){
     score = Number.POSITIVE_INFINITY;
   }
-  else if (winCondition(boardArray, true) === true && currentTurn() === "red" && "red" != color) {
+  else if (winCondition(boardArray, true) === "red" && "red" !== color) {
     score = Number.NEGATIVE_INFINITY;
   }
-  else if (winCondition(boardArray, true) === true && currentTurn() === "blue" && "blue" === color){
-    score = Number.POSITIVE_INFINITY;
-  }
-  else if (winCondition(boardArray, true) === true && currentTurn() === "blue" && "blue" != color) {
+  else if (winCondition(boardArray, true) === "blue" && "blue" !== color) {
     score = Number.NEGATIVE_INFINITY;
   }
   else {
@@ -780,7 +779,6 @@ function boardScore(boardArray, color) {
       score = bluescore - redscore;
     }
   }
-  console.log(score);
   return score;
 }
 
@@ -1236,4 +1234,98 @@ function popupPlayerName(name) {
 
 function popupConnectionLost() {
     alert('Your opponent ended the match.');
+}
+
+function getOppositeColor(color) {
+  return color === "red" ? "blue" : "red";
+}
+
+function Tree(board, depth) {
+	this.depth = depth;
+	this.path = new Array();
+
+	//generate the tree
+	this.tree = new Node();
+	this.tree.setChildren(generateChildren(board, this.depth, currentTurn(), this.depth));
+
+	function generateChildren(boardArray, depth, color, initDepth) {
+    var children = [];
+		//for each child we need to create
+		for (var i = 1; i < 8; i++) {
+      var aiArray = copyArray(boardArray);
+      if (dropChip(i, color, aiArray, true)) {
+			  var newChild = new Node();
+			  if (depth > 1) {
+				  newChild.setChildren(generateChildren(aiArray, depth-1, getOppositeColor(color), initDepth));
+			  } else {
+          newChild.setScore(boardScore(aiArray, currentTurn()));
+			  }
+
+			//add it to the array
+			children.push(newChild);
+		  }
+    }
+		return children;
+  }
+}
+
+Tree.prototype.getBestValue = function(colorToMax, currentColor) {
+  var f = this.minmax(this.tree, this.depth, colorToMax, currentColor);
+  console.log(this.path);
+  console.log(this.tree);
+	return f;
+}
+
+Tree.prototype.minmax = function(node, depth, colorToMax, currentColor) {
+	if (depth == 0 || !("children" in node)) {
+    return node.score;
+	}
+  var best_value, v;
+  if (colorToMax === currentColor) {
+    //maximizing player
+    best_value = Number.NEGATIVE_INFINITY;
+
+    for (var child in node.children) {
+      v = this.minmax(node.children[child], depth - 1, getOppositeColor(colorToMax), currentColor);
+      best_value = Math.max(v, best_value);
+    }
+    if(depth === this.depth - 1) {
+      this.path.push(best_value);
+    }
+    return best_value;
+  }
+  else {
+    //minimizing player
+    best_value = Number.POSITIVE_INFINITY;
+
+    for (var child in node.children) {
+      v = this.minmax(node.children[child], depth - 1, getOppositeColor(colorToMax), currentColor);
+      best_value = Math.min(v, best_value);
+    }
+    if(depth === this.depth - 1) {
+      this.path.push(best_value);
+    }
+    return best_value;
+  }
+}
+
+Tree.prototype.bestMove = function() {
+	var best = Math.max(...this.path);
+	return this.path.indexOf(best);
+}
+
+function Node() {}
+
+Node.prototype.setChildren = function(children) {
+	this.children = children;
+}
+
+Node.prototype.setScore = function(score) {
+	this.score = score;
+}
+
+function makeTree(board, depth, colorToMax, currentColor) {
+  var tree = new Tree(board, depth);
+  tree.getBestValue(colorToMax, currentColor);
+  return tree.bestMove();
 }
