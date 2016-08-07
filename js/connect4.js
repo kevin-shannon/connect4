@@ -545,12 +545,10 @@ function displayPlay() {
 function winAdder(color){
   if (color === "red"){
     redVictories++;
-    console.log(redVictories);
     $("#redVic").text(redVictories);
   }
   else{
     blueVictories++;
-    console.log(blueVictories);
     $("#blueVic").text(blueVictories);
   }
 }
@@ -635,11 +633,9 @@ function winningMoveAI() {
         //decide chip dropping animation should play
         var shouldNotAnimate = AIDelay <= maxMillisecondsToAnimateChipDropping;
         //not completely necessary, but whatever
-        var column = makeTree(pos_array, 5, currentTurn(), currentTurn()) + 1;
+        var column = makeTree(pos_array, 6, currentTurn(), currentTurn()) + 1;
         if (winner === false) {
             while (!dropChip(column, currentTurn(), pos_array, false, shouldNotAnimate)) {
-                console.log("The AI just tried to drop a chip in column " + column + ", which is full. (What an idiot!)");
-                column = Math.floor((Math.random() * 7) + 1);
             }
         }
         else {
@@ -655,10 +651,10 @@ function possiblemoves(boardArray) {
     for (var i = 1; i < 8; i++) {
         var testingArray = copyArray(boardArray);
         if (dropChip(i, currentTurn(), testingArray, true)) {
-            possible[i] = true;
+            possible[i-1] = true;
         }
         else {
-            possible[i] = false;
+            possible[i-1] = false;
             counter++;
         }
     }
@@ -666,7 +662,7 @@ function possiblemoves(boardArray) {
         return false;
     }
     else {
-      return 7 - counter;
+      return possible;
     }
 }
 
@@ -1264,6 +1260,11 @@ function Tree(board, depth) {
 			//add it to the array
 			children.push(newChild);
 		  }
+      else {
+        var newChild = new Node();
+        newChild.setScore(null);
+        children.push(newChild);
+      }
     }
 		return children;
   }
@@ -1271,6 +1272,11 @@ function Tree(board, depth) {
 
 Tree.prototype.getBestValue = function(colorToMax, currentColor) {
   var f = this.minmax(this.tree, this.depth, colorToMax, currentColor);
+  for(var i = 0; i < 7; i++){
+    if(!possiblemoves(pos_array)[i]) {
+      this.path.splice(i, 0, null);
+    }
+  }
   console.log(this.path);
   console.log(this.tree);
 	return f;
@@ -1286,8 +1292,10 @@ Tree.prototype.minmax = function(node, depth, colorToMax, currentColor) {
     best_value = Number.NEGATIVE_INFINITY;
 
     for (var child in node.children) {
-      v = this.minmax(node.children[child], depth - 1, getOppositeColor(colorToMax), currentColor);
-      best_value = Math.max(v, best_value);
+      if (node.children[child].score !== null) {
+        v = this.minmax(node.children[child], depth - 1, getOppositeColor(colorToMax), currentColor);
+        best_value = Math.max(v, best_value);
+      }
     }
     if(depth === this.depth - 1) {
       this.path.push(best_value);
@@ -1299,8 +1307,10 @@ Tree.prototype.minmax = function(node, depth, colorToMax, currentColor) {
     best_value = Number.POSITIVE_INFINITY;
 
     for (var child in node.children) {
-      v = this.minmax(node.children[child], depth - 1, getOppositeColor(colorToMax), currentColor);
-      best_value = Math.min(v, best_value);
+      if (node.children[child].score !== null) {
+        v = this.minmax(node.children[child], depth - 1, getOppositeColor(colorToMax), currentColor);
+        best_value = Math.min(v, best_value);
+      }
     }
     if(depth === this.depth - 1) {
       this.path.push(best_value);
@@ -1310,7 +1320,12 @@ Tree.prototype.minmax = function(node, depth, colorToMax, currentColor) {
 }
 
 Tree.prototype.bestMove = function() {
-	var best = Math.max(...this.path);
+  var best = Number.NEGATIVE_INFINITY;
+  for(var i = 0; i < 7; i++){
+    if(this.path[i] !== null && this.path[i] > best) {
+        best = this.path[i];
+    }
+  }
 	return this.path.indexOf(best);
 }
 
