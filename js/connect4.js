@@ -491,15 +491,17 @@ function winCondition(boardArray, AICheck) {
         }
     }
     // tie
-    if (moves === 42 && winner === false && !AICheck) {
-        //manual win event instead of using win function
-        console.log("the game is a draw");
-        winner = true;
-        setTimeout(function () {
-            ctx.drawImage(draw, (3 * bw / 10), -(bh / 6), (bw / 2.5), (bh / 6));
-        }, 500);
-        displayPlay();
-    }
+    setTimeout(function () {
+      if (moves === 43 && winner === false && !AICheck) {
+          //manual win event instead of using win function
+          console.log("the game is a draw");
+          winner = true;
+          setTimeout(function () {
+              ctx.drawImage(draw, (3 * bw / 10), -(bh / 6), (bw / 2.5), (bh / 6));
+            }, 450);
+          displayPlay();
+        }
+      }, 50);
     return victory;
 }
 
@@ -633,7 +635,18 @@ function winningMoveAI() {
         //decide chip dropping animation should play
         var shouldNotAnimate = AIDelay <= maxMillisecondsToAnimateChipDropping;
         //not completely necessary, but whatever
-        var column = makeTree(pos_array, 6, currentTurn(), currentTurn()) + 1;
+        if (moves < 3) {
+          var column = makeTree(pos_array, 3, currentTurn(), currentTurn()) + 1;
+        }
+        else if (moves > 30) {
+          var column = makeTree(pos_array, 10, currentTurn(), currentTurn()) + 1;
+        }
+        else if (moves > 15) {
+          var column = makeTree(pos_array, 6, currentTurn(), currentTurn()) + 1;
+        }
+        else{
+          var column = makeTree(pos_array, 5, currentTurn(), currentTurn()) + 1;
+        }
         if (winner === false) {
             while (!dropChip(column, currentTurn(), pos_array, false, shouldNotAnimate)) {
             }
@@ -1321,12 +1334,18 @@ Tree.prototype.minmax = function(node, depth, colorToMax, currentColor) {
 
 Tree.prototype.bestMove = function() {
   var best = Number.NEGATIVE_INFINITY;
+  var bestdupes = [];
   for(var i = 0; i < 7; i++){
     if(this.path[i] !== null && this.path[i] > best) {
         best = this.path[i];
     }
   }
-	return this.path.indexOf(best);
+  for(var i = 0; i < 7; i++){
+    if(this.path[i] === best){
+      bestdupes.push(i);
+    }
+  }
+  return bestdupes[Math.floor(Math.random()*bestdupes.length)];
 }
 
 function Node() {}
