@@ -527,18 +527,20 @@ function displayPlay() {
     start(gamemode);
   } else {
     setTimeout(function () {
-      if (gamemode === 2 || gamemode === 3) {
-        showPlayAgainPopup(function () {
-            askToPlayAgain();
-            hidePlayAgainPopup();
-          });
+      if (resetButtonActive) {
+        if (gamemode === 2 || gamemode === 3) {
+          showPlayAgainPopup(function () {
+              askToPlayAgain();
+              hidePlayAgainPopup();
+            });
+          }
+        else {
+          showPlayAgainPopup(function () {
+              resetBoard();
+              start(gamemode);
+              hidePlayAgainPopup();
+            });
         }
-      else {
-        showPlayAgainPopup(function () {
-            resetBoard();
-            start(gamemode);
-            hidePlayAgainPopup();
-          });
       }
     }, 1000);
   }
@@ -641,7 +643,7 @@ function winningMoveAI() {
         else if (moves > 30) {
           var column = makeTree(pos_array, 10, currentTurn(), currentTurn()) + 1;
         }
-        else if (moves > 15) {
+        else if (moves > 20) {
           var column = makeTree(pos_array, 6, currentTurn(), currentTurn()) + 1;
         }
         else{
@@ -779,8 +781,8 @@ function boardScore(boardArray, color) {
     score = Number.NEGATIVE_INFINITY;
   }
   else {
-    redscore += 200 * redThreeInRows + 50 * redTwoInRows + redMid;
-    bluescore += 200 * blueThreeInRows +  50 * blueTwoInRows + blueMid;
+    redscore += 150 * redThreeInRows + 50 * redTwoInRows + redMid;
+    bluescore += 150 * blueThreeInRows +  50 * blueTwoInRows + blueMid;
     if (color === "red") {
       score = redscore - bluescore;
     }
