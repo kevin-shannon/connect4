@@ -92,6 +92,7 @@ var playerCanDropChips;
 
 //Draw the board upon load
 $(window).load(drawBoard);
+$(window).resize(function(){location.reload();});
 
 //Ran when the site is fully loaded
 $(document).ready(function () {
