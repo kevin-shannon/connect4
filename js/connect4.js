@@ -637,18 +637,7 @@ function winningMoveAI() {
         //decide chip dropping animation should play
         var shouldNotAnimate = AIDelay <= maxMillisecondsToAnimateChipDropping;
         //not completely necessary, but whatever
-        if (moves < 3) {
-          var column = makeTree(pos_array, 3, currentTurn(), currentTurn()) + 1;
-        }
-        else if (moves > 30) {
-          var column = makeTree(pos_array, 10, currentTurn(), currentTurn()) + 1;
-        }
-        else if (moves > 20) {
-          var column = makeTree(pos_array, 6, currentTurn(), currentTurn()) + 1;
-        }
-        else{
-          var column = makeTree(pos_array, 5, currentTurn(), currentTurn()) + 1;
-        }
+        var column = makeTree(pos_array, Math.round(Math.log(30000)/Math.log(7 - possiblemoves(pos_array, false))), currentTurn(), currentTurn()) + 1;
         if (winner === false) {
             while (!dropChip(column, currentTurn(), pos_array, false, shouldNotAnimate)) {
             }
@@ -660,7 +649,7 @@ function winningMoveAI() {
     }, AIDelay);
 }
 
-function possiblemoves(boardArray) {
+function possiblemoves(boardArray, arrayOrNo) {
     var counter = 0;
     possible = new Array(7);
     for (var i = 1; i < 8; i++) {
@@ -675,9 +664,10 @@ function possiblemoves(boardArray) {
     }
     if (counter === 7) {
         return false;
-    }
-    else {
+    } else if (arrayOrNo){
       return possible;
+    } else {
+      return counter;
     }
 }
 
@@ -725,7 +715,7 @@ function bestPossibleMove(boardArray) {
 
     //pick a random move, making sure to avoid columns found above
     while (true) {
-        possiblemoves(pos_array);
+        possiblemoves(pos_array, true);
         var is_same = possible.length === avoid.length && possible.every(function (element, index) {
             return element === avoid[index];
         });
@@ -1285,7 +1275,7 @@ function Tree(board, depth) {
 Tree.prototype.getBestValue = function(colorToMax, currentColor) {
   var mm = this.minmax(this.tree, this.depth, colorToMax, currentColor);
   for(var i = 0; i < 7; i++){
-    if(!possiblemoves(pos_array)[i]) {
+    if(!possiblemoves(pos_array, true)[i]) {
       this.path.splice(i, 0, {
         score: null
       });
