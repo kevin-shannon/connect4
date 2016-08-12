@@ -92,7 +92,6 @@ var playerCanDropChips;
 
 //Draw the board upon load
 $(window).load(drawBoard);
-$(window).resize(function(){location.reload();});
 
 //Ran when the site is fully loaded
 $(document).ready(function () {
@@ -524,8 +523,10 @@ function displayPlay() {
   var shouldAutoPlayAgain = $('#aivsaicb').checkbox('is checked');
 
   if (shouldAutoPlayAgain && gamemode === 4) {
-    resetBoard();
-    start(gamemode);
+    setTimeout(function () {
+      resetBoard();
+      start(gamemode);
+    }, 1200);
   } else {
     setTimeout(function () {
       if (resetButtonActive) {
