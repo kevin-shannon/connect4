@@ -774,10 +774,7 @@ function boardScore(boardArray, color) {
   if (winCondition(boardArray, true) === color){
     score = Number.POSITIVE_INFINITY;
   }
-  else if (winCondition(boardArray, true) === "red" && "red" !== color) {
-    score = Number.NEGATIVE_INFINITY;
-  }
-  else if (winCondition(boardArray, true) === "blue" && "blue" !== color) {
+  else if (typeof winCondition(boardArray, true) === "string" && winCondition(boardArray, true) !== color) {
     score = Number.NEGATIVE_INFINITY;
   }
   else {
@@ -1286,30 +1283,54 @@ function Tree(board, depth) {
 }
 
 Tree.prototype.getBestValue = function(colorToMax, currentColor) {
-  var f = this.minmax(this.tree, this.depth, colorToMax, currentColor);
+  var mm = this.minmax(this.tree, this.depth, colorToMax, currentColor);
   for(var i = 0; i < 7; i++){
     if(!possiblemoves(pos_array)[i]) {
-      this.path.splice(i, 0, null);
+      this.path.splice(i, 0, {
+        score: null
+      });
     }
   }
-  console.log(this.path);
-  console.log(this.tree);
-	return f;
+	return mm;
 }
 
 Tree.prototype.minmax = function(node, depth, colorToMax, currentColor) {
 	if (depth == 0 || !("children" in node)) {
-    return node.score;
+    return {
+      score: node.score,
+      depth: depth
+    }
 	}
   var best_value, v;
   if (colorToMax === currentColor) {
     //maximizing player
-    best_value = Number.NEGATIVE_INFINITY;
+
+    best_value = {
+      score: Number.NEGATIVE_INFINITY,
+      depth: depth
+    };
 
     for (var child in node.children) {
       if (node.children[child].score !== null) {
         v = this.minmax(node.children[child], depth - 1, getOppositeColor(colorToMax), currentColor);
-        best_value = Math.max(v, best_value);
+        var bestScore = Math.max(v.score, best_value.score);
+        var bestDepth;
+        if (v.score === best_value.score) {
+          if (best_value.score === Number.POSITIVE_INFINITY){
+            bestDepth = v.depth > best_value.depth ? v.depth : best_value.depth;
+          } else if (best_value.score === Number.NEGATIVE_INFINITY) {
+            bestDepth = v.depth < best_value.depth ? v.depth : best_value.depth;
+          }
+          else {
+            bestDepth = best_value.depth;
+          }
+        } else {
+          bestDepth = bestScore === v.score ? v.depth : best_value.depth;
+        }
+        best_value = {
+          score: bestScore,
+          depth: bestDepth
+        }
       }
     }
     if(depth === this.depth - 1) {
@@ -1319,12 +1340,32 @@ Tree.prototype.minmax = function(node, depth, colorToMax, currentColor) {
   }
   else {
     //minimizing player
-    best_value = Number.POSITIVE_INFINITY;
+    best_value = {
+      score: Number.POSITIVE_INFINITY,
+      depth: depth
+    };
 
     for (var child in node.children) {
       if (node.children[child].score !== null) {
         v = this.minmax(node.children[child], depth - 1, getOppositeColor(colorToMax), currentColor);
-        best_value = Math.min(v, best_value);
+        var bestScore = Math.min(v.score, best_value.score);
+        var bestDepth;
+        if (v.score === best_value.score) {
+          if (best_value.score === Number.POSITIVE_INFINITY){
+            bestDepth = v.depth < best_value.depth ? v.depth : best_value.depth;
+          } else if (best_value.score === Number.NEGATIVE_INFINITY) {
+            bestDepth = v.depth > best_value.depth ? v.depth : best_value.depth;
+          }
+          else {
+            bestDepth = best_value.depth;
+          }
+        } else {
+          bestDepth = bestScore === v.score ? v.depth : best_value.depth;
+        }
+        best_value = {
+          score: bestScore,
+          depth: bestDepth
+        }
       }
     }
     if(depth === this.depth - 1) {
@@ -1334,20 +1375,14 @@ Tree.prototype.minmax = function(node, depth, colorToMax, currentColor) {
   }
 }
 
-Tree.prototype.bestMove = function() {
-  var best = Number.NEGATIVE_INFINITY;
-  var bestdupes = [];
+Tree.prototype.bestMove = function(tree, best) {
+  var dupes = [];
   for(var i = 0; i < 7; i++){
-    if(this.path[i] !== null && this.path[i] > best) {
-        best = this.path[i];
+    if (this.path[i].score === best.score && this.path[i].depth === best.depth) {
+      dupes.push(i);
     }
   }
-  for(var i = 0; i < 7; i++){
-    if(this.path[i] === best){
-      bestdupes.push(i);
-    }
-  }
-  return bestdupes[Math.floor(Math.random()*bestdupes.length)];
+  return dupes[Math.floor(Math.random()*dupes.length)];
 }
 
 function Node() {}
@@ -1362,6 +1397,6 @@ Node.prototype.setScore = function(score) {
 
 function makeTree(board, depth, colorToMax, currentColor) {
   var tree = new Tree(board, depth);
-  tree.getBestValue(colorToMax, currentColor);
-  return tree.bestMove();
+  var best = tree.getBestValue(colorToMax, currentColor);
+  return tree.bestMove(tree, best);
 }
