@@ -1,25 +1,23 @@
+/*
+*   Connect 4 by Kevin Shannon and Tanner Krewson
+*/
 
 /*
- *   Connect 4 by Kevin Shannon and Tanner Krewson
- */
-
-
-/*
- * Variable declarations
- */
+* Variable declarations
+*/
 
 //get the url parameters
 var urlParams;
 (window.onpopstate = function () {
-    var match,
-        pl     = /\+/g,  // Regex for replacing addition symbol with a space
-        search = /([^&=]+)=?([^&]*)/g,
-        decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
-        query  = window.location.search.substring(1);
+  var match,
+  pl     = /\+/g,  // Regex for replacing addition symbol with a space
+  search = /([^&=]+)=?([^&]*)/g,
+  decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
+  query  = window.location.search.substring(1);
 
-    urlParams = {};
-    while (match = search.exec(query))
-       urlParams[decode(match[1])] = decode(match[2]);
+  urlParams = {};
+  while (match = search.exec(query))
+  urlParams[decode(match[1])] = decode(match[2]);
 })();
 
 //gamemode (local multiplayer: 0, singleplayer: 1, p2p host: 2, p2p opponent: 3)
@@ -42,24 +40,24 @@ var blur = 4;
 
 //board dimensions
 if ($(window).width() < $(window).height()) {
-    var bw = $(window).width() / 1.5;
-    var bh = $(window).width() * 4 / 7;
+  var bw = $(window).width() / 1.5;
+  var bh = $(window).width() * 4 / 7;
 }
 else {
-    var bw = $(window).width() / 2.5;   // sets board width
-    var bh = $(window).width() * 12 / 35;  // sets board height
+  var bw = $(window).width() / 2.5;   // sets board width
+  var bh = $(window).width() * 12 / 35;  // sets board height
 }
 
 //canvases
 var canvas = $('<canvas/>').attr({
-    width: bw,
-    height: bh + (bh / 6)
+  width: bw,
+  height: bh + (bh / 6)
 }).appendTo('#game');
 var ctx = canvas.get(0).getContext("2d");
 ctx.translate(0, (bw / 7));
 var canvas2 = $('<canvas/>').attr({
-    width: bw,
-    height: bw
+  width: bw,
+  height: bw
 }).appendTo('#game');
 var ctx2 = canvas2.get(0).getContext("2d");
 
@@ -85,10 +83,10 @@ XXX.src = "img/X.png";
 //event blocker: when false, click and hover events do not work
 var playerCanDropChips;
 
-/*
- * Main Code
- */
 
+/*
+* Main Code
+*/
 
 //Draw the board upon load
 $(window).load(drawBoard);
@@ -96,321 +94,321 @@ $(window).load(drawBoard);
 //Ran when the site is fully loaded
 $(document).ready(function () {
 
-    //Ran when user clicks on the canvas
-    $('canvas').click(click);
+  //Ran when user clicks on the canvas
+  $('canvas').click(click);
 
-    //called when the mouse moves across the canvas
-    $('canvas').mousemove(hoverChip);
+  //called when the mouse moves across the canvas
+  $('canvas').mousemove(hoverChip);
 
-    //run reset function when button is clicked
-    $('#reset').click(Reset());
+  //run reset function when button is clicked
+  $('#reset').click(Reset());
 
-    //makes it so the user cannot drop a chip or hover
-    playerCanDropChips = false;
+  //makes it so the user cannot drop a chip or hover
+  playerCanDropChips = false;
 
-    //check if a match id has been passed
-    if (urlParams.host && urlParams.host.length === 40) {
-      setUpOnline(urlParams.host);
-      hostOnlineGame();
-    } else if (urlParams.join && urlParams.join.length === 40) {
-      joinOnlineGame(urlParams.join);
-      goToStart(3);
-    } else {
-      //popup the gamemode selector
-      gamemodeSelector();
-    }
+  //check if a match id has been passed
+  if (urlParams.host && urlParams.host.length === 40) {
+    setUpOnline(urlParams.host);
+    hostOnlineGame();
+  } else if (urlParams.join && urlParams.join.length === 40) {
+    joinOnlineGame(urlParams.join);
+    goToStart(3);
+  } else {
+    //popup the gamemode selector
+    gamemodeSelector();
+  }
 });
 
 
 /*
- * Functions
- */
+* Functions
+*/
 
 function start(gm) {
-    //received gamemode from the selector
-    gamemode = gm;
+  //received gamemode from the selector
+  gamemode = gm;
 
-    //sets postion of indicator tiles
-    $("#redturnIn").css('left', ($(window).width()/10) + 'px');
-    $("#blueturnIn").css('left', ($(window).width()/6) + 'px');
-    $("#redturnIn").css('top', ($(window).height()/6) + 'px');
-    $("#blueturnIn").css('top', ($(window).height()/6) + 'px');
-    //sets size of indicator tiles
-    $("#redturnIn").css('height', (bh/6) + 'px');
-    $("#blueturnIn").css('height', (bh/6) + 'px');
-    $("#redturnIn").css('width', (bw/7) + 'px');
-    $("#blueturnIn").css('width', (bw/7) + 'px');
-    //makes tiles visible once gamplay has commensed
-    $("#redturnIn").css('visibility', 'visible');
-    $("#blueturnIn").css('visibility', 'visible');
-    $("#redVic").css('visibility', 'visible');
-    $("#blueVic").css('visibility', 'visible');
-    //sets postion of win counter text
-    $("#redVic").css('left', ($(window).width()/10) + (bw/24) + 'px');
-    $("#blueVic").css('left', ($(window).width()/6) + (bw/24) + 'px');
-    $("#redVic").css('top', ($(window).height()/6) + (bh/96)  + 'px');
-    $("#blueVic").css('top', ($(window).height()/6) + (bh/96) + 'px');
-    //sizes the loading animation
-    $("#LoadingAnimation").css('height', (bh/6) + 'px');
-    $("#LoadingAnimation").css('width', (bw/7) + 'px');
-    //postions play again button
-    $("#playpop").css('right', ($(window).width()/10) + 'px');
-    $("#playpop").css('top', ($(window).height()/5) + 'px');
-    //figure out which gamemode the user wants to play
-    console.log("Gamemode " + gamemode + " selected.");
+  //sets postion of indicator tiles
+  $("#redturnIn").css('left', ($(window).width()/10) + 'px');
+  $("#blueturnIn").css('left', ($(window).width()/6) + 'px');
+  $("#redturnIn").css('top', ($(window).height()/6) + 'px');
+  $("#blueturnIn").css('top', ($(window).height()/6) + 'px');
+  //sets size of indicator tiles
+  $("#redturnIn").css('height', (bh/6) + 'px');
+  $("#blueturnIn").css('height', (bh/6) + 'px');
+  $("#redturnIn").css('width', (bw/7) + 'px');
+  $("#blueturnIn").css('width', (bw/7) + 'px');
+  //makes tiles visible once gamplay has commensed
+  $("#redturnIn").css('visibility', 'visible');
+  $("#blueturnIn").css('visibility', 'visible');
+  $("#redVic").css('visibility', 'visible');
+  $("#blueVic").css('visibility', 'visible');
+  //sets postion of win counter text
+  $("#redVic").css('left', ($(window).width()/10) + (bw/24) + 'px');
+  $("#blueVic").css('left', ($(window).width()/6) + (bw/24) + 'px');
+  $("#redVic").css('top', ($(window).height()/6) + (bh/96)  + 'px');
+  $("#blueVic").css('top', ($(window).height()/6) + (bh/96) + 'px');
+  //sizes the loading animation
+  $("#LoadingAnimation").css('height', (bh/6) + 'px');
+  $("#LoadingAnimation").css('width', (bw/7) + 'px');
+  //postions play again button
+  $("#playpop").css('right', ($(window).width()/10) + 'px');
+  $("#playpop").css('top', ($(window).height()/5) + 'px');
+  //figure out which gamemode the user wants to play
+  console.log("Gamemode " + gamemode + " selected.");
 
-    /*
-     //if the gamemode is online multiplayer, let's set that up
-     if (gamemode === 2 || gamemode === 3) {
-     setUpOnlineMultiplayer();
-     }*/
+  /*
+  //if the gamemode is online multiplayer, let's set that up
+  if (gamemode === 2 || gamemode === 3) {
+  setUpOnlineMultiplayer();
+}*/
 
-    //assign colors to players
-    assignColors();
+//assign colors to players
+assignColors();
 
-    //get the pos_array ready for some epic connect4 action
-    pos_array = fillArray();
+//get the pos_array ready for some epic connect4 action
+pos_array = fillArray();
 
-    //unblur background
-    blurBackground(false);
+//unblur background
+blurBackground(false);
 
-    //activate reset button
-    resetButtonActive = true;
+//activate reset button
+resetButtonActive = true;
 
-    //start turn one
-    nextTurn();
-    //now we wait for a click event
+//start turn one
+nextTurn();
+//now we wait for a click event
 }
 
 function click(e) {
-    if (playerCanDropChips === false) {
-        return false;
-    }
+  if (playerCanDropChips === false) {
+    return false;
+  }
 
-    //if this is online multiplayer, make sure the connection is open
-    if ((gamemode === 2 || gamemode === 3) && !connection.open) {
-        return false;
-    }
+  //if this is online multiplayer, make sure the connection is open
+  if ((gamemode === 2 || gamemode === 3) && !connection.open) {
+    return false;
+  }
 
-    //determine where the chip was dropped
-    var offset = $(this).offset();
-    var xPos = (e.pageX - offset.left);
-    for (var i = 1; i < 8; i++) {
-        if (((i - 1) * (bw / 7)) < xPos && xPos < ((i) * (bw / 7))) {
-            //if the chip drop was successful
-            if (dropChip(i, currentTurn(), pos_array, false)) {
-                if (gamemode === 2 || gamemode === 3) {
-                    sendMove(i);
-                }
-                nextTurn();
-            }
+  //determine where the chip was dropped
+  var offset = $(this).offset();
+  var xPos = (e.pageX - offset.left);
+  for (var i = 1; i < 8; i++) {
+    if (((i - 1) * (bw / 7)) < xPos && xPos < ((i) * (bw / 7))) {
+      //if the chip drop was successful
+      if (dropChip(i, currentTurn(), pos_array, false)) {
+        if (gamemode === 2 || gamemode === 3) {
+          sendMove(i);
         }
+        nextTurn();
+      }
     }
+  }
 }
 
 function nextTurn() {
-    winCondition(pos_array, false);
-    //if there's a winner, get outta here
-    if (winner || resetButtonActive === false) {
-        return;
+  winCondition(pos_array, false);
+  //if there's a winner, get outta here
+  if (winner || resetButtonActive === false) {
+    return;
+  }
+
+  advanceTurn();
+  console.log("Turn " + moves + ", " + currentTurn() + "'s turn.");
+
+  if (currentTurn() === "red") {
+    $("#redturnIn").css('WebkitFilter', 'grayscale(0%) opacity(100%) blur(0px)');
+    $("#blueturnIn").css('WebkitFilter', 'grayscale(50%) opacity(70%) blur(2px)');
+  }
+  else {
+    $("#redturnIn").css('WebkitFilter', 'grayscale(50%) opacity(70%) blur(2px)');
+    $("#blueturnIn").css('WebkitFilter', 'grayscale(0%) opacity(100%) blur(0px)');
+  }
+
+  //give the correct player control based on the gamemode
+  switch (gamemode) {
+    case 0: //local multiplayer
+    playerCanDropChips = true;
+    break;
+    case 1: //singleplayer
+    if (currentTurn() === playersColor) {
+      playerCanDropChips = true;
+    } else {
+      playerCanDropChips = false;
+
+      //remember, randomAI is non-blocking because it is in a timeout
+      winningMoveAI();
     }
+    break;
+    case 2: //p2p host
+    if (currentTurn() === playersColor) {
+      //for first turn, openConnection function sets it to true
+      if (connection === undefined) {
+        playerCanDropChips = false;
+      } else {
+        playerCanDropChips = true;
+      }
+    } else {
+      playerCanDropChips = false;
 
-    advanceTurn();
-    console.log("Turn " + moves + ", " + currentTurn() + "'s turn.");
-
-    if (currentTurn() === "red") {
-      $("#redturnIn").css('WebkitFilter', 'grayscale(0%) opacity(100%) blur(0px)');
-      $("#blueturnIn").css('WebkitFilter', 'grayscale(50%) opacity(70%) blur(2px)');
+      multiplayerTurn();
     }
-    else {
-      $("#redturnIn").css('WebkitFilter', 'grayscale(50%) opacity(70%) blur(2px)');
-      $("#blueturnIn").css('WebkitFilter', 'grayscale(0%) opacity(100%) blur(0px)');
+    break;
+    case 3: //p2p opponent
+    if (currentTurn() === playersColor) {
+      playerCanDropChips = true;
+    } else {
+      playerCanDropChips = false;
+      //remember, randomAI is non-blocking because it is in a timeout
+      multiplayerTurn();
     }
-
-    //give the correct player control based on the gamemode
-    switch (gamemode) {
-        case 0: //local multiplayer
-            playerCanDropChips = true;
-            break;
-        case 1: //singleplayer
-            if (currentTurn() === playersColor) {
-                playerCanDropChips = true;
-            } else {
-                playerCanDropChips = false;
-
-                //remember, randomAI is non-blocking because it is in a timeout
-                winningMoveAI();
-            }
-            break;
-        case 2: //p2p host
-            if (currentTurn() === playersColor) {
-                //for first turn, openConnection function sets it to true
-                if (connection === undefined) {
-                    playerCanDropChips = false;
-                } else {
-                    playerCanDropChips = true;
-                }
-            } else {
-                playerCanDropChips = false;
-
-                multiplayerTurn();
-            }
-            break;
-        case 3: //p2p opponent
-            if (currentTurn() === playersColor) {
-                playerCanDropChips = true;
-            } else {
-                playerCanDropChips = false;
-                //remember, randomAI is non-blocking because it is in a timeout
-                multiplayerTurn();
-            }
-            break;
-        case 4: //ai vs ai
-            winningMoveAI();
-            break;
-    }
+    break;
+    case 4: //ai vs ai
+    winningMoveAI();
+    break;
+  }
 }
 
 //Draws the chip, adds it to the array, returns true if successful
 function dropChip(x, color, boardArray, AICheck, noAnimation) {
-    //for loop that checks array starting at bottom of board which is at 6 going up to 1
-    for (var j = 6; j > 0; j--) {
-        //the position in the array will be undefined when there is an open space to drop the chip
-        if (boardArray[x][j] === undefined && !winCondition(boardArray, AICheck)) {
-            if (!AICheck) {
-                console.log(color.charAt(0).toUpperCase() + color.slice(1) + " dropped in column " + x);
-                drawChip(x, j, color, noAnimation);
-            }
-            boardArray[x][j] = color;
-            return true;
-        }
+  //for loop that checks array starting at bottom of board which is at 6 going up to 1
+  for (var j = 6; j > 0; j--) {
+    //the position in the array will be undefined when there is an open space to drop the chip
+    if (boardArray[x][j] === undefined && !winCondition(boardArray, AICheck)) {
+      if (!AICheck) {
+        console.log(color.charAt(0).toUpperCase() + color.slice(1) + " dropped in column " + x);
+        drawChip(x, j, color, noAnimation);
+      }
+      boardArray[x][j] = color;
+      return true;
     }
-    //chip wasn't successfully dropped
-    return false;
+  }
+  //chip wasn't successfully dropped
+  return false;
 }
 
 function drawChip(x, y, chipColor, noAnimation) {
-    var chipImage = new Image();
+  var chipImage = new Image();
 
-    //Set the correct color chip to draw
-    chipImage = chipColor === "red" ? redchip : bluechip;
+  //Set the correct color chip to draw
+  chipImage = chipColor === "red" ? redchip : bluechip;
 
-    x = (bw / 7) * (x - 1);
-    y = (bh / 6) * (y - 1);
-    var chip = {
-        x: x,
-        y: 0,
-        width: (bw / 7),
-        height: (bh / 6)
-    };
-    var startTime = (new Date()).getTime();
+  x = (bw / 7) * (x - 1);
+  y = (bh / 6) * (y - 1);
+  var chip = {
+    x: x,
+    y: 0,
+    width: (bw / 7),
+    height: (bh / 6)
+  };
+  var startTime = (new Date()).getTime();
 
-    if (!noAnimation) {
-        window.requestAnimFrame = (function (callback) {
-            return window.requestAnimationFrame
-                || window.webkitRequestAnimationFrame
-                || window.mozRequestAnimationFrame
-                || window.oRequestAnimationFrame
-                || window.msRequestAnimationFrame
-                || function (callback) {
-                    window.setTimeout(callback, 1000 / 60);
-                };
-        })();
+  if (!noAnimation) {
+    window.requestAnimFrame = (function (callback) {
+      return window.requestAnimationFrame
+      || window.webkitRequestAnimationFrame
+      || window.mozRequestAnimationFrame
+      || window.oRequestAnimationFrame
+      || window.msRequestAnimationFrame
+      || function (callback) {
+        window.setTimeout(callback, 1000 / 60);
+      };
+    })();
 
-        //initial call, and recurs until the chip drops all the way
-        animate(chip, canvas, ctx, startTime);
+    //initial call, and recurs until the chip drops all the way
+    animate(chip, canvas, ctx, startTime);
 
-        function animate(chip, canvas, ctx, startTime) {
-            if (resetButtonActive === false) {
-                ctx.clearRect(0, -(bh / 6), bw, bh + (bh / 6));
-                return;
-            }
-            // update
-            var time = (new Date()).getTime() - startTime;
-            var a = bh * 1.7;
-            // pixels / second
-            var newY = (a * Math.pow(time / 1000, 2) - (bh / 6));
-            if (newY < y) {
-                chip.y = newY;
-                // request new frame
-                requestAnimFrame(function () {
-                    animate(chip, canvas, ctx, startTime);
-                });
-            }
-            else {
-                chip.y = y;
-            }
-            ctx.clearRect(x, (chip.y - (bh / 6)), (bw / 7), ((bh / 6) + (bh / 12)));
-            ctx.drawImage(chipImage, chip.x, chip.y, chip.width, chip.height);
-        }
-    } else {
-        ctx.drawImage(chipImage, chip.x, y, chip.width, chip.height);
+    function animate(chip, canvas, ctx, startTime) {
+      if (resetButtonActive === false) {
+        ctx.clearRect(0, -(bh / 6), bw, bh + (bh / 6));
+        return;
+      }
+      // update
+      var time = (new Date()).getTime() - startTime;
+      var a = bh * 1.7;
+      // pixels / second
+      var newY = (a * Math.pow(time / 1000, 2) - (bh / 6));
+      if (newY < y) {
+        chip.y = newY;
+        // request new frame
+        requestAnimFrame(function () {
+          animate(chip, canvas, ctx, startTime);
+        });
+      }
+      else {
+        chip.y = y;
+      }
+      ctx.clearRect(x, (chip.y - (bh / 6)), (bw / 7), ((bh / 6) + (bh / 12)));
+      ctx.drawImage(chipImage, chip.x, chip.y, chip.width, chip.height);
     }
+  } else {
+    ctx.drawImage(chipImage, chip.x, y, chip.width, chip.height);
+  }
 }
 
 
 function Reset() {
 
-    //if the button is somehow displayed even though it shouldn't be
-    //make sure reset doesn't run?? -Tanner
-    if (resetButtonActive === false) {
-        return false;
-    }
+  //if the button is somehow displayed even though it shouldn't be
+  //make sure reset doesn't run?? -Tanner
+  if (resetButtonActive === false) {
+    return false;
+  }
 
-    AIDelay = 1000;
+  AIDelay = 1000;
 
-    redVictories = 0;
-    blueVictories = 0;
-    $("#redVic").text(redVictories);
-    $("#blueVic").text(redVictories);
+  redVictories = 0;
+  blueVictories = 0;
+  $("#redVic").text(redVictories);
+  $("#blueVic").text(redVictories);
 
-    $("#redturnIn").css('visibility', 'hidden');
-    $("#blueturnIn").css('visibility', 'hidden');
-    $("#redVic").css('visibility', 'hidden');
-    $("#blueVic").css('visibility', 'hidden');
-    $("#LoadingAnimation").css('visibility', 'hidden');
+  $("#redturnIn").css('visibility', 'hidden');
+  $("#blueturnIn").css('visibility', 'hidden');
+  $("#redVic").css('visibility', 'hidden');
+  $("#blueVic").css('visibility', 'hidden');
+  $("#LoadingAnimation").css('visibility', 'hidden');
 
-    resetBoard();
-    closeConnection();
-    hidePlayAgainPopup();
+  resetBoard();
+  closeConnection();
+  hidePlayAgainPopup();
 
-    //restart the game
-    gamemodeSelector();
+  //restart the game
+  gamemodeSelector();
 }
 
 function askToPlayAgain() {
-    wantToPlayAgain = true;
-    console.log("sending 0 from ask");
-    sendMove(0);
+  wantToPlayAgain = true;
+  console.log("sending 0 from ask");
+  sendMove(0);
 }
 
 function receivePlayAgainRequest() {
-    //if wantToPlayAgain is true, then this means both players want to play
-    //      again and we can start the new game.
-    //else we will ask the player if they want to play again, and if they do,
-    //      we will play.
-    if (wantToPlayAgain) {
-        playAgain();
-    } else {
-        //TODO: ask the player to respond to the request from their oppenent to
-        //      player again.
-        //if they say yes:
-        console.log("sending 0 from receive");
-        sendMove(0);
-        playAgain();
-    }
+  //if wantToPlayAgain is true, then this means both players want to play
+  //      again and we can start the new game.
+  //else we will ask the player if they want to play again, and if they do,
+  //      we will play.
+  if (wantToPlayAgain) {
+    playAgain();
+  } else {
+    //TODO: ask the player to respond to the request from their oppenent to
+    //      player again.
+    //if they say yes:
+    console.log("sending 0 from receive");
+    sendMove(0);
+    playAgain();
+  }
 }
 
 function playAgain() {
-    console.log("Playing again");
+  console.log("Playing again");
 
-    hidePlayAgainPopup();
+  hidePlayAgainPopup();
 
-    //resetting this variable for next time
-    wantToPlayAgain = false;
+  //resetting this variable for next time
+  wantToPlayAgain = false;
 
-    resetBoard();
-    start(gamemode);
+  resetBoard();
+  start(gamemode);
 }
 
 function showPlayAgainPopup(functionToRunOnClick) {
@@ -424,99 +422,99 @@ function hidePlayAgainPopup() {
 }
 
 function resetBoard() {
-    console.log("Resetting game");
+  console.log("Resetting game");
 
-    pos_array.length = 0;
-    ctx.clearRect(0, -(bh / 6), bw, bh + (bh / 6));
-    pos_array = fillArray();
-    winner = false;
-    moves = 0;
-    playerCanDropChips = false;
-    resetButtonActive = false;
+  pos_array.length = 0;
+  ctx.clearRect(0, -(bh / 6), bw, bh + (bh / 6));
+  pos_array = fillArray();
+  winner = false;
+  moves = 0;
+  playerCanDropChips = false;
+  resetButtonActive = false;
 }
 
 function fillArray() {
-    arrayToFill = new Array(7);
-    for (var i = 1; i < 8; i++) {
-        arrayToFill[i] = new Array(6);
-    }
-    return arrayToFill;
+  arrayToFill = new Array(7);
+  for (var i = 1; i < 8; i++) {
+    arrayToFill[i] = new Array(6);
+  }
+  return arrayToFill;
 }
 
 //[columns][rows]
 //if AICheck is true, a win will not be triggered
 //this is for AI
 function winCondition(boardArray, AICheck) {
-    var victory = false;
-    var color;
-    //horizontal
-    for (var i = 1; i < 5; i++) {
-        for (var j = 1; j < 7; j++) {
-            if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j] && boardArray[i][j] === boardArray[i + 2][j] && boardArray[i][j] === boardArray[i + 3][j]) {
-              if (!AICheck)
-                win(i, j, "h");
-              victory = boardArray[i][j]
-            }
-        }
+  var victory = false;
+  var color;
+  //horizontal
+  for (var i = 1; i < 5; i++) {
+    for (var j = 1; j < 7; j++) {
+      if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j] && boardArray[i][j] === boardArray[i + 2][j] && boardArray[i][j] === boardArray[i + 3][j]) {
+        if (!AICheck)
+        win(i, j, "h");
+        victory = boardArray[i][j]
+      }
     }
+  }
 
-    //vertical
-    for (var i = 1; i < 8; i++) {
-        for (var j = 1; j < 4; j++) {
-            if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i][j + 1] && boardArray[i][j] === boardArray[i][j + 2] && boardArray[i][j] === boardArray[i][j + 3]) {
-                if (!AICheck)
-                    win(i, j, "v");
-                victory = boardArray[i][j]
-            }
-        }
+  //vertical
+  for (var i = 1; i < 8; i++) {
+    for (var j = 1; j < 4; j++) {
+      if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i][j + 1] && boardArray[i][j] === boardArray[i][j + 2] && boardArray[i][j] === boardArray[i][j + 3]) {
+        if (!AICheck)
+        win(i, j, "v");
+        victory = boardArray[i][j]
+      }
     }
-    // /diagonals
-    for (var i = 1; i < 5; i++) {
-        for (var j = 4; j < 7; j++) {
-            if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j - 1] && boardArray[i][j] === boardArray[i + 2][j - 2] && boardArray[i][j] === boardArray[i + 3][j - 3]) {
-                if (!AICheck)
-                    win(i, j, "//");
-                victory = boardArray[i][j]
-            }
-        }
+  }
+  // /diagonals
+  for (var i = 1; i < 5; i++) {
+    for (var j = 4; j < 7; j++) {
+      if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j - 1] && boardArray[i][j] === boardArray[i + 2][j - 2] && boardArray[i][j] === boardArray[i + 3][j - 3]) {
+        if (!AICheck)
+        win(i, j, "//");
+        victory = boardArray[i][j]
+      }
     }
-    // \diagonals
-    for (var i = 1; i < 5; i++) {
-        for (var j = 1; j < 4; j++) {
-            if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j + 1] && boardArray[i][j] === boardArray[i + 2][j + 2] && boardArray[i][j] === boardArray[i + 3][j + 3]) {
-                if (!AICheck)
-                    win(i, j, "\\");
-                victory = boardArray[i][j]
-            }
-        }
+  }
+  // \diagonals
+  for (var i = 1; i < 5; i++) {
+    for (var j = 1; j < 4; j++) {
+      if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j + 1] && boardArray[i][j] === boardArray[i + 2][j + 2] && boardArray[i][j] === boardArray[i + 3][j + 3]) {
+        if (!AICheck)
+        win(i, j, "\\");
+        victory = boardArray[i][j]
+      }
     }
-    // tie
-    setTimeout(function () {
-      if (moves === 43 && winner === false && !AICheck) {
-          //manual win event instead of using win function
-          console.log("the game is a draw");
-          winner = true;
-          setTimeout(function () {
-              ctx.drawImage(draw, (3 * bw / 10), -(bh / 6), (bw / 2.5), (bh / 6));
-            }, 450);
-          displayPlay();
-        }
-      }, 50);
-    return victory;
+  }
+  // tie
+  setTimeout(function () {
+    if (moves === 43 && winner === false && !AICheck) {
+      //manual win event instead of using win function
+      console.log("the game is a draw");
+      winner = true;
+      setTimeout(function () {
+        ctx.drawImage(draw, (3 * bw / 10), -(bh / 6), (bw / 2.5), (bh / 6));
+      }, 450);
+      displayPlay();
+    }
+  }, 50);
+  return victory;
 }
 
 //i and j are the coord of the first chip in the winning four
 function win(i, j, direction) {
-    winner = true;
-    console.log(currentTurn() + " wins on turn " + moves);
-    winAdder(currentTurn());
-    //this is to make sure that the events are blocked
-    playerCanDropChips = false;
-    //Draw the win pic based on the color of the chip that won after a delay
-    setTimeout(drawWinBanner, 500, pos_array[i][j]);
-    //delay
-    setTimeout(drawWinXs, 1000, i, j, direction);
-    displayPlay();
+  winner = true;
+  console.log(currentTurn() + " wins on turn " + moves);
+  winAdder(currentTurn());
+  //this is to make sure that the events are blocked
+  playerCanDropChips = false;
+  //Draw the win pic based on the color of the chip that won after a delay
+  setTimeout(drawWinBanner, 500, pos_array[i][j]);
+  //delay
+  setTimeout(drawWinXs, 1000, i, j, direction);
+  displayPlay();
 }
 
 function displayPlay() {
@@ -532,16 +530,16 @@ function displayPlay() {
       if (resetButtonActive) {
         if (gamemode === 2 || gamemode === 3) {
           showPlayAgainPopup(function () {
-              askToPlayAgain();
-              hidePlayAgainPopup();
-            });
-          }
+            askToPlayAgain();
+            hidePlayAgainPopup();
+          });
+        }
         else {
           showPlayAgainPopup(function () {
-              resetBoard();
-              start(gamemode);
-              hidePlayAgainPopup();
-            });
+            resetBoard();
+            start(gamemode);
+            hidePlayAgainPopup();
+          });
         }
       }
     }, 1000);
@@ -561,193 +559,193 @@ function winAdder(color){
 
 function drawWinBanner(color) {
 
-    //choose the correct picture for either red or blue
-    var bannerImage = (color === "red") ? redwins : bluewins;
+  //choose the correct picture for either red or blue
+  var bannerImage = (color === "red") ? redwins : bluewins;
 
-    //draw that sucker
-    if (resetButtonActive === true) {
-        ctx.drawImage(bannerImage, (bw / 6), -(bh / 6), (bw / 1.5), (bh / 6));
-    }
+  //draw that sucker
+  if (resetButtonActive === true) {
+    ctx.drawImage(bannerImage, (bw / 6), -(bh / 6), (bw / 1.5), (bh / 6));
+  }
 }
 
 function drawWinXs(i, j, direction) {
-    //repeat four times because it's connect FOUR
-    if (resetButtonActive === false) {
-        return;
+  //repeat four times because it's connect FOUR
+  if (resetButtonActive === false) {
+    return;
+  }
+  for (var n = 1; n < 5; n++) {
+    //draw the X
+    ctx.drawImage(XXX, (bw / 7) * (i - 1), (bh / 6) * (j - 1), (bw / 7), (bh / 6));
+    //change the coordinate position based on which direction the win was
+    switch (direction) {
+      case "h":
+      i++;
+      break;
+      case "v":
+      j++;
+      break;
+      case "//":
+      j--;
+      i++;
+      break;
+      case "\\":
+      j++;
+      i++;
+      break;
     }
-    for (var n = 1; n < 5; n++) {
-        //draw the X
-        ctx.drawImage(XXX, (bw / 7) * (i - 1), (bh / 6) * (j - 1), (bw / 7), (bh / 6));
-        //change the coordinate position based on which direction the win was
-        switch (direction) {
-            case "h":
-                i++;
-                break;
-            case "v":
-                j++;
-                break;
-            case "//":
-                j--;
-                i++;
-                break;
-            case "\\":
-                j++;
-                i++;
-                break;
-        }
-    }
+  }
 }
 
 function drawBoard() {
-    ctx2.drawImage(board, 0, 0, bw, bh + (bh / 6));
+  ctx2.drawImage(board, 0, 0, bw, bh + (bh / 6));
 }
 
 function hoverChip(e) {
-    if (playerCanDropChips === false) {
-        return false;
-    }
-    var offset = $(this).offset();
-    var xPos = (e.pageX - offset.left);
-    var image = new Image();
+  if (playerCanDropChips === false) {
+    return false;
+  }
+  var offset = $(this).offset();
+  var xPos = (e.pageX - offset.left);
+  var image = new Image();
 
-    //Set the correct color chip to draw
-    image = currentTurn() === "red" ? redchip : bluechip;
+  //Set the correct color chip to draw
+  image = currentTurn() === "red" ? redchip : bluechip;
 
-    //draw the image of the chip to be dropped
-    for (var i = 1; i < 8; i++) {
-        if (xPos > ((i - 1) * (bw / 7)) && xPos < (i * (bw / 7)) && winner === false) {
-            ctx.clearRect(0, -(bh / 6), bw, (bh / 6));
-            ctx.drawImage(image, ((i - 1) * (bw / 7)), -(bh / 6), (bw / 7), (bh / 6));
-        }
+  //draw the image of the chip to be dropped
+  for (var i = 1; i < 8; i++) {
+    if (xPos > ((i - 1) * (bw / 7)) && xPos < (i * (bw / 7)) && winner === false) {
+      ctx.clearRect(0, -(bh / 6), bw, (bh / 6));
+      ctx.drawImage(image, ((i - 1) * (bw / 7)), -(bh / 6), (bw / 7), (bh / 6));
     }
+  }
 }
 
 function randomAI() {
-    setTimeout(function () {
-        //will try to drop the chip until successful
-        var column = Math.floor((Math.random() * 7) + 1);
-        while (!dropChip(column, currentTurn(), pos_array, false)) {
-            console.log("The AI just tried to drop a chip in column " + column + ", which is full. (What an idiot!)");
-            column = Math.floor((Math.random() * 7) + 1);
-        }
-        nextTurn();
-    }, AIDelay);
+  setTimeout(function () {
+    //will try to drop the chip until successful
+    var column = Math.floor((Math.random() * 7) + 1);
+    while (!dropChip(column, currentTurn(), pos_array, false)) {
+      console.log("The AI just tried to drop a chip in column " + column + ", which is full. (What an idiot!)");
+      column = Math.floor((Math.random() * 7) + 1);
+    }
+    nextTurn();
+  }, AIDelay);
 }
 
 function winningMoveAI() {
-    setTimeout(function () {
-        //decide chip dropping animation should play
-        var shouldNotAnimate = AIDelay <= maxMillisecondsToAnimateChipDropping;
-        //not completely necessary, but whatever
-        var column = makeTree(pos_array, Math.round(Math.log(30000)/Math.log(7 - possiblemoves(pos_array, false))), currentTurn(), currentTurn()) + 1;
-        if (winner === false) {
-            while (!dropChip(column, currentTurn(), pos_array, false, shouldNotAnimate)) {
-            }
-        }
-        else {
-            return;
-        }
-        nextTurn();
-    }, AIDelay);
+  setTimeout(function () {
+    //decide chip dropping animation should play
+    var shouldNotAnimate = AIDelay <= maxMillisecondsToAnimateChipDropping;
+    //not completely necessary, but whatever
+    var column = makeTree(pos_array, Math.round(Math.log(30000)/Math.log(7 - possiblemoves(pos_array, false))), currentTurn(), currentTurn()) + 1;
+    if (winner === false) {
+      while (!dropChip(column, currentTurn(), pos_array, false, shouldNotAnimate)) {
+      }
+    }
+    else {
+      return;
+    }
+    nextTurn();
+  }, AIDelay);
 }
 
 function possiblemoves(boardArray, arrayOrNo) {
-    var counter = 0;
-    possible = new Array(7);
-    for (var i = 1; i < 8; i++) {
-        var testingArray = copyArray(boardArray);
-        if (dropChip(i, currentTurn(), testingArray, true)) {
-            possible[i-1] = true;
-        }
-        else {
-            possible[i-1] = false;
-            counter++;
-        }
+  var counter = 0;
+  possible = new Array(7);
+  for (var i = 1; i < 8; i++) {
+    var testingArray = copyArray(boardArray);
+    if (dropChip(i, currentTurn(), testingArray, true)) {
+      possible[i-1] = true;
     }
-    if (counter === 7) {
-        return false;
-    } else if (arrayOrNo){
-      return possible;
-    } else {
-      return counter;
+    else {
+      possible[i-1] = false;
+      counter++;
     }
+  }
+  if (counter === 7) {
+    return false;
+  } else if (arrayOrNo){
+    return possible;
+  } else {
+    return counter;
+  }
 }
 
 function bestPossibleMove(boardArray) {
-    /*
-     * Order of importance:
-     *  -winning move
-     *  -blocking move
-     *  -random move while avoiding setting the next player up to win
-     */
-    //the column we will drop into will be random unless we find a better move
-    var potentialWinningMove = willCauseWin(boardArray, currentTurn());
+  /*
+  * Order of importance:
+  *  -winning move
+  *  -blocking move
+  *  -random move while avoiding setting the next player up to win
+  */
+  //the column we will drop into will be random unless we find a better move
+  var potentialWinningMove = willCauseWin(boardArray, currentTurn());
 
-    //if there's no winning move, let's check to see if we can block the other player
-    if (potentialWinningMove === -1) {
-        var potentialBlockingMove = willCauseWin(boardArray, oppositeOfCurrentTurn());
-        //if there is a blocking move, let's do that
-        if (potentialBlockingMove !== -1) {
-            console.log("Blocking move found at " + potentialBlockingMove);
-            return potentialBlockingMove;
-        }
-    } else {
-        //we have a winning move! let's drop there
-        console.log("Winning move found at " + potentialWinningMove);
-        return potentialWinningMove;
+  //if there's no winning move, let's check to see if we can block the other player
+  if (potentialWinningMove === -1) {
+    var potentialBlockingMove = willCauseWin(boardArray, oppositeOfCurrentTurn());
+    //if there is a blocking move, let's do that
+    if (potentialBlockingMove !== -1) {
+      console.log("Blocking move found at " + potentialBlockingMove);
+      return potentialBlockingMove;
     }
+  } else {
+    //we have a winning move! let's drop there
+    console.log("Winning move found at " + potentialWinningMove);
+    return potentialWinningMove;
+  }
 
-    //for every column current color can drop in, we will check if it will cause the other player to win
-    for (var i = 1; i <= 7; i++) {
-        var testingArray = copyArray(boardArray);
-        //if the column is not full
-        if (dropChip(i, currentTurn(), testingArray, true)) {
-            //check to see if the opponent has a winning move due to the drop we just made
-            var opponentWinningMoveColumn = willCauseWin(testingArray, oppositeOfCurrentTurn());
-            //if the opponent does have a winning move, take note of that in our array
-            if (opponentWinningMoveColumn !== -1) {
-                console.log(oppositeOfCurrentTurn() + ' will win by dropping in column '
-                        + opponentWinningMoveColumn + ' if ' + currentTurn() + ' drops in column ' + i);
-                avoid[i] = true;
-            } else {
-                avoid[i] = false;
-            }
-        }
+  //for every column current color can drop in, we will check if it will cause the other player to win
+  for (var i = 1; i <= 7; i++) {
+    var testingArray = copyArray(boardArray);
+    //if the column is not full
+    if (dropChip(i, currentTurn(), testingArray, true)) {
+      //check to see if the opponent has a winning move due to the drop we just made
+      var opponentWinningMoveColumn = willCauseWin(testingArray, oppositeOfCurrentTurn());
+      //if the opponent does have a winning move, take note of that in our array
+      if (opponentWinningMoveColumn !== -1) {
+        console.log(oppositeOfCurrentTurn() + ' will win by dropping in column '
+        + opponentWinningMoveColumn + ' if ' + currentTurn() + ' drops in column ' + i);
+        avoid[i] = true;
+      } else {
+        avoid[i] = false;
+      }
     }
+  }
 
-    //pick a random move, making sure to avoid columns found above
-    while (true) {
-        possiblemoves(pos_array, true);
-        var is_same = possible.length === avoid.length && possible.every(function (element, index) {
-            return element === avoid[index];
-        });
-        var potentialMove = Math.floor((Math.random() * 7) + 1);
-        //if we shouldn't avoid this particular move, then let's do it!
-        if (!avoid[potentialMove] || is_same === true) {
-            return potentialMove;
-        }
+  //pick a random move, making sure to avoid columns found above
+  while (true) {
+    possiblemoves(pos_array, true);
+    var is_same = possible.length === avoid.length && possible.every(function (element, index) {
+      return element === avoid[index];
+    });
+    var potentialMove = Math.floor((Math.random() * 7) + 1);
+    //if we shouldn't avoid this particular move, then let's do it!
+    if (!avoid[potentialMove] || is_same === true) {
+      return potentialMove;
     }
+  }
 }
 
 //returns -1 if no winning move found
 function willCauseWin(boardArray, color) {
-    //trying each column
-    for (var i = 1; i <= 7; i++) {
-        //copy actual array to our temporary array
-        //var aiArray = pos_array;
-        var aiArray = copyArray(boardArray);
-        //if our drop into the temporary array is successful, this is true
-        var dropChipSuccessful = dropChip(i, color, aiArray, true);
-        //if our drop caused our ai to win, this will be true
-        var isWinningMove = winCondition(aiArray, true);
-        if (dropChipSuccessful && isWinningMove) {
-            //we'll drop the chip there
-            return i;
-            //get outta here cause we already won!
-            break;
-        }
+  //trying each column
+  for (var i = 1; i <= 7; i++) {
+    //copy actual array to our temporary array
+    //var aiArray = pos_array;
+    var aiArray = copyArray(boardArray);
+    //if our drop into the temporary array is successful, this is true
+    var dropChipSuccessful = dropChip(i, color, aiArray, true);
+    //if our drop caused our ai to win, this will be true
+    var isWinningMove = winCondition(aiArray, true);
+    if (dropChipSuccessful && isWinningMove) {
+      //we'll drop the chip there
+      return i;
+      //get outta here cause we already won!
+      break;
     }
-    return -1;
+  }
+  return -1;
 }
 
 function boardScore(boardArray, color) {
@@ -787,56 +785,56 @@ function threeInRows(boardArray){
   var blueCounter = 0;
   //horizontal
   for (var i = 1; i < 6; i++) {
-      for (var j = 1; j < 7; j++) {
-          if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j] && boardArray[i][j] === boardArray[i + 2][j]) {
-            if (boardArray[i][j] === "red"){
-              redCounter++;
-            }
-            else {
-              blueCounter++;
-            }
-          }
+    for (var j = 1; j < 7; j++) {
+      if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j] && boardArray[i][j] === boardArray[i + 2][j]) {
+        if (boardArray[i][j] === "red"){
+          redCounter++;
+        }
+        else {
+          blueCounter++;
+        }
       }
+    }
   }
 
   //vertical
   for (var i = 1; i < 8; i++) {
-      for (var j = 1; j < 5; j++) {
-          if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i][j + 1] && boardArray[i][j] === boardArray[i][j + 2]) {
-            if (boardArray[i][j] === "red"){
-              redCounter++;
-            }
-            else {
-              blueCounter++;
-            }
-          }
+    for (var j = 1; j < 5; j++) {
+      if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i][j + 1] && boardArray[i][j] === boardArray[i][j + 2]) {
+        if (boardArray[i][j] === "red"){
+          redCounter++;
+        }
+        else {
+          blueCounter++;
+        }
       }
+    }
   }
   // /diagonals
   for (var i = 1; i < 6; i++) {
-      for (var j = 3; j < 7; j++) {
-          if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j - 1] && boardArray[i][j] === boardArray[i + 2][j - 2]) {
-            if (boardArray[i][j] === "red"){
-              redCounter++;
-            }
-            else {
-              blueCounter++;
-            }
-          }
+    for (var j = 3; j < 7; j++) {
+      if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j - 1] && boardArray[i][j] === boardArray[i + 2][j - 2]) {
+        if (boardArray[i][j] === "red"){
+          redCounter++;
+        }
+        else {
+          blueCounter++;
+        }
       }
+    }
   }
   // \diagonals
   for (var i = 1; i < 6; i++) {
-      for (var j = 1; j < 5; j++) {
-          if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j + 1] && boardArray[i][j] === boardArray[i + 2][j + 2]) {
-            if (boardArray[i][j] === "red"){
-              redCounter++;
-            }
-            else {
-              blueCounter++;
-            }
-          }
+    for (var j = 1; j < 5; j++) {
+      if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j + 1] && boardArray[i][j] === boardArray[i + 2][j + 2]) {
+        if (boardArray[i][j] === "red"){
+          redCounter++;
+        }
+        else {
+          blueCounter++;
+        }
       }
+    }
   }
 
   return {
@@ -850,56 +848,56 @@ function twoInRows(boardArray){
   var blueCounter = 0;
   //horizontal
   for (var i = 1; i < 7; i++) {
-      for (var j = 1; j < 7; j++) {
-          if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j]) {
-            if (boardArray[i][j] === "red"){
-              redCounter++;
-            }
-            else {
-              blueCounter++;
-            }
-          }
+    for (var j = 1; j < 7; j++) {
+      if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j]) {
+        if (boardArray[i][j] === "red"){
+          redCounter++;
+        }
+        else {
+          blueCounter++;
+        }
       }
+    }
   }
 
   //vertical
   for (var i = 1; i < 8; i++) {
-      for (var j = 1; j < 6; j++) {
-          if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i][j + 1]) {
-            if (boardArray[i][j] === "red"){
-              redCounter++;
-            }
-            else {
-              blueCounter++;
-            }
-          }
+    for (var j = 1; j < 6; j++) {
+      if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i][j + 1]) {
+        if (boardArray[i][j] === "red"){
+          redCounter++;
+        }
+        else {
+          blueCounter++;
+        }
       }
+    }
   }
   // /diagonals
   for (var i = 1; i < 7; i++) {
-      for (var j = 2; j < 7; j++) {
-          if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j - 1]) {
-            if (boardArray[i][j] === "red"){
-              redCounter++;
-            }
-            else {
-              blueCounter++;
-            }
-          }
+    for (var j = 2; j < 7; j++) {
+      if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j - 1]) {
+        if (boardArray[i][j] === "red"){
+          redCounter++;
+        }
+        else {
+          blueCounter++;
+        }
       }
+    }
   }
   // \diagonals
   for (var i = 1; i < 7; i++) {
-      for (var j = 1; j < 6; j++) {
-          if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j + 1]) {
-            if (boardArray[i][j] === "red"){
-              redCounter++;
-            }
-            else {
-              blueCounter++;
-            }
-          }
+    for (var j = 1; j < 6; j++) {
+      if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j + 1]) {
+        if (boardArray[i][j] === "red"){
+          redCounter++;
+        }
+        else {
+          blueCounter++;
+        }
       }
+    }
   }
 
   return {
@@ -956,284 +954,283 @@ function middleScorer(boardArray) {
       blueCounter += 5;
     }
   }
-    return {
-      redCount: redCounter,
-      blueCount: blueCounter
-    };
+  return {
+    redCount: redCounter,
+    blueCount: blueCounter
+  };
 }
 
 function copyArray(arrayToCopy) {
-    return arrayToCopy.map(function (arr) {
-        return arr.slice();
-    });
+  return arrayToCopy.map(function (arr) {
+    return arr.slice();
+  });
 }
 
 function currentTurn() {
-    if (moves % 2 === 0) {
-        return startingColor === "red" ? "blue" : "red";
-    }
-    else {
-        return startingColor;
-    }
+  if (moves % 2 === 0) {
+    return startingColor === "red" ? "blue" : "red";
+  }
+  else {
+    return startingColor;
+  }
 }
 
 function oppositeOfCurrentTurn() {
-    if (moves % 2 === 1) {
-        return startingColor === "red" ? "blue" : "red";
-    }
-    else {
-        return startingColor;
-    }
+  if (moves % 2 === 1) {
+    return startingColor === "red" ? "blue" : "red";
+  }
+  else {
+    return startingColor;
+  }
 }
 
 //returns who's turn it is now
 function advanceTurn() {
-    moves++;
-    return currentTurn();
+  moves++;
+  return currentTurn();
 }
 
 function assignColors() {
-    switch (gamemode) {
-        case 0: //local mulitplayer
-            //doesn't matter because it won't be checked in nextTurn
-            break;
-        case 1: //singleplayer
-            playersColor = "red";
-            opponentsColor = "blue";
-            break;
-        case 2: //p2p host
-            playersColor = "red";
-            opponentsColor = "blue";
-            break;
-        case 3: //p2p opponent
-            playersColor = "blue";
-            opponentsColor = "red";
-            break;
-    }
+  switch (gamemode) {
+    case 0: //local mulitplayer
+    //doesn't matter because it won't be checked in nextTurn
+    break;
+    case 1: //singleplayer
+    playersColor = "red";
+    opponentsColor = "blue";
+    break;
+    case 2: //p2p host
+    playersColor = "red";
+    opponentsColor = "blue";
+    break;
+    case 3: //p2p opponent
+    playersColor = "blue";
+    opponentsColor = "red";
+    break;
+  }
 }
 
 function setUpOnline(forcedPeerNum) {
-    var peerNum = forcedPeerNum || Math.floor(Math.random() * 900) + 100;
-    console.log("Peer id: " + peerNum);
-    peer = new Peer(peerNum, {key: 'fe7e2757-bbef-4456-a934-ae93385502b9'});
-    return peerNum;
+  var peerNum = forcedPeerNum || Math.floor(Math.random() * 900) + 100;
+  console.log("Peer id: " + peerNum);
+  peer = new Peer(peerNum, {key: 'fe7e2757-bbef-4456-a934-ae93385502b9'});
+  return peerNum;
 }
 
 function hostOnlineGame() {
-
-    //start new game
-    //alert("Your game number is " + peerNum);
-    if($('#popup').css('visibility') === "hidden") {
-      $("#LoadingAnimation").css('visibility', 'visible');
-    }
-    peer.on('connection', function (conn) {
-        connection = conn;
-        openConnection();
-        goToStart(2);
-    });
+  //start new game
+  //alert("Your game number is " + peerNum);
+  if($('#popup').css('visibility') === "hidden") {
+    $("#LoadingAnimation").css('visibility', 'visible');
+  }
+  peer.on('connection', function (conn) {
+    connection = conn;
+    openConnection();
+    goToStart(2);
+  });
 }
 
 function joinOnlineGame(gameNum) {
-    setUpOnline();
+  setUpOnline();
 
-    //join game
-    //var gameNum = window.prompt("Enter an game number to join");
-    $("#LoadingAnimation").css('visibility', 'visible');
-    connection = peer.connect(gameNum);
-    peer.on('error', function(err) {
-      if(err.type === 'peer-unavailable') {
-        Reset();
-        alert('Game does not exist.');
-      }
-    });
-    openConnection();
+  //join game
+  //var gameNum = window.prompt("Enter an game number to join");
+  $("#LoadingAnimation").css('visibility', 'visible');
+  connection = peer.connect(gameNum);
+  peer.on('error', function(err) {
+    if(err.type === 'peer-unavailable') {
+      Reset();
+      alert('Game does not exist.');
+    }
+  });
+  openConnection();
 }
 
 function multiplayerTurn() {
   //prevent duplicates
   if (!isMultiplayerTurnEventInPlace) {
     connection.on('data', function (data) {
-        console.log("Received " + data + " from peer");
-        //0 is sent when a player wants to play again and the game has been won
-        if (data === 0 && winner) {
-            receivePlayAgainRequest();
-        } else if (currentTurn() === opponentsColor) {
-            dropChip(data, currentTurn(), pos_array, false);
-            nextTurn();
-        }
+      console.log("Received " + data + " from peer");
+      //0 is sent when a player wants to play again and the game has been won
+      if (data === 0 && winner) {
+        receivePlayAgainRequest();
+      } else if (currentTurn() === opponentsColor) {
+        dropChip(data, currentTurn(), pos_array, false);
+        nextTurn();
+      }
     });
     isMultiplayerTurnEventInPlace = true;
   }
 }
 
 function sendMove(data) {
-    console.log("Sent " + data + " to peer");
-    connection.send(data);
+  console.log("Sent " + data + " to peer");
+  connection.send(data);
 }
 
 function openConnection() {
-    connection.on('open', function () {
-        console.log("Connection open");
-        $("#LoadingAnimation").css('visibility', 'hidden');
-        playerCanDropChips = currentTurn() === playersColor;
-        $('#host').click();
+  connection.on('open', function () {
+    console.log("Connection open");
+    $("#LoadingAnimation").css('visibility', 'hidden');
+    playerCanDropChips = currentTurn() === playersColor;
+    $('#host').click();
 
-        //tell the opponent our name
-        if (gamemode === 3 && urlParams.name) {
-          sendMove('name:' + urlParams.name);
+    //tell the opponent our name
+    if (gamemode === 3 && urlParams.name) {
+      sendMove('name:' + urlParams.name);
+    }
+
+    //set up to receive name from opponent if we're the host
+    if (gamemode === 2) {
+      connection.on('data', function (data) {
+        if (typeof data === 'string' && data.startsWith('name:')) {
+          var opponentName = data.split(':')[1];
+          popupPlayerName(opponentName);
         }
+      });
+    }
+  });
 
-        //set up to receive name from opponent if we're the host
-        if (gamemode === 2) {
-          connection.on('data', function (data) {
-              if (typeof data === 'string' && data.startsWith('name:')) {
-                  var opponentName = data.split(':')[1];
-                  popupPlayerName(opponentName);
-              }
-          });
-        }
-    });
+  connection.on('close', function () {
+    //make sure that the person who clicked the reset button doesn't
+    //  get this message
+    if (resetButtonActive) {
+      console.log('Connection lost');
+      popupConnectionLost();
 
-    connection.on('close', function () {
-      //make sure that the person who clicked the reset button doesn't
-      //  get this message
-      if (resetButtonActive) {
-        console.log('Connection lost');
-        popupConnectionLost();
-
-        Reset();
-      }
-    });
+      Reset();
+    }
+  });
 }
 
 function closeConnection() {
-    if (gamemode === 2 || gamemode === 3) {
-        try {
-            peer.destroy();
-            connection.close();
-            isMultiplayerTurnEventInPlace = false;
-        } catch (err) {
-            console.log("error closing connection");
-        }
+  if (gamemode === 2 || gamemode === 3) {
+    try {
+      peer.destroy();
+      connection.close();
+      isMultiplayerTurnEventInPlace = false;
+    } catch (err) {
+      console.log("error closing connection");
     }
+  }
 }
 
 function blurBackground(tf) {
-    if (tf) {
-        $("#game").css("WebkitFilter", "blur(" + blur + "px)");
-        $("#game").css("-moz-filter", "blur(" + blur + "px)");
-        $("#game").css("filter", "blur(" + blur + "px)");
-    } else {
-        $("#game").css("WebkitFilter", "blur(0px)");
-        $("#game").css("-moz-filter", "blur(0px)");
-        $("#game").css("filter", "blur(0px)");
-    }
+  if (tf) {
+    $("#game").css("WebkitFilter", "blur(" + blur + "px)");
+    $("#game").css("-moz-filter", "blur(" + blur + "px)");
+    $("#game").css("filter", "blur(" + blur + "px)");
+  } else {
+    $("#game").css("WebkitFilter", "blur(0px)");
+    $("#game").css("-moz-filter", "blur(0px)");
+    $("#game").css("filter", "blur(0px)");
+  }
 }
 
 function gamemodeSelector() {
-    var peerNum = setUpOnline();
-    blurBackground(true);
-    $("#popup").css("visibility", "visible");
-    $("#reset").css("visibility", "hidden");
-    $("#single").click(function () {
-        goToStart(1);
-    });
+  var peerNum = setUpOnline();
+  blurBackground(true);
+  $("#popup").css("visibility", "visible");
+  $("#reset").css("visibility", "hidden");
+  $("#single").click(function () {
+    goToStart(1);
+  });
 
-    $("#local").click(function () {
-        goToStart(0);
-    });
+  $("#local").click(function () {
+    goToStart(0);
+  });
 
-    $("#host").click(function () {
-        hostOnlineGame();
-        //goToStart is called within hostOnlineGame
-    });
+  $("#host").click(function () {
+    hostOnlineGame();
+    //goToStart is called within hostOnlineGame
+  });
 
-    //join game popup
-    $('#join').popup({
-        popup: $('#joinpop'),
-        on: 'click',
-        closeable: true,
-        position: 'bottom center'
-    });
+  //join game popup
+  $('#join').popup({
+    popup: $('#joinpop'),
+    on: 'click',
+    closeable: true,
+    position: 'bottom center'
+  });
 
-    $('#aivsai').popup({
-        popup: $('#aipop'),
-        on: 'click',
-        closeable: true,
-        position: 'bottom center'
-    });
+  $('#aivsai').popup({
+    popup: $('#aipop'),
+    on: 'click',
+    closeable: true,
+    position: 'bottom center'
+  });
 
-    $("#gamenum").html("Your game number is " + peerNum);
+  $("#gamenum").html("Your game number is " + peerNum);
 
-    $('#host').popup({
-        popup: $('#hostpop'),
-        on: 'click',
-        closeable: true,
-        position: 'bottom center'
-    });
+  $('#host').popup({
+    popup: $('#hostpop'),
+    on: 'click',
+    closeable: true,
+    position: 'bottom center'
+  });
 
-    function startJoin() {
-        //get the game number from the input box in the popup and send
-        //it to the join online game function
-        var gn = $('#joinin').val();
+  function startJoin() {
+    //get the game number from the input box in the popup and send
+    //it to the join online game function
+    var gn = $('#joinin').val();
 
-        //simulates clicking join online game button to close the popup
-        $('#join').click();
+    //simulates clicking join online game button to close the popup
+    $('#join').click();
 
-        joinOnlineGame(gn);
-        goToStart(3);
+    joinOnlineGame(gn);
+    goToStart(3);
+  }
+
+  function startAI () {
+    //get the delay from the input box in the popup and send
+    //it to the join online game function
+    var aid = $('#aiin').val();
+
+    //simulates clicking join online game button to close the popup
+    $('#aivsai').click();
+
+    AIDelay = aid;
+    goToStart(4);
+  }
+
+  $("#joinbut").click(startJoin);
+
+  //checks for enter key press on input box
+  $('#joinin').keypress(function (e) {
+    if (e.which == 13) {
+      startJoin();
+      return false;
     }
+  });
 
-    function startAI () {
-        //get the delay from the input box in the popup and send
-        //it to the join online game function
-        var aid = $('#aiin').val();
+  $("#aibut").click(startAI);
 
-        //simulates clicking join online game button to close the popup
-        $('#aivsai').click();
-
-        AIDelay = aid;
-        goToStart(4);
+  //checks for enter key press on input box
+  $('#aiin').keypress(function (e) {
+    if (e.which == 13) {
+      startAI();
+      return false;
     }
-
-    $("#joinbut").click(startJoin);
-
-    //checks for enter key press on input box
-    $('#joinin').keypress(function (e) {
-      if (e.which == 13) {
-        startJoin();
-        return false;
-      }
-    });
-
-    $("#aibut").click(startAI);
-
-    //checks for enter key press on input box
-    $('#aiin').keypress(function (e) {
-      if (e.which == 13) {
-        startAI();
-        return false;
-      }
-    });
+  });
 }
 
 function goToStart(gm) {
-    $("#single").unbind("click");
-    $("#local").unbind("click");
-    $("#host").unbind("click");
-    $("#joinbut").unbind("click");
-    $("#aibut").unbind("click");
-    $("#popup").css("visibility", "hidden");
-    $("#reset").css("visibility", "visible");
-    start(gm);
+  $("#single").unbind("click");
+  $("#local").unbind("click");
+  $("#host").unbind("click");
+  $("#joinbut").unbind("click");
+  $("#aibut").unbind("click");
+  $("#popup").css("visibility", "hidden");
+  $("#reset").css("visibility", "visible");
+  start(gm);
 }
 
 function popupPlayerName(name) {
-    alert('You are now playing with ' + name + '.');
+  alert('You are now playing with ' + name + '.');
 }
 
 function popupConnectionLost() {
-    alert('Your opponent ended the match.');
+  alert('Your opponent ended the match.');
 }
 
 function getOppositeColor(color) {
@@ -1241,36 +1238,36 @@ function getOppositeColor(color) {
 }
 
 function Tree(board, depth) {
-	this.depth = depth;
-	this.path = new Array();
+  this.depth = depth;
+  this.path = new Array();
 
-	//generate the tree
-	this.tree = new Node();
-	this.tree.setChildren(generateChildren(board, this.depth, currentTurn(), this.depth));
+  //generate the tree
+  this.tree = new Node();
+  this.tree.setChildren(generateChildren(board, this.depth, currentTurn(), this.depth));
 
-	function generateChildren(boardArray, depth, color, initDepth) {
+  function generateChildren(boardArray, depth, color, initDepth) {
     var children = [];
-		//for each child we need to create
-		for (var i = 1; i < 8; i++) {
+    //for each child we need to create
+    for (var i = 1; i < 8; i++) {
       var aiArray = copyArray(boardArray);
       if (dropChip(i, color, aiArray, true)) {
-			  var newChild = new Node();
-			  if (depth > 1) {
-				  newChild.setChildren(generateChildren(aiArray, depth-1, getOppositeColor(color), initDepth));
-			  } else {
+        var newChild = new Node();
+        if (depth > 1) {
+          newChild.setChildren(generateChildren(aiArray, depth-1, getOppositeColor(color), initDepth));
+        } else {
           newChild.setScore(boardScore(aiArray, currentTurn()));
-			  }
+        }
 
-			//add it to the array
-			children.push(newChild);
-		  }
+        //add it to the array
+        children.push(newChild);
+      }
       else {
         var newChild = new Node();
         newChild.setScore(null);
         children.push(newChild);
       }
     }
-		return children;
+    return children;
   }
 }
 
@@ -1283,16 +1280,16 @@ Tree.prototype.getBestValue = function(colorToMax, currentColor) {
       });
     }
   }
-	return mm;
+  return mm;
 }
 
 Tree.prototype.minmax = function(node, depth, colorToMax, currentColor) {
-	if (depth == 0 || !("children" in node)) {
+  if (depth == 0 || !("children" in node)) {
     return {
       score: node.score,
       depth: depth
     }
-	}
+  }
   var best_value, v;
   if (colorToMax === currentColor) {
     //maximizing player
@@ -1380,11 +1377,11 @@ Tree.prototype.bestMove = function(tree, best) {
 function Node() {}
 
 Node.prototype.setChildren = function(children) {
-	this.children = children;
+  this.children = children;
 }
 
 Node.prototype.setScore = function(score) {
-	this.score = score;
+  this.score = score;
 }
 
 function makeTree(board, depth, colorToMax, currentColor) {
