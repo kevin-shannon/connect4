@@ -337,15 +337,20 @@ function drawChip(x, y, chipColor, noAnimation) {
       }
       else {
         chip.y = y;
+        setTimeout(function () {
+          ctx.drawImage(chipImage, chip.x, chip.y, chip.width, chip.height);
+        }, 50);
       }
       ctx.clearRect(x, (chip.y - (bh / 6)), (bw / 7), ((bh / 6) + (bh / 12)));
       ctx.drawImage(chipImage, chip.x, chip.y, chip.width, chip.height);
     }
   } else {
     ctx.drawImage(chipImage, chip.x, y, chip.width, chip.height);
+    setTimeout(function () {
+      ctx.drawImage(chipImage, chip.x, y, chip.width, chip.height);
+    }, 50);
   }
 }
-
 
 function Reset() {
 
@@ -423,14 +428,16 @@ function hidePlayAgainPopup() {
 
 function resetBoard() {
   console.log("Resetting game");
-
   pos_array.length = 0;
-  ctx.clearRect(0, -(bh / 6), bw, bh + (bh / 6));
   pos_array = fillArray();
   winner = false;
   moves = 0;
   playerCanDropChips = false;
   resetButtonActive = false;
+  ctx.clearRect(0, -(bh / 6), bw, bh + (bh / 6));
+  setTimeout(function () {
+    ctx.clearRect(0, -(bh / 6), bw, bh + (bh / 6));
+  }, 45);
 }
 
 function fillArray() {
