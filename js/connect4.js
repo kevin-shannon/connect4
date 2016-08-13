@@ -33,7 +33,7 @@ var wantToPlayAgain = false;
 var isMultiplayerTurnEventInPlace = false;
 
 //colors and design
-var startingColor = "red";
+var startingColor = ["red", "blue"][Math.floor(Math.random() * 2)];
 var playersColor;
 var opponentsColor;
 var blur = 4;
@@ -165,7 +165,9 @@ function start(gm) {
 
 //assign colors to players
 assignColors();
-
+if (gm !== 2 && gm !== 3){
+  startingColor = ["red", "blue"][Math.floor(Math.random() * 2)];
+}
 //get the pos_array ready for some epic connect4 action
 pos_array = fillArray();
 
@@ -1007,10 +1009,12 @@ function assignColors() {
     opponentsColor = "blue";
     break;
     case 2: //p2p host
+    startingColor = "red"
     playersColor = "red";
     opponentsColor = "blue";
     break;
     case 3: //p2p opponent
+    startingColor = "red"
     playersColor = "blue";
     opponentsColor = "red";
     break;
