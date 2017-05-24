@@ -53,6 +53,10 @@ var chipCanvas = $('#chips').get(0).getContext("2d");
 chipCanvas.translate(0, (bw / 7));
 var boardCanvas = $('#board').get(0).getContext("2d");
 
+$(window).on('resize', function(){
+  makeCanvasAndItsContainerTheSameSize();
+});
+
 //logic globals (these are bad practice and will probably have to be replaced)
 var pos_array;
 var possible = new Array(7);
@@ -85,6 +89,9 @@ $(window).on("load", drawBoard);
 
 //Ran when the site is fully loaded
 $(document).ready(function () {
+
+  //or else everything will be under the canvas
+  makeCanvasAndItsContainerTheSameSize();
 
   //Ran when user clicks on the canvas
   $('canvas').click(click);
@@ -599,6 +606,11 @@ function drawWinXs(i, j, direction) {
 
 function drawBoard() {
   boardCanvas.drawImage(board, 0, 0, 300, 300);
+}
+
+function makeCanvasAndItsContainerTheSameSize() {
+  var canvasHeight = document.getElementById('board').scrollHeight;
+  $('.canvasContainer').height(canvasHeight);
 }
 
 function hoverChip(e) {
