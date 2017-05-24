@@ -49,17 +49,9 @@ else {
 }
 
 //canvases
-var canvas = $('<canvas/>').attr({
-  width: bw,
-  height: bh + (bh / 6)
-}).appendTo('#game');
-var ctx = canvas.get(0).getContext("2d");
-ctx.translate(0, (bw / 7));
-var canvas2 = $('<canvas/>').attr({
-  width: bw,
-  height: bw
-}).appendTo('#game');
-var ctx2 = canvas2.get(0).getContext("2d");
+var chipCanvas = $('#chips').get(0).getContext("2d");
+chipCanvas.translate(0, (bw / 7));
+var boardCanvas = $('#board').get(0).getContext("2d");
 
 //logic globals (these are bad practice and will probably have to be replaced)
 var pos_array;
@@ -318,11 +310,11 @@ function drawChip(x, y, chipColor, noAnimation) {
     })();
 
     //initial call, and recurs until the chip drops all the way
-    animate(chip, canvas, ctx, startTime);
+    animate(chip, canvas, chipCanvas, startTime);
 
-    function animate(chip, canvas, ctx, startTime) {
+    function animate(chip, canvas, chipCanvas, startTime) {
       if (resetButtonActive === false) {
-        ctx.clearRect(0, -(bh / 6), bw, bh + (bh / 6));
+        chipCanvas.clearRect(0, -(bh / 6), bw, bh + (bh / 6));
         return;
       }
       // update
@@ -334,22 +326,22 @@ function drawChip(x, y, chipColor, noAnimation) {
         chip.y = newY;
         // request new frame
         requestAnimFrame(function () {
-          animate(chip, canvas, ctx, startTime);
+          animate(chip, canvas, chipCanvas, startTime);
         });
       }
       else {
         chip.y = y;
         setTimeout(function () {
-          ctx.drawImage(chipImage, chip.x, chip.y, chip.width, chip.height);
+          chipCanvas.drawImage(chipImage, chip.x, chip.y, chip.width, chip.height);
         }, 50);
       }
-      ctx.clearRect(x, (chip.y - (bh / 6)), (bw / 7), ((bh / 6) + (bh / 12)));
-      ctx.drawImage(chipImage, chip.x, chip.y, chip.width, chip.height);
+      chipCanvas.clearRect(x, (chip.y - (bh / 6)), (bw / 7), ((bh / 6) + (bh / 12)));
+      chipCanvas.drawImage(chipImage, chip.x, chip.y, chip.width, chip.height);
     }
   } else {
-    ctx.drawImage(chipImage, chip.x, y, chip.width, chip.height);
+    chipCanvas.drawImage(chipImage, chip.x, y, chip.width, chip.height);
     setTimeout(function () {
-      ctx.drawImage(chipImage, chip.x, y, chip.width, chip.height);
+      chipCanvas.drawImage(chipImage, chip.x, y, chip.width, chip.height);
     }, 50);
   }
 }
@@ -436,9 +428,9 @@ function resetBoard() {
   moves = 0;
   playerCanDropChips = false;
   resetButtonActive = false;
-  ctx.clearRect(0, -(bh / 6), bw, bh + (bh / 6));
+  chipCanvas.clearRect(0, -(bh / 6), bw, bh + (bh / 6));
   setTimeout(function () {
-    ctx.clearRect(0, -(bh / 6), bw, bh + (bh / 6));
+    chipCanvas.clearRect(0, -(bh / 6), bw, bh + (bh / 6));
   }, 45);
 }
 
@@ -504,7 +496,7 @@ function winCondition(boardArray, AICheck) {
       console.log("the game is a draw");
       winner = true;
       setTimeout(function () {
-        ctx.drawImage(draw, (3 * bw / 10), -(bh / 6), (bw / 2.5), (bh / 6));
+        chipCanvas.drawImage(draw, (3 * bw / 10), -(bh / 6), (bw / 2.5), (bh / 6));
       }, 450);
       displayPlay();
     }
@@ -573,7 +565,7 @@ function drawWinBanner(color) {
 
   //draw that sucker
   if (resetButtonActive === true) {
-    ctx.drawImage(bannerImage, (bw / 6), -(bh / 6), (bw / 1.5), (bh / 6));
+    chipCanvas.drawImage(bannerImage, (bw / 6), -(bh / 6), (bw / 1.5), (bh / 6));
   }
 }
 
@@ -584,7 +576,7 @@ function drawWinXs(i, j, direction) {
   }
   for (var n = 1; n < 5; n++) {
     //draw the X
-    ctx.drawImage(XXX, (bw / 7) * (i - 1), (bh / 6) * (j - 1), (bw / 7), (bh / 6));
+    chipCanvas.drawImage(XXX, (bw / 7) * (i - 1), (bh / 6) * (j - 1), (bw / 7), (bh / 6));
     //change the coordinate position based on which direction the win was
     switch (direction) {
       case "h":
@@ -606,7 +598,7 @@ function drawWinXs(i, j, direction) {
 }
 
 function drawBoard() {
-  ctx2.drawImage(board, 0, 0, bw, bh + (bh / 6));
+  boardCanvas.drawImage(board, 0, 0, 300, 300);
 }
 
 function hoverChip(e) {
@@ -623,8 +615,8 @@ function hoverChip(e) {
   //draw the image of the chip to be dropped
   for (var i = 1; i < 8; i++) {
     if (xPos > ((i - 1) * (bw / 7)) && xPos < (i * (bw / 7)) && winner === false) {
-      ctx.clearRect(0, -(bh / 6), bw, (bh / 6));
-      ctx.drawImage(image, ((i - 1) * (bw / 7)), -(bh / 6), (bw / 7), (bh / 6));
+      chipCanvas.clearRect(0, -(bh / 6), bw, (bh / 6));
+      chipCanvas.drawImage(image, ((i - 1) * (bw / 7)), -(bh / 6), (bw / 7), (bh / 6));
     }
   }
 }
@@ -1157,27 +1149,30 @@ function gamemodeSelector() {
   });
 
   //join game popup
-  $('#join').popup({
-    popup: $('#joinpop'),
-    on: 'click',
-    closeable: true,
-    position: 'bottom center'
+  $('#join').popover({
+    html : true,
+    content: function() {
+      return $('#joinpop').html();
+    },
+    placement: 'bottom'
   });
 
-  $('#aivsai').popup({
-    popup: $('#aipop'),
-    on: 'click',
-    closeable: true,
-    position: 'bottom center'
+  $('#aivsai').popover({
+    html : true,
+    content: function() {
+      return $('#aipop').html();
+    },
+    placement: 'bottom'
   });
 
   $("#gamenum").html("Your game number is " + peerNum);
 
-  $('#host').popup({
-    popup: $('#hostpop'),
-    on: 'click',
-    closeable: true,
-    position: 'bottom center'
+  $('#host').popover({
+    html : true,
+    content: function() {
+      return $('#hostpop').html();
+    },
+    placement: 'bottom'
   });
 
   function startJoin() {

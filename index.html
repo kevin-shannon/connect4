@@ -15,7 +15,17 @@
   <body>
     <h1>Connect 4 Bootstrap Test</h1>
 
-    <div id="game">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-2"></div>
+        <div class="col-lg-8">
+          <div id="game">
+            <canvas id="chips" width="300" height="300"></canvas>
+            <canvas id="board" width="300" height="300"></canvas>
+          </div>
+        </div>
+        <div class="col-lg-2"></div>
+      </div>
     </div>
 
     <!-- jQuery first, then Tether, then Bootstrap JS. -->
