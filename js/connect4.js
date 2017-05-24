@@ -39,14 +39,9 @@ var opponentsColor;
 var blur = 4;
 
 //board dimensions
-if ($(window).width() < $(window).height()) {
-  var bw = $(window).width() / 1.5;
-  var bh = $(window).width() * 4 / 7;
-}
-else {
-  var bw = $(window).width() / 2.5;   // sets board width
-  var bh = $(window).width() * 12 / 35;  // sets board height
-}
+var bw = $('#chips').get(0).width;
+var bh = $('#chips').get(0).height;
+bh =  bh - (43/300) * bh;
 
 //canvases
 var chipCanvas = $('#chips').get(0).getContext("2d");
@@ -314,9 +309,9 @@ function drawChip(x, y, chipColor, noAnimation) {
     })();
 
     //initial call, and recurs until the chip drops all the way
-    animate(chip, canvas, chipCanvas, startTime);
+    animate(chip, chipCanvas, startTime);
 
-    function animate(chip, canvas, chipCanvas, startTime) {
+    function animate(chip, chipCanvas, startTime) {
       if (resetButtonActive === false) {
         chipCanvas.clearRect(0, -(bh / 6), bw, bh + (bh / 6));
         return;
@@ -330,7 +325,7 @@ function drawChip(x, y, chipColor, noAnimation) {
         chip.y = newY;
         // request new frame
         requestAnimFrame(function () {
-          animate(chip, canvas, chipCanvas, startTime);
+          animate(chip, chipCanvas, startTime);
         });
       }
       else {
@@ -602,7 +597,7 @@ function drawWinXs(i, j, direction) {
 }
 
 function drawBoard() {
-  boardCanvas.drawImage(board, 0, 0, 300, 300);
+  boardCanvas.drawImage(board, 0, 0, bw, bh + (bh / 6));
 }
 
 function makeCanvasAndItsContainerTheSameSize() {
@@ -1218,13 +1213,14 @@ function gamemodeSelector() {
 }
 
 function goToStart(gm) {
-  $("#single").unbind("click");
+  /*$("#single").unbind("click");
   $("#local").unbind("click");
   $("#host").unbind("click");
   $("#joinbut").unbind("click");
   $("#aibut").unbind("click");
   $("#popup").css("visibility", "hidden");
-  $("#reset").css("visibility", "visible");
+  $("#reset").css("visibility", "visible");*/
+  $('#gamemodeSelector').modal('hide');
   start(gm);
 }
 
