@@ -170,9 +170,6 @@ if (gm !== 2 && gm !== 3){
 //get the pos_array ready for some epic connect4 action
 pos_array = fillArray();
 
-//unblur background
-blurBackground(false);
-
 //activate reset button
 resetButtonActive = true;
 
@@ -1130,23 +1127,11 @@ function closeConnection() {
   }
 }
 
-function blurBackground(tf) {
-  if (tf) {
-    $("#game").css("WebkitFilter", "blur(" + blur + "px)");
-    $("#game").css("-moz-filter", "blur(" + blur + "px)");
-    $("#game").css("filter", "blur(" + blur + "px)");
-  } else {
-    $("#game").css("WebkitFilter", "blur(0px)");
-    $("#game").css("-moz-filter", "blur(0px)");
-    $("#game").css("filter", "blur(0px)");
-  }
-}
-
 function gamemodeSelector() {
   var peerNum = setUpOnline();
-  blurBackground(true);
-  $("#popup").css("visibility", "visible");
-  $("#reset").css("visibility", "hidden");
+
+  $('#gamemodeSelector').modal('show');
+
   $("#single").click(function () {
     goToStart(1);
   });

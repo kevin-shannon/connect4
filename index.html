@@ -13,7 +13,6 @@
 
   </head>
   <body>
-    <h1>Connect 4 Bootstrap Test</h1>
 
     <div class="container">
       <div class="row">
@@ -31,6 +30,23 @@
           <button type="button" class="btn btn-primary" onclick="Reset()">
             Reset
           </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="gamemodeSelector" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header mx-auto">
+            <h5 class="modal-title">Connect 4</h5>
+          </div>
+          <div class="modal-body mx-auto" style="text-align:center;">
+            <button type="button" class="btn btn-primary" id="single">Single Player</button>
+            <button type="button" class="btn btn-primary" id="local">Local Multiplayer</button>
+            <button type="button" class="btn btn-primary" id="aivsai">AI vs AI</button>
+            <button type="button" class="btn btn-primary" id="host">Host Online Game</button>
+            <button type="button" class="btn btn-primary" id="join">Join Online Game</button>
+          </div>
         </div>
       </div>
     </div>
