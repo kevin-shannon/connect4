@@ -1,69 +1,29 @@
 <!DOCTYPE html>
-<head>
-  <title>Connect 4</title>
-  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.0.8/semantic.min.css">
-  <link rel="shortcut icon" type="image/ico" href="img/favicon.ico"/>
-  <link rel="stylesheet" type="text/css" href="css/connect4.css">
-</head>
-<body>
-  <div id="TurnDiv"><img id="redturnIn" class="noselect" src="img/bestchipred.png" width="120px" height="120px">
-    <img id="blueturnIn" class="noselect" src="img/bestchipblue.png" width="120px" height="120px">
-    <p id="redVic" class="noselect">0</p><p id="blueVic" class="noselect">0</p></div>
-    <img id="LoadingAnimation" class="noselect" src="img/spiningchip.gif" width="120px" height="120px"></img>
-    <div id="popup" style="text-align:center;">
-      <div id="titlebox" class="noselect"><img src="img/connect-4-logo.png" alt="" ondragstart="return false;"/></div>
-      <div class="ui divider"></div>
-      <div id="gamemodebuttons">
-        <button id="single" class="ui primary button">single player</button>
-        <button id="local" class="ui primary button">local multiplayer</button>
-        <button id="aivsai" class="ui primary button">ai vs ai</button></br>
-        <button id="host" class="ui primary button">host online game</button>
-        <button id="join" class="ui primary button" title="Join game">join online game</button>
-        <div id="joinpop" class="ui popup">
-          <div class="ui divided equal width relaxed center aligned choice grid" style="display: flex;">
-            <div class="framework column">
-              <h4 class="ui center aligned header">Enter game number:</h4>
-              <div class="ui input">
-                <input id="joinin" type="text" placeholder="Game number">
-              </div>
-              <div id="joinbut" class="ui primary fluid button">Play</div>
-            </div>
-          </div>
-        </div>
-        <div id="hostpop" class="ui popup">
-          <div class="ui divided equal width relaxed center aligned choice grid" style="display: flex;">
-            <div class="framework column">
-              <h4 id="gamenum" class="ui center aligned header"></h4>
-            </div>
-          </div>
-        </div>
-        <div id="aipop" class="ui popup">
-          <div class="ui divided equal width relaxed center aligned choice grid" style="display: flex;">
-            <div class="framework column">
-              <h4 class="ui center aligned header">Enter AI delay:</h4>
-              <div class="ui input">
-                <input id="aiin" type="text" placeholder="milliseconds">
-              </div>
-              <br><br>
-              <div id="aivsaicb" class="ui checkbox">
-                <input type="checkbox">
-                <label>Auto Play Again</label>
-              </div>
-              <br><br>
-              <div id="aibut" class="ui primary fluid button">Play</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div id="playpop" style="text-align:center;">
-      <button id="play" class="huge ui red button">Play Again?!</button>
-    </div>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+
+    <link rel="shortcut icon" type="image/ico" href="img/favicon.ico"/>
+    <link rel="stylesheet" type="text/css" href="css/connect4.css">
+
+  </head>
+  <body>
+    <h1>Connect 4 Bootstrap Test</h1>
+
     <div id="game">
-      <div id="reset"><a class="butt" onclick="Reset()">reset</a></div>
-      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.0.8/semantic.min.js" type="text/javascript"></script>
-      <script src="https://skyway.io/dist/0.3/peer.js"></script>
-      <script src="js/connect4.js"></script>
     </div>
+
+    <!-- jQuery first, then Tether, then Bootstrap JS. -->
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+
+    <script src="https://skyway.io/dist/0.3/peer.js"></script>
+    <script src="js/connect4.js"></script>
   </body>
+</html>
