@@ -19,3 +19,7 @@
 #playAgainButton {
   display: none;
 }
+
+.popup {
+  display: none;
+}

@@ -525,7 +525,7 @@ function win(i, j, direction) {
 function displayPlay() {
 
   if (gamemode === 4) {
-    var shouldAutoPlayAgain = $('#aivsaicb').checkbox('is checked');
+    var shouldAutoPlayAgain = $('#aivsaicb').prop('checked');
     if (shouldAutoPlayAgain) {
       setTimeout(function () {
         resetBoard();
@@ -1155,27 +1155,11 @@ function gamemodeSelector() {
     //goToStart is called within hostOnlineGame
   });
 
-  //join game popup
-  $('#join').popover({
-    html : true,
-    content: function() {
-      return $('#joinpop').html();
-    },
-    placement: 'bottom'
-  });
-
-  $('#aivsai').popover({
-    html : true,
-    content: function() {
-      return $('#aipop').html();
-    },
-    placement: 'bottom'
-  });
-
   $("#gamenum").html("Your game number is " + peerNum);
 
   $('#host').popover({
     html : true,
+    trigger: 'hover',
     content: function() {
       return $('#hostpop').html();
     },
