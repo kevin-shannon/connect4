@@ -31,3 +31,7 @@
 .chipIndicator {
   visibility: hidden;
 }
+
+#loading {
+  margin: 64px;
+}

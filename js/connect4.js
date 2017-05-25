@@ -108,6 +108,10 @@ $(document).ready(function () {
     joinOnlineGame(urlParams.join);
     goToStart(3);
   } else {
+
+    //hide the loading screen
+    $('#loading').hide();
+
     //popup the gamemode selector
     gamemodeSelector();
   }
