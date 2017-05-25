@@ -2,6 +2,7 @@
   width:100%;
   margin:0 auto;
   position: relative;
+  font-family: 'Open Sans', sans-serif;
 }
 
 .canvasContainer canvas {
@@ -14,6 +15,8 @@
 
 .btn {
   margin: .25em;
+  font-size: 1em;
+  font-family: 'Open Sans', sans-serif;
 }
 
 #playAgainButton {

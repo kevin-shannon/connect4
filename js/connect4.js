@@ -39,7 +39,7 @@ var opponentsColor;
 var blur = 4;
 
 //board dimensions
-var bw = Math.round(($(window).width()*$(window).height())/($(window).width()+$(window).height()))*2;
+var bw = 1400;
 var bh = bw * (6/7);
 
 //canvases
@@ -805,8 +805,8 @@ function boardScore(boardArray, color) {
     score = Number.NEGATIVE_INFINITY;
   }
   else {
-    redscore += 150 * redThreeInRows + 50 * redTwoInRows + redMid;
-    bluescore += 150 * blueThreeInRows +  50 * blueTwoInRows + blueMid;
+    redscore += 100 * redThreeInRows + 50 * redTwoInRows + redMid;
+    bluescore += 100 * blueThreeInRows +  50 * blueTwoInRows + blueMid;
     if (color === "red") {
       score = redscore - bluescore;
     }

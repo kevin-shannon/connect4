@@ -10,6 +10,7 @@
 
     <link rel="shortcut icon" type="image/ico" href="img/favicon.ico"/>
     <link rel="stylesheet" type="text/css" href="css/connect4.css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 
   </head>
   <body>
@@ -26,22 +27,22 @@
         <div class="col-lg-2"></div>
       </div>
       <div class="row">
-          <div class="col">
-            <img id="redturnIn" src="img/bestchipred.png" class="chipIndicator img-fluid float-left">
-            <p id="redVic" class="chipIndicator">0</p>
-          </div>
-          <div class="col mx-auto text-center">
-            <button type="button" class="btn btn-primary" id="resetButton" onclick="Reset()">
-              Reset
-            </button>
-            <button type="button" class="btn btn-danger" id="playAgainButton">
-              Play Again
-            </button>
-          </div>
-          <div class="col">
-            <img id="blueturnIn" src="img/bestchipblue.png" class="chipIndicator img-fluid float-right">
-            <p id="blueVic" class="chipIndicator float-right">0</p>
-          </div>
+        <div class="col">
+          <img id="redturnIn" src="img/bestchipred.png" class="chipIndicator img-fluid float-left">
+          <p id="redVic" class="chipIndicator">0</p>
+        </div>
+        <div class="col mx-auto my-auto text-center">
+          <button type="button" class="btn btn-primary" id="resetButton" onclick="Reset()">
+            Reset
+          </button>
+          <button type="button" class="btn btn-danger" id="playAgainButton">
+            Play Again
+          </button>
+        </div>
+        <div class="col">
+          <img id="blueturnIn" src="img/bestchipblue.png" class="chipIndicator img-fluid float-right">
+          <p id="blueVic" class="chipIndicator float-right">0</p>
+        </div>
       </div>
     </div>
 
@@ -52,7 +53,7 @@
             <img src="img/spiningchip.gif" height="128px" style="max-width: 100%;">
           </div>
           <div class="row mx-auto">
-            <h5>Connect 4</h5>
+            <h4>Connect 4</h4>
           </div>
           <div class="modal-body mx-auto" style="text-align:center;">
             <button type="button" class="btn btn-primary" id="single">Single Player</button>
