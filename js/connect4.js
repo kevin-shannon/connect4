@@ -137,6 +137,7 @@ function start(gm) {
   $("#blueturnIn").css('visibility', 'visible');
   $("#redVic").css('visibility', 'visible');
   $("#blueVic").css('visibility', 'visible');
+  $("#resetButton").css('visibility', 'visible');
   //sets postion of win counter text
   $("#redVic").css('left', ($(window).width()/10) + (bw/24) + 'px');
   $("#blueVic").css('left', ($(window).width()/6) + (bw/24) + 'px');
@@ -370,7 +371,8 @@ function Reset() {
   $("#blueturnIn").css('visibility', 'hidden');
   $("#redVic").css('visibility', 'hidden');
   $("#blueVic").css('visibility', 'hidden');
-  $("#LoadingAnimation").css('visibility', 'hidden');
+  $("#resetButton").css("visibility", 'hidden');
+  //$("#LoadingAnimation").css('visibility', 'hidden');
 
   resetBoard();
   closeConnection();
@@ -1217,8 +1219,8 @@ function goToStart(gm) {
   $("#host").unbind("click");
   $("#joinbut").unbind("click");
   $("#aibut").unbind("click");
-  $("#popup").css("visibility", "hidden");
-  $("#reset").css("visibility", "visible");*/
+  $("#popup").css("visibility", "hidden");*/
+  $("#resetButton").css("visibility", "visible");
   $('#gamemodeSelector').modal('hide');
   start(gm);
 }

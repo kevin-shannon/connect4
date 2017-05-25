@@ -20,6 +20,10 @@
   display: none;
 }
 
+#resetButton {
+  visibility: hidden;
+}
+
 .popup {
   display: none;
 }
