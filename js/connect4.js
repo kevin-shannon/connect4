@@ -39,14 +39,21 @@ var opponentsColor;
 var blur = 4;
 
 //board dimensions
-var bw = $('#chips').get(0).width;
-var bh = $('#chips').get(0).height;
-bh =  bh - (43/300) * bh;
+var bw = Math.round(($(window).width()*$(window).height())/($(window).width()+$(window).height()))*2;
+var bh = bw * (6/7);
 
 //canvases
-var chipCanvas = $('#chips').get(0).getContext("2d");
+var chips = $('<canvas/>').attr({
+  width: bw,
+  height: bh + (bh / 6)
+}).appendTo('#game');
+var chipCanvas = chips.get(0).getContext("2d");
 chipCanvas.translate(0, (bw / 7));
-var boardCanvas = $('#board').get(0).getContext("2d");
+var brd = $('<canvas/>').attr({
+  width: bw,
+  height: bw
+}).appendTo('#game');
+var boardCanvas = brd.get(0).getContext("2d");
 
 $(window).on('resize', function(){
   makeCanvasAndItsContainerTheSameSize();
@@ -126,16 +133,20 @@ function start(gm) {
   //received gamemode from the selector
   gamemode = gm;
 
+  //actual board width and height
+  var w = chips.get(0).scrollWidth;
+  var h = chips.get(0).scrollHeight;
+
   //sets postion of indicator tiles
   $("#redturnIn").css('left', ($(window).width()/10) + 'px');
   $("#blueturnIn").css('left', ($(window).width()/6) + 'px');
   $("#redturnIn").css('top', ($(window).height()/6) + 'px');
   $("#blueturnIn").css('top', ($(window).height()/6) + 'px');
   //sets size of indicator tiles
-  $("#redturnIn").css('height', (bh/6) + 'px');
-  $("#blueturnIn").css('height', (bh/6) + 'px');
-  $("#redturnIn").css('width', (bw/7) + 'px');
-  $("#blueturnIn").css('width', (bw/7) + 'px');
+  $("#redturnIn").css('height', (h/6) + 'px');
+  $("#blueturnIn").css('height', (h/6) + 'px');
+  $("#redturnIn").css('width', (w/6) + 'px');
+  $("#blueturnIn").css('width', (w/6) + 'px');
   //makes tiles visible once gamplay has commensed
   $("#redturnIn").css('visibility', 'visible');
   $("#blueturnIn").css('visibility', 'visible');
@@ -143,13 +154,13 @@ function start(gm) {
   $("#blueVic").css('visibility', 'visible');
   $("#resetButton").css('visibility', 'visible');
   //sets postion of win counter text
-  $("#redVic").css('left', ($(window).width()/10) + (bw/24) + 'px');
-  $("#blueVic").css('left', ($(window).width()/6) + (bw/24) + 'px');
-  $("#redVic").css('top', ($(window).height()/6) + (bh/96)  + 'px');
-  $("#blueVic").css('top', ($(window).height()/6) + (bh/96) + 'px');
+  $("#redVic").css('left', ($(window).width()/10) + (w/24) + 'px');
+  $("#blueVic").css('left', ($(window).width()/6) + (w/24) + 'px');
+  $("#redVic").css('top', ($(window).height()/6) + (h/96)  + 'px');
+  $("#blueVic").css('top', ($(window).height()/6) + (h/96) + 'px');
   //sizes the loading animation
-  $("#LoadingAnimation").css('height', (bh/6) + 'px');
-  $("#LoadingAnimation").css('width', (bw/7) + 'px');
+  $("#LoadingAnimation").css('height', (h/6) + 'px');
+  $("#LoadingAnimation").css('width', (w/7) + 'px');
   //postions play again button
   $("#playpop").css('right', ($(window).width()/10) + 'px');
   $("#playpop").css('top', ($(window).height()/5) + 'px');
@@ -191,8 +202,8 @@ function canvasClick(e) {
   //actual board width and height
   //bw bh are the "initial" size of the canvas or
   //whatever idk
-  var w = $('#chips').get(0).scrollWidth;
-  var h = $('#chips').get(0).scrollHeight;
+  var w = chips.get(0).scrollWidth;
+  var h = chips.get(0).scrollHeight;
 
   //determine where the chip was dropped
   var offset = $(this).offset();
@@ -614,7 +625,7 @@ function drawBoard() {
 }
 
 function makeCanvasAndItsContainerTheSameSize() {
-  var canvasHeight = document.getElementById('board').scrollHeight;
+  var canvasHeight = brd.get(0).scrollHeight;
   $('.canvasContainer').height(canvasHeight);
 }
 
@@ -633,8 +644,8 @@ function hoverChip(e) {
   //actual board width and height
   //bw bh are the "initial" size of the canvas or
   //whatever idk
-  var w = $('#chips').get(0).scrollWidth;
-  var h = $('#chips').get(0).scrollHeight;
+  var w = chips.get(0).scrollWidth;
+  var h = chips.get(0).scrollHeight;
   h =  h - (43/300) * h;
 
   //draw the image of the chip to be dropped
