@@ -416,13 +416,12 @@ function playAgain() {
 }
 
 function showPlayAgainPopup(functionToRunOnClick) {
-  $("#playpop").css("visibility", "visible");
-  $("#play").click(functionToRunOnClick);
+  $("#playAgainButton").css("display", "block");
+  $("#playAgainButton").click(functionToRunOnClick);
 }
 
 function hidePlayAgainPopup() {
-  $("#play").unbind("click");
-  $("#playpop").css("visibility", "hidden");
+  $("#playAgainButton").css("display", "none");
 }
 
 function resetBoard() {
@@ -524,13 +523,15 @@ function win(i, j, direction) {
 }
 
 function displayPlay() {
-  var shouldAutoPlayAgain = $('#aivsaicb').checkbox('is checked');
 
-  if (shouldAutoPlayAgain && gamemode === 4) {
-    setTimeout(function () {
-      resetBoard();
-      start(gamemode);
-    }, 1200);
+  if (gamemode === 4) {
+    var shouldAutoPlayAgain = $('#aivsaicb').checkbox('is checked');
+    if (shouldAutoPlayAgain) {
+      setTimeout(function () {
+        resetBoard();
+        start(gamemode);
+      }, 1200);
+    }
   } else {
     setTimeout(function () {
       if (resetButtonActive) {
