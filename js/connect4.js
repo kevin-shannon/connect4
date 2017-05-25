@@ -601,17 +601,14 @@ function gamemodeSelector() {
 		start(0);
 	});
 
-	$("#host").click(function() {
-		hostOnlineGame();
-		//start is called within hostOnlineGame
-	});
-
 	$("#gamenum").html("Your game number is " + peerNum);
 
 	$('#host').popover({
 		html: true,
 		trigger: 'hover',
 		content: function() {
+      //start is called within hostOnlineGame
+      hostOnlineGame();
 			return $('#hostpop').html();
 		},
 		placement: 'bottom'
