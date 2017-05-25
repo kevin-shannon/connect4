@@ -5,22 +5,7 @@
 /*
  * Variable declarations
  */
- 
-//get the url parameters
-var urlParams;
-(window.onpopstate = function() {
-	var match,
-		pl = /\+/g, // Regex for replacing addition symbol with a space
-		search = /([^&=]+)=?([^&]*)/g,
-		decode = function(s) {
-			return decodeURIComponent(s.replace(pl, " "));
-		},
-		query = window.location.search.substring(1);
 
-	urlParams = {};
-	while (match = search.exec(query))
-		urlParams[decode(match[1])] = decode(match[2]);
-})();
 
 //gamemode (local multiplayer: 0, singleplayer: 1, p2p host: 2, p2p opponent: 3)
 var gamemode;
@@ -114,21 +99,11 @@ $(document).ready(function() {
 	//makes it so the user cannot drop a chip or hover
 	playerCanDropChips = false;
 
-	//check if a match id has been passed
-	if (urlParams.host && urlParams.host.length === 40) {
-		setUpOnline(urlParams.host);
-		hostOnlineGame();
-	} else if (urlParams.join && urlParams.join.length === 40) {
-		joinOnlineGame(urlParams.join);
-		start(3);
-	} else {
+	//hide the loading screen
+	$('#loading').hide();
 
-		//hide the loading screen
-		$('#loading').hide();
-
-		//popup the gamemode selector
-		gamemodeSelector();
-	}
+	//popup the gamemode selector
+	gamemodeSelector();
 });
 
 
@@ -718,8 +693,8 @@ function receivePlayAgainRequest() {
 	}
 }
 
-function setUpOnline(forcedPeerNum) {
-	var peerNum = forcedPeerNum || Math.floor(Math.random() * 900) + 100;
+function setUpOnline() {
+	var peerNum = Math.floor(Math.random() * 900) + 100;
 	console.log("Peer id: " + peerNum);
 	peer = new Peer(peerNum, {
 		key: 'fe7e2757-bbef-4456-a934-ae93385502b9'
@@ -784,21 +759,6 @@ function openConnection() {
 		$("#LoadingAnimation").css('visibility', 'hidden');
 		playerCanDropChips = currentTurn() === playersColor;
 		$('#host').click();
-
-		//tell the opponent our name
-		if (gamemode === 3 && urlParams.name) {
-			sendMove('name:' + urlParams.name);
-		}
-
-		//set up to receive name from opponent if we're the host
-		if (gamemode === 2) {
-			connection.on('data', function(data) {
-				if (typeof data === 'string' && data.startsWith('name:')) {
-					var opponentName = data.split(':')[1];
-					popupPlayerName(opponentName);
-				}
-			});
-		}
 	});
 
 	connection.on('close', function() {
@@ -823,10 +783,6 @@ function closeConnection() {
 			console.log("error closing connection");
 		}
 	}
-}
-
-function popupPlayerName(name) {
-	alert('You are now playing with ' + name + '.');
 }
 
 function popupConnectionLost() {
