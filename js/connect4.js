@@ -89,7 +89,7 @@ $(document).ready(function () {
   makeCanvasAndItsContainerTheSameSize();
 
   //Ran when user clicks on the canvas
-  $('canvas').click(click);
+  $('canvas').click(canvasClick);
 
   //called when the mouse moves across the canvas
   $('canvas').mousemove(hoverChip);
@@ -173,7 +173,7 @@ nextTurn();
 //now we wait for a click event
 }
 
-function click(e) {
+function canvasClick(e) {
   if (playerCanDropChips === false) {
     return false;
   }
@@ -183,11 +183,17 @@ function click(e) {
     return false;
   }
 
+  //actual board width and height
+  //bw bh are the "initial" size of the canvas or
+  //whatever idk
+  var w = $('#chips').get(0).scrollWidth;
+  var h = $('#chips').get(0).scrollHeight;
+
   //determine where the chip was dropped
   var offset = $(this).offset();
   var xPos = (e.pageX - offset.left);
   for (var i = 1; i < 8; i++) {
-    if (((i - 1) * (bw / 7)) < xPos && xPos < ((i) * (bw / 7))) {
+    if (((i - 1) * (w / 7)) < xPos && xPos < ((i) * (w / 7))) {
       //if the chip drop was successful
       if (dropChip(i, currentTurn(), pos_array, false)) {
         if (gamemode === 2 || gamemode === 3) {
@@ -609,6 +615,7 @@ function hoverChip(e) {
   if (playerCanDropChips === false) {
     return false;
   }
+
   var offset = $(this).offset();
   var xPos = (e.pageX - offset.left);
   var image = new Image();
@@ -616,9 +623,16 @@ function hoverChip(e) {
   //Set the correct color chip to draw
   image = currentTurn() === "red" ? redchip : bluechip;
 
+  //actual board width and height
+  //bw bh are the "initial" size of the canvas or
+  //whatever idk
+  var w = $('#chips').get(0).scrollWidth;
+  var h = $('#chips').get(0).scrollHeight;
+  h =  h - (43/300) * h;
+
   //draw the image of the chip to be dropped
   for (var i = 1; i < 8; i++) {
-    if (xPos > ((i - 1) * (bw / 7)) && xPos < (i * (bw / 7)) && winner === false) {
+    if (xPos > ((i - 1) * (w / 7)) && xPos < (i * (w / 7)) && winner === false) {
       chipCanvas.clearRect(0, -(bh / 6), bw, (bh / 6));
       chipCanvas.drawImage(image, ((i - 1) * (bw / 7)), -(bh / 6), (bw / 7), (bh / 6));
     }
