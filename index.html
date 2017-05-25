@@ -26,14 +26,22 @@
         <div class="col-lg-2"></div>
       </div>
       <div class="row">
-        <div class="mx-auto">
-          <button type="button" class="btn btn-primary" onclick="Reset()">
-            Reset
-          </button>
-          <button type="button" class="btn btn-danger" id="playAgainButton">
-            Play Again
-          </button>
-        </div>
+          <div class="col">
+            <img id="redturnIn" src="img/bestchipred.png" class="chipIndicator img-fluid float-left">
+            <p id="redVic" class="chipIndicator">0</p>
+          </div>
+          <div class="col mx-auto text-center">
+            <button type="button" class="btn btn-primary" onclick="Reset()">
+              Reset
+            </button>
+            <button type="button" class="btn btn-danger" id="playAgainButton">
+              Play Again
+            </button>
+          </div>
+          <div class="col">
+            <img id="blueturnIn" src="img/bestchipblue.png" class="chipIndicator img-fluid float-right">
+            <p id="blueVic" class="chipIndicator float-right">0</p>
+          </div>
       </div>
     </div>
 

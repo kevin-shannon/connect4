@@ -23,3 +23,7 @@
 .popup {
   display: none;
 }
+
+.chipIndicator {
+  visibility: hidden;
+}

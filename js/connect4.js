@@ -416,12 +416,12 @@ function playAgain() {
 }
 
 function showPlayAgainPopup(functionToRunOnClick) {
-  $("#playAgainButton").css("display", "block");
+  $("#playAgainButton").show();
   $("#playAgainButton").click(functionToRunOnClick);
 }
 
 function hidePlayAgainPopup() {
-  $("#playAgainButton").css("display", "none");
+  $("#playAgainButton").hide();
 }
 
 function resetBoard() {
