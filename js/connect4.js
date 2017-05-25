@@ -39,27 +39,18 @@ var opponentsColor;
 var blur = 4;
 
 //board dimensions
-if ($(window).width() < $(window).height()) {
-  var bw = $(window).width() / 1.5;
-  var bh = $(window).width() * 4 / 7;
-}
-else {
-  var bw = $(window).width() / 2.5;   // sets board width
-  var bh = $(window).width() * 12 / 35;  // sets board height
-}
+var bw = $('#chips').get(0).width;
+var bh = $('#chips').get(0).height;
+bh =  bh - (43/300) * bh;
 
 //canvases
-var canvas = $('<canvas/>').attr({
-  width: bw,
-  height: bh + (bh / 6)
-}).appendTo('#game');
-var ctx = canvas.get(0).getContext("2d");
-ctx.translate(0, (bw / 7));
-var canvas2 = $('<canvas/>').attr({
-  width: bw,
-  height: bw
-}).appendTo('#game');
-var ctx2 = canvas2.get(0).getContext("2d");
+var chipCanvas = $('#chips').get(0).getContext("2d");
+chipCanvas.translate(0, (bw / 7));
+var boardCanvas = $('#board').get(0).getContext("2d");
+
+$(window).on('resize', function(){
+  makeCanvasAndItsContainerTheSameSize();
+});
 
 //logic globals (these are bad practice and will probably have to be replaced)
 var pos_array;
@@ -89,13 +80,16 @@ var playerCanDropChips;
 */
 
 //Draw the board upon load
-$(window).load(drawBoard);
+$(window).on("load", drawBoard);
 
 //Ran when the site is fully loaded
 $(document).ready(function () {
 
+  //or else everything will be under the canvas
+  makeCanvasAndItsContainerTheSameSize();
+
   //Ran when user clicks on the canvas
-  $('canvas').click(click);
+  $('canvas').click(canvasClick);
 
   //called when the mouse moves across the canvas
   $('canvas').mousemove(hoverChip);
@@ -114,6 +108,10 @@ $(document).ready(function () {
     joinOnlineGame(urlParams.join);
     goToStart(3);
   } else {
+
+    //hide the loading screen
+    $('#loading').hide();
+
     //popup the gamemode selector
     gamemodeSelector();
   }
@@ -143,6 +141,7 @@ function start(gm) {
   $("#blueturnIn").css('visibility', 'visible');
   $("#redVic").css('visibility', 'visible');
   $("#blueVic").css('visibility', 'visible');
+  $("#resetButton").css('visibility', 'visible');
   //sets postion of win counter text
   $("#redVic").css('left', ($(window).width()/10) + (bw/24) + 'px');
   $("#blueVic").css('left', ($(window).width()/6) + (bw/24) + 'px');
@@ -171,9 +170,6 @@ if (gm !== 2 && gm !== 3){
 //get the pos_array ready for some epic connect4 action
 pos_array = fillArray();
 
-//unblur background
-blurBackground(false);
-
 //activate reset button
 resetButtonActive = true;
 
@@ -182,7 +178,7 @@ nextTurn();
 //now we wait for a click event
 }
 
-function click(e) {
+function canvasClick(e) {
   if (playerCanDropChips === false) {
     return false;
   }
@@ -192,11 +188,17 @@ function click(e) {
     return false;
   }
 
+  //actual board width and height
+  //bw bh are the "initial" size of the canvas or
+  //whatever idk
+  var w = $('#chips').get(0).scrollWidth;
+  var h = $('#chips').get(0).scrollHeight;
+
   //determine where the chip was dropped
   var offset = $(this).offset();
   var xPos = (e.pageX - offset.left);
   for (var i = 1; i < 8; i++) {
-    if (((i - 1) * (bw / 7)) < xPos && xPos < ((i) * (bw / 7))) {
+    if (((i - 1) * (w / 7)) < xPos && xPos < ((i) * (w / 7))) {
       //if the chip drop was successful
       if (dropChip(i, currentTurn(), pos_array, false)) {
         if (gamemode === 2 || gamemode === 3) {
@@ -318,11 +320,11 @@ function drawChip(x, y, chipColor, noAnimation) {
     })();
 
     //initial call, and recurs until the chip drops all the way
-    animate(chip, canvas, ctx, startTime);
+    animate(chip, chipCanvas, startTime);
 
-    function animate(chip, canvas, ctx, startTime) {
+    function animate(chip, chipCanvas, startTime) {
       if (resetButtonActive === false) {
-        ctx.clearRect(0, -(bh / 6), bw, bh + (bh / 6));
+        chipCanvas.clearRect(0, -(bh / 6), bw, bh + (bh / 6));
         return;
       }
       // update
@@ -334,22 +336,22 @@ function drawChip(x, y, chipColor, noAnimation) {
         chip.y = newY;
         // request new frame
         requestAnimFrame(function () {
-          animate(chip, canvas, ctx, startTime);
+          animate(chip, chipCanvas, startTime);
         });
       }
       else {
         chip.y = y;
         setTimeout(function () {
-          ctx.drawImage(chipImage, chip.x, chip.y, chip.width, chip.height);
+          chipCanvas.drawImage(chipImage, chip.x, chip.y, chip.width, chip.height);
         }, 50);
       }
-      ctx.clearRect(x, (chip.y - (bh / 6)), (bw / 7), ((bh / 6) + (bh / 12)));
-      ctx.drawImage(chipImage, chip.x, chip.y, chip.width, chip.height);
+      chipCanvas.clearRect(x, (chip.y - (bh / 6)), (bw / 7), ((bh / 6) + (bh / 12)));
+      chipCanvas.drawImage(chipImage, chip.x, chip.y, chip.width, chip.height);
     }
   } else {
-    ctx.drawImage(chipImage, chip.x, y, chip.width, chip.height);
+    chipCanvas.drawImage(chipImage, chip.x, y, chip.width, chip.height);
     setTimeout(function () {
-      ctx.drawImage(chipImage, chip.x, y, chip.width, chip.height);
+      chipCanvas.drawImage(chipImage, chip.x, y, chip.width, chip.height);
     }, 50);
   }
 }
@@ -373,7 +375,8 @@ function Reset() {
   $("#blueturnIn").css('visibility', 'hidden');
   $("#redVic").css('visibility', 'hidden');
   $("#blueVic").css('visibility', 'hidden');
-  $("#LoadingAnimation").css('visibility', 'hidden');
+  $("#resetButton").css("visibility", 'hidden');
+  //$("#LoadingAnimation").css('visibility', 'hidden');
 
   resetBoard();
   closeConnection();
@@ -419,13 +422,12 @@ function playAgain() {
 }
 
 function showPlayAgainPopup(functionToRunOnClick) {
-  $("#playpop").css("visibility", "visible");
-  $("#play").click(functionToRunOnClick);
+  $("#playAgainButton").show();
+  $("#playAgainButton").click(functionToRunOnClick);
 }
 
 function hidePlayAgainPopup() {
-  $("#play").unbind("click");
-  $("#playpop").css("visibility", "hidden");
+  $("#playAgainButton").hide();
 }
 
 function resetBoard() {
@@ -436,9 +438,9 @@ function resetBoard() {
   moves = 0;
   playerCanDropChips = false;
   resetButtonActive = false;
-  ctx.clearRect(0, -(bh / 6), bw, bh + (bh / 6));
+  chipCanvas.clearRect(0, -(bh / 6), bw, bh + (bh / 6));
   setTimeout(function () {
-    ctx.clearRect(0, -(bh / 6), bw, bh + (bh / 6));
+    chipCanvas.clearRect(0, -(bh / 6), bw, bh + (bh / 6));
   }, 45);
 }
 
@@ -504,7 +506,7 @@ function winCondition(boardArray, AICheck) {
       console.log("the game is a draw");
       winner = true;
       setTimeout(function () {
-        ctx.drawImage(draw, (3 * bw / 10), -(bh / 6), (bw / 2.5), (bh / 6));
+        chipCanvas.drawImage(draw, (3 * bw / 10), -(bh / 6), (bw / 2.5), (bh / 6));
       }, 450);
       displayPlay();
     }
@@ -527,13 +529,15 @@ function win(i, j, direction) {
 }
 
 function displayPlay() {
-  var shouldAutoPlayAgain = $('#aivsaicb').checkbox('is checked');
 
-  if (shouldAutoPlayAgain && gamemode === 4) {
-    setTimeout(function () {
-      resetBoard();
-      start(gamemode);
-    }, 1200);
+  if (gamemode === 4) {
+    var shouldAutoPlayAgain = $('#aivsaicb').prop('checked');
+    if (shouldAutoPlayAgain) {
+      setTimeout(function () {
+        resetBoard();
+        start(gamemode);
+      }, 1200);
+    }
   } else {
     setTimeout(function () {
       if (resetButtonActive) {
@@ -573,7 +577,7 @@ function drawWinBanner(color) {
 
   //draw that sucker
   if (resetButtonActive === true) {
-    ctx.drawImage(bannerImage, (bw / 6), -(bh / 6), (bw / 1.5), (bh / 6));
+    chipCanvas.drawImage(bannerImage, (bw / 6), -(bh / 6), (bw / 1.5), (bh / 6));
   }
 }
 
@@ -584,7 +588,7 @@ function drawWinXs(i, j, direction) {
   }
   for (var n = 1; n < 5; n++) {
     //draw the X
-    ctx.drawImage(XXX, (bw / 7) * (i - 1), (bh / 6) * (j - 1), (bw / 7), (bh / 6));
+    chipCanvas.drawImage(XXX, (bw / 7) * (i - 1), (bh / 6) * (j - 1), (bw / 7), (bh / 6));
     //change the coordinate position based on which direction the win was
     switch (direction) {
       case "h":
@@ -606,13 +610,19 @@ function drawWinXs(i, j, direction) {
 }
 
 function drawBoard() {
-  ctx2.drawImage(board, 0, 0, bw, bh + (bh / 6));
+  boardCanvas.drawImage(board, 0, 0, bw, bh + (bh / 6));
+}
+
+function makeCanvasAndItsContainerTheSameSize() {
+  var canvasHeight = document.getElementById('board').scrollHeight;
+  $('.canvasContainer').height(canvasHeight);
 }
 
 function hoverChip(e) {
   if (playerCanDropChips === false) {
     return false;
   }
+
   var offset = $(this).offset();
   var xPos = (e.pageX - offset.left);
   var image = new Image();
@@ -620,11 +630,18 @@ function hoverChip(e) {
   //Set the correct color chip to draw
   image = currentTurn() === "red" ? redchip : bluechip;
 
+  //actual board width and height
+  //bw bh are the "initial" size of the canvas or
+  //whatever idk
+  var w = $('#chips').get(0).scrollWidth;
+  var h = $('#chips').get(0).scrollHeight;
+  h =  h - (43/300) * h;
+
   //draw the image of the chip to be dropped
   for (var i = 1; i < 8; i++) {
-    if (xPos > ((i - 1) * (bw / 7)) && xPos < (i * (bw / 7)) && winner === false) {
-      ctx.clearRect(0, -(bh / 6), bw, (bh / 6));
-      ctx.drawImage(image, ((i - 1) * (bw / 7)), -(bh / 6), (bw / 7), (bh / 6));
+    if (xPos > ((i - 1) * (w / 7)) && xPos < (i * (w / 7)) && winner === false) {
+      chipCanvas.clearRect(0, -(bh / 6), bw, (bh / 6));
+      chipCanvas.drawImage(image, ((i - 1) * (bw / 7)), -(bh / 6), (bw / 7), (bh / 6));
     }
   }
 }
@@ -1126,23 +1143,11 @@ function closeConnection() {
   }
 }
 
-function blurBackground(tf) {
-  if (tf) {
-    $("#game").css("WebkitFilter", "blur(" + blur + "px)");
-    $("#game").css("-moz-filter", "blur(" + blur + "px)");
-    $("#game").css("filter", "blur(" + blur + "px)");
-  } else {
-    $("#game").css("WebkitFilter", "blur(0px)");
-    $("#game").css("-moz-filter", "blur(0px)");
-    $("#game").css("filter", "blur(0px)");
-  }
-}
-
 function gamemodeSelector() {
   var peerNum = setUpOnline();
-  blurBackground(true);
-  $("#popup").css("visibility", "visible");
-  $("#reset").css("visibility", "hidden");
+
+  $('#gamemodeSelector').modal('show');
+
   $("#single").click(function () {
     goToStart(1);
   });
@@ -1156,28 +1161,15 @@ function gamemodeSelector() {
     //goToStart is called within hostOnlineGame
   });
 
-  //join game popup
-  $('#join').popup({
-    popup: $('#joinpop'),
-    on: 'click',
-    closeable: true,
-    position: 'bottom center'
-  });
-
-  $('#aivsai').popup({
-    popup: $('#aipop'),
-    on: 'click',
-    closeable: true,
-    position: 'bottom center'
-  });
-
   $("#gamenum").html("Your game number is " + peerNum);
 
-  $('#host').popup({
-    popup: $('#hostpop'),
-    on: 'click',
-    closeable: true,
-    position: 'bottom center'
+  $('#host').popover({
+    html : true,
+    trigger: 'hover',
+    content: function() {
+      return $('#hostpop').html();
+    },
+    placement: 'bottom'
   });
 
   function startJoin() {
@@ -1226,13 +1218,14 @@ function gamemodeSelector() {
 }
 
 function goToStart(gm) {
-  $("#single").unbind("click");
+  /*$("#single").unbind("click");
   $("#local").unbind("click");
   $("#host").unbind("click");
   $("#joinbut").unbind("click");
   $("#aibut").unbind("click");
-  $("#popup").css("visibility", "hidden");
-  $("#reset").css("visibility", "visible");
+  $("#popup").css("visibility", "hidden");*/
+  $("#resetButton").css("visibility", "visible");
+  $('#gamemodeSelector').modal('hide');
   start(gm);
 }
 
