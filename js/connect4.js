@@ -80,38 +80,25 @@ var playerCanDropChips = false;
  * Main Code
  */
 
-// load all player modules
-// https://stackoverflow.com/questions/11803215/how-to-include-multiple-js-files-using-jquery-getscript-method
-$.when(
-    $.getScript( "/js/localPlayer.js" ),
-    $.getScript( "/js/minimaxPlayer.js" ),
-    $.getScript( "/js/remotePlayer.js" ),
-    $.Deferred(function( deferred ){
-        $( deferred.resolve );
-    })
-).done(function(){
+// ran after all scripts are loaded
 
-    // ran after all scripts are loaded
+//Draw the board upon load
+$(window).on("load", drawBoard);
 
-    //Draw the board upon load
-    drawBoard();
+//Ran when the site is fully loaded
+$(document).ready(function() {
 
-    //Ran when the site is fully loaded
-    $(document).ready(function() {
+	//or else everything will be under the canvas
+	makeCanvasAndItsContainerTheSameSize();
 
-    	//or else everything will be under the canvas
-    	makeCanvasAndItsContainerTheSameSize();
+	//makes it so the user cannot drop a chip or hover
+	playerCanDropChips = false;
 
-    	//makes it so the user cannot drop a chip or hover
-    	playerCanDropChips = false;
+	//hide the loading screen
+	$('#loading').hide();
 
-    	//hide the loading screen
-    	$('#loading').hide();
-
-    	//popup the gamemode selector
-    	gamemodeSelector();
-    });
-
+	//popup the gamemode selector
+	gamemodeSelector();
 });
 
 
