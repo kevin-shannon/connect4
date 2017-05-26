@@ -53,6 +53,9 @@ var winner = false;
 var redVictories = 0;
 var blueVictories = 0;
 
+var lastPlayer1;
+var lastPlayer2;
+
 //images
 var redchip = new Image(),
 	bluechip = new Image(),
@@ -140,7 +143,7 @@ function gamemodeSelector() {
  		trigger: 'hover',
  		content: function() {
        //start is called within hostOnlineGame
-       hostOnlineGame();
+       //hostOnlineGame();
  			return $('#hostpop').html();
  		},
  		placement: 'bottom'
@@ -188,6 +191,9 @@ function gamemodeSelector() {
 }
 
 function start(player1, player2) {
+
+  lastPlayer1 = player1;
+  lastPlayer2 = player2;
 
   $("#resetButton").css("visibility", "visible");
   $('#gamemodeSelector').modal('hide');
@@ -392,18 +398,6 @@ function Reset() {
 	gamemodeSelector();
 }
 
-function playAgain() {
-	console.log("Playing again");
-
-	hidePlayAgainPopup();
-
-	//resetting this variable for next time
-	wantToPlayAgain = false;
-
-	resetBoard();
-	start(gamemode);
-}
-
 function showPlayAgainPopup(functionToRunOnClick) {
 	$("#playAgainButton").show();
 	$("#playAgainButton").click(functionToRunOnClick);
@@ -450,33 +444,15 @@ function win(color, i, j, direction) {
 }
 
 function displayPlay() {
-
-	if (gamemode === 4) {
-		var shouldAutoPlayAgain = $('#aivsaicb').prop('checked');
-		if (shouldAutoPlayAgain) {
-			setTimeout(function() {
+	setTimeout(function() {
+		if (resetButtonActive) {
+			showPlayAgainPopup(function() {
 				resetBoard();
-				start(gamemode);
-			}, 1200);
+				start(lastPlayer1, lastPlayer2);
+				hidePlayAgainPopup();
+			});
 		}
-	} else {
-		setTimeout(function() {
-			if (resetButtonActive) {
-				if (gamemode === 2 || gamemode === 3) {
-					showPlayAgainPopup(function() {
-						askToPlayAgain();
-						hidePlayAgainPopup();
-					});
-				} else {
-					showPlayAgainPopup(function() {
-						resetBoard();
-						start(gamemode);
-						hidePlayAgainPopup();
-					});
-				}
-			}
-		}, 1000);
-	}
+	}, 1000);
 }
 
 function winAdder(color) {
