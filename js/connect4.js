@@ -241,22 +241,12 @@ function start(player1, player2) {
 
 function nextTurn(color, playerToTakeTurnNow, playerToTakeTurnAfter) {
 	helperMethods.checkForWin(pos_array, function (colorThatWon, xPos, yPos, direction) {
-    //ran when someone has won
-    win(colorThatWon, xPos, yPos, direction);
-  }, function () {
-    //ran in the event of a tie
-
-    setTimeout(function() {
-			//manual win event instead of using win function
-			console.log("the game is a draw");
-			winner = true;
-			setTimeout(function() {
-				chipCanvas.drawImage(draw, (3 * bw / 10), -(bh / 6), (bw / 2.5), (bh / 6));
-			}, 450);
-			displayPlay();
-  	}, 50);
-
-  });
+        //ran when someone has won
+        win(colorThatWon, xPos, yPos, direction);
+      }, function () {
+        //ran in the event of a tie
+        tie();
+      });
 
 	//if there's a winner, get outta here
 	if (winner || resetButtonActive === false) {
@@ -266,40 +256,38 @@ function nextTurn(color, playerToTakeTurnNow, playerToTakeTurnAfter) {
 	advanceTurn();
 	console.log("Turn " + moves + ", " + color + "'s turn.");
 
-	if (color === RED) {
-		$("#redturnIn").css('WebkitFilter', 'grayscale(0%) opacity(100%) blur(0px)');
-		$("#blueturnIn").css('WebkitFilter', 'grayscale(50%) opacity(70%) blur(2px)');
-	} else {
-		$("#redturnIn").css('WebkitFilter', 'grayscale(50%) opacity(70%) blur(2px)');
-		$("#blueturnIn").css('WebkitFilter', 'grayscale(0%) opacity(100%) blur(0px)');
-	}
+    setIndicatorColor(color);
 
-	//give the correct player control based on the gamemode
-  playerToTakeTurnNow.takeTurn(pos_array, color, function(columnToDropIn) {
-    //ran when the plauer makes their moves
+    tryTurn(color, playerToTakeTurnNow, playerToTakeTurnAfter);
+}
 
-    //the player has decided their move, so let's execute it.
-    var chipWasDropped = false;
-    while (!chipWasDropped) {
-      chipWasDropped = helperMethods.dropChip(
-        pos_array,
-        columnToDropIn,
-        color,
-        function (column, j, colorOfChip, noAnimation) {
-          //ran when the chip has been dropped into the board array
+function tryTurn(chipColor, playerToTakeTurnNow, playerToTakeTurnAfter) {
+    //give the correct player control based on the gamemode
+    playerToTakeTurnNow.takeTurn(pos_array, chipColor, function (columnToDropIn) {
+        //ran when the plauer makes their moves
 
-          console.log(colorOfChip.charAt(0).toUpperCase() + colorOfChip.slice(1) + " dropped in column " + column);
-    			drawChip(column, j, colorOfChip, noAnimation);
+        //the player has decided their move, so let's execute it.
+        var chipWasDropped = helperMethods.dropChip(
+            pos_array,
+            columnToDropIn,
+            chipColor,
+            function (column, j, colorOfChip, noAnimation) {
+                //ran when the chip has been dropped into the board array
+                console.log(colorOfChip.charAt(0).toUpperCase() + colorOfChip.slice(1) + " dropped in column " + column);
+            	drawChip(column, j, colorOfChip, noAnimation);
+            }
+        );
 
+        if (chipWasDropped) {
+            //player has successfully made their move,
+            //so switch the color and players and keep going.
+            nextTurn(getOppositeColor(chipColor), playerToTakeTurnAfter, playerToTakeTurnNow);
+        } else {
+            //try the same thing again
+            tryTurn(chipColor, playerToTakeTurnNow, playerToTakeTurnAfter);
         }
-      );
-    }
 
-    //player has successfully made their move,
-    //so switch the color and players and keep going.
-    nextTurn(getOppositeColor(color), playerToTakeTurnAfter, playerToTakeTurnNow);
-  });
-
+    });
 }
 
 function drawChip(x, y, chipColor, noAnimation) {
@@ -364,6 +352,16 @@ function drawChip(x, y, chipColor, noAnimation) {
 			chipCanvas.drawImage(chipImage, chip.x, y, chip.width, chip.height);
 		}, 50);
 	}
+}
+
+function setIndicatorColor(newColor) {
+    if (newColor === RED) {
+        $("#redturnIn").css('WebkitFilter', 'grayscale(0%) opacity(100%) blur(0px)');
+        $("#blueturnIn").css('WebkitFilter', 'grayscale(50%) opacity(70%) blur(2px)');
+    } else {
+        $("#redturnIn").css('WebkitFilter', 'grayscale(50%) opacity(70%) blur(2px)');
+        $("#blueturnIn").css('WebkitFilter', 'grayscale(0%) opacity(100%) blur(0px)');
+    }
 }
 
 function Reset() {
@@ -433,6 +431,18 @@ function win(color, i, j, direction) {
 	//delay
 	setTimeout(drawWinXs, 1000, i, j, direction);
 	displayPlay();
+}
+
+function tie() {
+    setTimeout(function() {
+        //manual win event instead of using win function
+        console.log("the game is a draw");
+        winner = true;
+        setTimeout(function() {
+            chipCanvas.drawImage(draw, (3 * bw / 10), -(bh / 6), (bw / 2.5), (bh / 6));
+        }, 450);
+        displayPlay();
+    }, 50);
 }
 
 function displayPlay() {
@@ -545,7 +555,7 @@ var helperMethods = {
   		for (var j = 1; j < 7; j++) {
   			if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j] && boardArray[i][j] === boardArray[i + 2][j] && boardArray[i][j] === boardArray[i + 3][j]) {
           onWin(boardArray[i][j], i, j, "h");
-          return;
+          victory = boardArray[i][j];
   			}
   		}
   	}
@@ -555,7 +565,7 @@ var helperMethods = {
   		for (var j = 1; j < 4; j++) {
   			if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i][j + 1] && boardArray[i][j] === boardArray[i][j + 2] && boardArray[i][j] === boardArray[i][j + 3]) {
           onWin(boardArray[i][j], i, j, "v");
-          return;
+          victory = boardArray[i][j];
   			}
   		}
   	}
@@ -564,7 +574,7 @@ var helperMethods = {
   		for (var j = 4; j < 7; j++) {
   			if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j - 1] && boardArray[i][j] === boardArray[i + 2][j - 2] && boardArray[i][j] === boardArray[i + 3][j - 3]) {
           onWin(boardArray[i][j], i, j, "//");
-          return;
+          victory = boardArray[i][j];
   			}
   		}
   	}
@@ -573,24 +583,28 @@ var helperMethods = {
   		for (var j = 1; j < 4; j++) {
   			if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j + 1] && boardArray[i][j] === boardArray[i + 2][j + 2] && boardArray[i][j] === boardArray[i + 3][j + 3]) {
           onWin(boardArray[i][j], i, j, "\\");
-          return;
+          victory = boardArray[i][j];
   			}
   		}
   	}
 
   	//check for a tie
-    var boardIsNotFull = false;
-    for (var i = 1; i < 8; i++) {
-  		for (var j = 1; j < 7; j++) {
-        if (boardArray[i][j] === undefined) {
-          boardIsNotFull = true;
+    if (!victory) {
+      var boardIsNotFull = false;
+      for (var i = 1; i < 8; i++) {
+    		for (var j = 1; j < 7; j++) {
+          if (boardArray[i][j] === undefined) {
+            boardIsNotFull = true;
+          }
         }
+      }
+
+      if (!boardIsNotFull) {
+        onTie();
       }
     }
 
-    if (!boardIsNotFull) {
-      onTie();
-    }
+    return victory;
 
   },
   allowUIChipDrop: function () {

@@ -1,26 +1,13 @@
 var MinimaxPlayer = function (helperMethods, data) {
 
-  function winningMoveAI() {
-  	setTimeout(function() {
-  		//decide chip dropping animation should play
-  		var shouldNotAnimate = AIDelay <= maxMillisecondsToAnimateChipDropping;
-  		//not completely necessary, but whatever
-  		var column = makeTree(pos_array, Math.round(Math.log(30000) / Math.log(7 - possibleMoves(pos_array, false))), currentTurn(), currentTurn()) + 1;
-  		if (winner === false) {
-  			while (!dropChip(column, currentTurn(), pos_array, false, shouldNotAnimate)) {}
-  		} else {
-  			return;
-  		}
-  		nextTurn();
-  	}, AIDelay);
-  }
+  var chipColor;
 
   function possibleMoves(boardArray, arrayOrNo) {
   	var counter = 0;
   	possible = new Array(7);
   	for (var i = 1; i < 8; i++) {
-  		var testingArray = copyArray(boardArray);
-  		if (dropChip(i, currentTurn(), testingArray, true)) {
+  		var testingArray = helperMethods.copyBoard(boardArray);
+  		if (helperMethods.dropChip(testingArray, i, chipColor, function(){})) {
   			possible[i - 1] = true;
   		} else {
   			possible[i - 1] = false;
@@ -49,9 +36,9 @@ var MinimaxPlayer = function (helperMethods, data) {
   	var mid = middleScorer(boardArray, color);
   	var redMid = mid.redCount;
   	var blueMid = mid.blueCount;
-  	if (winCondition(boardArray, true) === color) {
+  	if (helperMethods.checkForWin(boardArray, function(){}, function(){}) === color) {
   		score = Number.POSITIVE_INFINITY;
-  	} else if (typeof winCondition(boardArray, true) === "string" && winCondition(boardArray, true) !== color) {
+  	} else if (typeof helperMethods.checkForWin(boardArray, function(){}, function(){}) === "string" && helperMethods.checkForWin(boardArray, function(){}, function(){}) !== color) {
   		score = Number.NEGATIVE_INFINITY;
   	} else {
   		redscore += 100 * redThreeInRows + 50 * redTwoInRows + redMid;
@@ -178,35 +165,25 @@ var MinimaxPlayer = function (helperMethods, data) {
   	};
   }
 
-  function copyArray(arrayToCopy) {
-  	return arrayToCopy.map(function(arr) {
-  		return arr.slice();
-  	});
-  }
-
-  function getOppositeColor(color) {
-  	return color === "red" ? "blue" : "red";
-  }
-
   function Tree(board, depth) {
   	this.depth = depth;
   	this.path = new Array();
 
   	//generate the tree
   	this.tree = new Node();
-  	this.tree.setChildren(generateChildren(board, this.depth, currentTurn(), this.depth));
+  	this.tree.setChildren(generateChildren(board, this.depth, chipColor, this.depth));
 
   	function generateChildren(boardArray, depth, color, initDepth) {
   		var children = [];
   		//for each child we need to create
   		for (var i = 1; i < 8; i++) {
-  			var aiArray = copyArray(boardArray);
-  			if (dropChip(i, color, aiArray, true)) {
+  			var aiArray = helperMethods.copyBoard(boardArray);
+  			if (helperMethods.dropChip(aiArray, i, color, function(){})) {
   				var newChild = new Node();
   				if (depth > 1) {
   					newChild.setChildren(generateChildren(aiArray, depth - 1, getOppositeColor(color), initDepth));
   				} else {
-  					newChild.setScore(boardScore(aiArray, currentTurn()));
+  					newChild.setScore(boardScore(aiArray, chipColor));
   				}
 
   				//add it to the array
@@ -339,10 +316,15 @@ var MinimaxPlayer = function (helperMethods, data) {
 
   return {
     takeTurn: function (currentBoard, yourColor, makeMove) {
+      chipColor = yourColor;
       setTimeout(function() {
-        var column = Math.floor((Math.random() * 7) + 1);
-        makeMove(column);
-      }, 500);
+    		//decide chip dropping animation should play
+    		var shouldNotAnimate = AIDelay <= maxMillisecondsToAnimateChipDropping;
+    		//not completely necessary, but whatever
+            var depth = Math.round(Math.log(30000) / Math.log(7 - possibleMoves(pos_array, false)));
+        	var column = makeTree(currentBoard, depth, yourColor, yourColor) + 1;
+            makeMove(column);
+    	}, AIDelay);
     }
   };
 

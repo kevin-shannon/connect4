@@ -31,6 +31,7 @@ var LocalPlayer = function (helperMethods, data) {
   return {
     takeTurn: function (currentBoard, yourColor, makeMove) {
 
+      $('canvas').off('click');
       helperMethods.allowUIChipDrop();
 
       //called when the mouse moves across the canvas
@@ -61,7 +62,7 @@ var LocalPlayer = function (helperMethods, data) {
           }
         }
       });
-
+      //throw true;
     }
   };
 
