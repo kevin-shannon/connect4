@@ -73,7 +73,7 @@ draw.src = "img/draw.png";
 XXX.src = "img/X.png";
 
 //event blocker: when false, click and hover events do not work
-var playerCanDropChips;
+var playerCanDropChips = false;
 
 
 /*
@@ -101,9 +101,6 @@ $.when(
 
     	//or else everything will be under the canvas
     	makeCanvasAndItsContainerTheSameSize();
-
-    	//run reset function when button is clicked
-    	$('#reset').click(Reset());
 
     	//makes it so the user cannot drop a chip or hover
     	playerCanDropChips = false;
@@ -196,6 +193,7 @@ function start(player1, player2) {
   lastPlayer2 = player2;
 
   $("#resetButton").css("visibility", "visible");
+
   $('#gamemodeSelector').modal('hide');
 
 	//actual board width and height
@@ -370,12 +368,6 @@ function drawChip(x, y, chipColor, noAnimation) {
 
 function Reset() {
 
-	//if the button is somehow displayed even though it shouldn't be
-	//make sure reset doesn't run?? -Tanner
-	if (resetButtonActive === false) {
-		return false;
-	}
-
 	AIDelay = 1000;
 
 	redVictories = 0;
@@ -408,7 +400,7 @@ function hidePlayAgainPopup() {
 }
 
 function resetBoard() {
-	console.log("Resetting game");
+	console.log("Resetting board");
 	pos_array.length = 0;
 	pos_array = fillArray();
 	winner = false;
