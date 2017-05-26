@@ -7,7 +7,10 @@ var MinimaxPlayer = function(helperMethods, data) {
 		var possible = new Array(7);
 		for (var i = 1; i < 8; i++) {
 			var testingArray = helperMethods.copyBoard(boardArray);
-			if (helperMethods.dropChip(testingArray, i, chipColor, function() {})) {
+
+            // we drop RED because color doesn't matter, we're just
+            // seeing if the column is full or not
+			if (helperMethods.dropChip(testingArray, i, RED, function() {})) {
 				possible[i - 1] = true;
 			} else {
 				possible[i - 1] = false;
@@ -172,7 +175,7 @@ var MinimaxPlayer = function(helperMethods, data) {
 
 		//generate the tree
 		this.tree = new Node();
-		this.tree.setChildren(generateChildren(board, this.depth, chipColor, this.depth));
+		this.tree.setChildren(generateChildren(this.board, this.depth, chipColor, this.depth));
 
 		function generateChildren(boardArray, depth, color, initDepth) {
 			var children = [];
@@ -184,7 +187,7 @@ var MinimaxPlayer = function(helperMethods, data) {
 					if (depth > 1) {
 						newChild.setChildren(generateChildren(aiArray, depth - 1, getOppositeColor(color), initDepth));
 					} else {
-						newChild.setScore(boardScore(aiArray, chipColor));
+						newChild.setScore(boardScore(aiArray, color));
 					}
 
 					//add it to the array
@@ -289,7 +292,7 @@ var MinimaxPlayer = function(helperMethods, data) {
 		}
 	};
 
-	Tree.prototype.bestMove = function(tree, best) {
+	Tree.prototype.bestMove = function(best) {
 		var dupes = [];
 		for (var i = 0; i < 7; i++) {
 			if (this.path[i].score === best.score && this.path[i].depth === best.depth) {
@@ -309,22 +312,25 @@ var MinimaxPlayer = function(helperMethods, data) {
 		this.score = score;
 	};
 
-	function makeTree(board, depth, colorToMax, currentColor) {
+	function runMinimax(board, depth, colorToMax, currentColor) {
 		var tree = new Tree(board, depth);
 		var best = tree.getBestValue(colorToMax, currentColor);
-		return tree.bestMove(tree, best);
+		return tree.bestMove(best);
 	}
 
 	return {
 		takeTurn: function(currentBoard, yourColor, makeMove) {
 			chipColor = yourColor;
 			setTimeout(function() {
-				//decide chip dropping animation should play
+				//decide if chip dropping animation should play
                 var maxMillisecondsToAnimateChipDropping = 120;
                 var delayEnteredByTheUser = data;
 				var shouldAnimate = delayEnteredByTheUser >= maxMillisecondsToAnimateChipDropping;
-				//not completely necessary, but whatever
-				var column = makeTree(currentBoard, Math.round(Math.log(30000) / Math.log(7 - possibleMoves(currentBoard, false))), yourColor, yourColor) + 1;
+
+                //run the ai on the board
+                var depth = Math.round(Math.log(30000) / Math.log(7 - possibleMoves(currentBoard, false)));
+				var column = runMinimax(currentBoard, depth, yourColor, yourColor) + 1;
+
 				makeMove(column, shouldAnimate);
 			}, data);
 		}
