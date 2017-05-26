@@ -113,7 +113,8 @@ function gamemodeSelector() {
  	$('#gamemodeSelector').modal('show');
 
  	$("#single").click(function() {
- 		start(new LocalPlayer(helperMethods), new MinimaxPlayer(helperMethods));
+		var computerPlayerDelay = 1000;
+ 		start(new LocalPlayer(helperMethods), new MinimaxPlayer(helperMethods, computerPlayerDelay));
  	});
 
  	$("#local").click(function() {
