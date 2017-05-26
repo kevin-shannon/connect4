@@ -58,11 +58,10 @@ var LocalPlayer = function (helperMethods, data) {
           if (((i - 1) * (w / 7)) < xPos && xPos < ((i) * (w / 7))) {
             $('canvas').off();
             helperMethods.disallowUIChipDrop();
-            makeMove(i);
+            makeMove(i, true);
           }
         }
       });
-      //throw true;
     }
   };
 

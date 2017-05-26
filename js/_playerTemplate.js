@@ -5,7 +5,7 @@ var templatePlayer = function (helperMethods, data) {
     takeTurn: function (currentBoard, yourColor, makeMove) {
       setTimeout(function() {
         var column = Math.floor((Math.random() * 7) + 1);
-        makeMove(column);
+        makeMove(column, true);
       }, 500);
     }
   };

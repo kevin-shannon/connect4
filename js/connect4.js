@@ -159,6 +159,9 @@ function gamemodeSelector() {
  	}
 
  	function startAI() {
+        //close the modal
+        $('#aipop').modal('hide');
+
  		//get the delay from the input box in the popup and send
  		//it to the join online game function
  		var aid = $('#aiin').val();
@@ -188,55 +191,60 @@ function gamemodeSelector() {
 }
 
 function start(player1, player2) {
+    lastPlayer1 = player1;
+    lastPlayer2 = player2;
 
-  lastPlayer1 = player1;
-  lastPlayer2 = player2;
+    $("#resetButton").css("visibility", "visible");
 
-  $("#resetButton").css("visibility", "visible");
+    $('#gamemodeSelector').modal('hide');
 
-  $('#gamemodeSelector').modal('hide');
+    $("#single").off("click");
+    $("#local").off("click");
+    $("#host").off("click");
+    $("#joinbut").off("click");
+    $("#aibut").off("click");
 
-	//actual board width and height
-	var w = chips.get(0).scrollWidth;
-	var h = chips.get(0).scrollHeight;
+    //actual board width and height
+    var w = chips.get(0).scrollWidth;
+    var h = chips.get(0).scrollHeight;
 
-	//sets postion of indicator tiles
-	$("#redturnIn").css('left', ($(window).width() / 10) + 'px');
-	$("#blueturnIn").css('left', ($(window).width() / 6) + 'px');
-	$("#redturnIn").css('top', ($(window).height() / 6) + 'px');
-	$("#blueturnIn").css('top', ($(window).height() / 6) + 'px');
-	//sets size of indicator tiles
-	$("#redturnIn").css('height', (h / 6) + 'px');
-	$("#blueturnIn").css('height', (h / 6) + 'px');
-	$("#redturnIn").css('width', (w / 6) + 'px');
-	$("#blueturnIn").css('width', (w / 6) + 'px');
-	//makes tiles visible once gamplay has commensed
-	$("#redturnIn").css('visibility', 'visible');
-	$("#blueturnIn").css('visibility', 'visible');
-	$("#redVic").css('visibility', 'visible');
-	$("#blueVic").css('visibility', 'visible');
-	$("#resetButton").css('visibility', 'visible');
-	//sets postion of win counter text
-	$("#redVic").css('left', ($(window).width() / 10) + (w / 24) + 'px');
-	$("#blueVic").css('left', ($(window).width() / 6) + (w / 24) + 'px');
-	$("#redVic").css('top', ($(window).height() / 6) + (h / 96) + 'px');
-	$("#blueVic").css('top', ($(window).height() / 6) + (h / 96) + 'px');
-	//sizes the loading animation
-	$("#LoadingAnimation").css('height', (h / 6) + 'px');
-	$("#LoadingAnimation").css('width', (w / 7) + 'px');
-	//postions play again button
-	$("#playpop").css('right', ($(window).width() / 10) + 'px');
-	$("#playpop").css('top', ($(window).height() / 5) + 'px');
+    //sets postion of indicator tiles
+    $("#redturnIn").css('left', ($(window).width() / 10) + 'px');
+    $("#blueturnIn").css('left', ($(window).width() / 6) + 'px');
+    $("#redturnIn").css('top', ($(window).height() / 6) + 'px');
+    $("#blueturnIn").css('top', ($(window).height() / 6) + 'px');
+    //sets size of indicator tiles
+    $("#redturnIn").css('height', (h / 6) + 'px');
+    $("#blueturnIn").css('height', (h / 6) + 'px');
+    $("#redturnIn").css('width', (w / 6) + 'px');
+    $("#blueturnIn").css('width', (w / 6) + 'px');
+    //makes tiles visible once gamplay has commensed
+    $("#redturnIn").css('visibility', 'visible');
+    $("#blueturnIn").css('visibility', 'visible');
+    $("#redVic").css('visibility', 'visible');
+    $("#blueVic").css('visibility', 'visible');
+    $("#resetButton").css('visibility', 'visible');
+    //sets postion of win counter text
+    $("#redVic").css('left', ($(window).width() / 10) + (w / 24) + 'px');
+    $("#blueVic").css('left', ($(window).width() / 6) + (w / 24) + 'px');
+    $("#redVic").css('top', ($(window).height() / 6) + (h / 96) + 'px');
+    $("#blueVic").css('top', ($(window).height() / 6) + (h / 96) + 'px');
+    //sizes the loading animation
+    $("#LoadingAnimation").css('height', (h / 6) + 'px');
+    $("#LoadingAnimation").css('width', (w / 7) + 'px');
+    //postions play again button
+    $("#playpop").css('right', ($(window).width() / 10) + 'px');
+    $("#playpop").css('top', ($(window).height() / 5) + 'px');
 
-	//get the pos_array ready for some epic connect4 action
-	pos_array = fillArray();
+    //get the pos_array ready for some epic connect4 action
+    pos_array = fillArray();
 
-	//activate reset button
-	resetButtonActive = true;
+    //activate reset button
+    resetButtonActive = true;
 
-	//start turn one
-	nextTurn(RED, player1, player2);
-	//now we wait for a click event
+    //start turn one
+    nextTurn(RED, player1, player2);
+    //now we wait for a click event
 }
 
 function nextTurn(color, playerToTakeTurnNow, playerToTakeTurnAfter) {
@@ -263,7 +271,7 @@ function nextTurn(color, playerToTakeTurnNow, playerToTakeTurnAfter) {
 
 function tryTurn(chipColor, playerToTakeTurnNow, playerToTakeTurnAfter) {
     //give the correct player control based on the gamemode
-    playerToTakeTurnNow.takeTurn(pos_array, chipColor, function (columnToDropIn) {
+    playerToTakeTurnNow.takeTurn(pos_array, chipColor, function (columnToDropIn, shouldAnimate) {
         //ran when the plauer makes their moves
 
         //the player has decided their move, so let's execute it.
@@ -271,10 +279,10 @@ function tryTurn(chipColor, playerToTakeTurnNow, playerToTakeTurnAfter) {
             pos_array,
             columnToDropIn,
             chipColor,
-            function (column, j, colorOfChip, noAnimation) {
+            function (column, j, colorOfChip) {
                 //ran when the chip has been dropped into the board array
                 console.log(colorOfChip.charAt(0).toUpperCase() + colorOfChip.slice(1) + " dropped in column " + column);
-            	drawChip(column, j, colorOfChip, noAnimation);
+            	drawChip(column, j, colorOfChip, shouldAnimate);
             }
         );
 
@@ -290,7 +298,7 @@ function tryTurn(chipColor, playerToTakeTurnNow, playerToTakeTurnAfter) {
     });
 }
 
-function drawChip(x, y, chipColor, noAnimation) {
+function drawChip(x, y, chipColor, shouldAnimate) {
 	var chipImage = new Image();
 
 	//Set the correct color chip to draw
@@ -306,7 +314,7 @@ function drawChip(x, y, chipColor, noAnimation) {
 	};
 	var startTime = (new Date()).getTime();
 
-	if (!noAnimation) {
+	if (shouldAnimate) {
 		window.requestAnimFrame = (function(callback) {
 			return window.requestAnimationFrame ||
 				window.webkitRequestAnimationFrame ||
@@ -395,6 +403,7 @@ function showPlayAgainPopup(functionToRunOnClick) {
 
 function hidePlayAgainPopup() {
 	$("#playAgainButton").hide();
+    $("#playAgainButton").off();
 }
 
 function resetBoard() {
@@ -526,13 +535,13 @@ function advanceTurn() {
 
 var helperMethods = {
 
-  //Draws the chip, adds it to the array, returns true if successful
+  //Tries to add the chip to the array, returns true if successful
   dropChip: function (boardArray, column, color, onDrop) {
   	//for loop that checks array starting at bottom of board which is at 6 going up to 1
   	for (var j = 6; j > 0; j--) {
   		//the position in the array will be undefined when there is an open space to drop the chip
   		if (boardArray[column][j] === undefined) {
-  			onDrop(column, j, color, false);
+  			onDrop(column, j, color);
   			boardArray[column][j] = color;
   			return true;
   		}
