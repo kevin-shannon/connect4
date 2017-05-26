@@ -6,18 +6,7 @@
  * Variable declarations
  */
 
-
-//gamemode (local multiplayer: 0, singleplayer: 1, p2p host: 2, p2p opponent: 3)
-var gamemode;
-var AIDelay = 1000;
-var maxMillisecondsToAnimateChipDropping = 120;
 var resetButtonActive = false;
-
-//online multiplayer
-var peer;
-var connection;
-var wantToPlayAgain = false;
-var isMultiplayerTurnEventInPlace = false;
 
 //colors and design
 var RED = "red";
@@ -45,9 +34,7 @@ $(window).on('resize', function() {
 });
 
 //logic globals (these are bad practice and will probably have to be replaced)
-var pos_array;
-var possible = new Array(7);
-var avoid = new Array(7);
+var mainBoard;
 var moves = 0;
 var winner = false;
 var redVictories = 0;
@@ -224,8 +211,8 @@ function start(player1, player2) {
     $("#playpop").css('right', ($(window).width() / 10) + 'px');
     $("#playpop").css('top', ($(window).height() / 5) + 'px');
 
-    //get the pos_array ready for some epic connect4 action
-    pos_array = fillArray();
+    //get the mainBoard ready for some epic connect4 action
+    mainBoard = fillArray();
 
     //activate reset button
     resetButtonActive = true;
@@ -236,7 +223,7 @@ function start(player1, player2) {
 }
 
 function nextTurn(color, playerToTakeTurnNow, playerToTakeTurnAfter) {
-	helperMethods.checkForWin(pos_array, function (colorThatWon, xPos, yPos, direction) {
+	helperMethods.checkForWin(mainBoard, function (colorThatWon, xPos, yPos, direction) {
         //ran when someone has won
         win(colorThatWon, xPos, yPos, direction);
       }, function () {
@@ -259,12 +246,12 @@ function nextTurn(color, playerToTakeTurnNow, playerToTakeTurnAfter) {
 
 function tryTurn(chipColor, playerToTakeTurnNow, playerToTakeTurnAfter) {
     //give the correct player control based on the gamemode
-    playerToTakeTurnNow.takeTurn(pos_array, chipColor, function (columnToDropIn, shouldAnimate) {
+    playerToTakeTurnNow.takeTurn(mainBoard, chipColor, function (columnToDropIn, shouldAnimate) {
         //ran when the plauer makes their moves
 
         //the player has decided their move, so let's execute it.
         var chipWasDropped = helperMethods.dropChip(
-            pos_array,
+            mainBoard,
             columnToDropIn,
             chipColor,
             function (column, j, colorOfChip) {
@@ -290,7 +277,7 @@ function drawChip(x, y, chipColor, shouldAnimate) {
 	var chipImage = new Image();
 
 	//Set the correct color chip to draw
-	chipImage = chipColor === "red" ? redchip : bluechip;
+	chipImage = chipColor === RED ? redchip : bluechip;
 
 	x = (bw / 7) * (x - 1);
 	y = (bh / 6) * (y - 1);
@@ -396,8 +383,8 @@ function hidePlayAgainPopup() {
 
 function resetBoard() {
 	console.log("Resetting board");
-	pos_array.length = 0;
-	pos_array = fillArray();
+	mainBoard.length = 0;
+	mainBoard = fillArray();
 	winner = false;
 	moves = 0;
 	playerCanDropChips = false;
@@ -424,7 +411,7 @@ function win(color, i, j, direction) {
 	//this is to make sure that the events are blocked
 	playerCanDropChips = false;
 	//Draw the win pic based on the color of the chip that won after a delay
-	setTimeout(drawWinBanner, 500, pos_array[i][j]);
+	setTimeout(drawWinBanner, 500, mainBoard[i][j]);
 	//delay
 	setTimeout(drawWinXs, 1000, i, j, direction);
 	displayPlay();
@@ -455,7 +442,7 @@ function displayPlay() {
 }
 
 function winAdder(color) {
-	if (color === "red") {
+	if (color === RED) {
 		redVictories++;
 		$("#redVic").text(redVictories);
 	} else {
@@ -467,7 +454,7 @@ function winAdder(color) {
 function drawWinBanner(color) {
 
 	//choose the correct picture for either red or blue
-	var bannerImage = (color === "red") ? redwins : bluewins;
+	var bannerImage = (color === RED) ? redwins : bluewins;
 
 	//draw that sucker
 	if (resetButtonActive === true) {
