@@ -187,7 +187,7 @@ var MinimaxPlayer = function(helperMethods, data) {
 					if (depth > 1) {
 						newChild.setChildren(generateChildren(aiArray, depth - 1, getOppositeColor(color), initDepth));
 					} else {
-						newChild.setScore(boardScore(aiArray, color));
+						newChild.setScore(boardScore(aiArray, chipColor));
 					}
 
 					//add it to the array
