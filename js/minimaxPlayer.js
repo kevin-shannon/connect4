@@ -182,20 +182,22 @@ var MinimaxPlayer = function(helperMethods, data) {
 			//for each child we need to create
 			for (var i = 1; i < 8; i++) {
 				var aiArray = helperMethods.copyBoard(boardArray);
-				if (helperMethods.dropChip(aiArray, i, color, function() {})) {
-					var newChild = new Node();
-					if (depth > 1) {
-						newChild.setChildren(generateChildren(aiArray, depth - 1, getOppositeColor(color), initDepth));
-					} else {
-						newChild.setScore(boardScore(aiArray, chipColor));
-					}
+				if (!helperMethods.checkForWin(aiArray, function() {}, function() {})) {
+					if (helperMethods.dropChip(aiArray, i, color, function() {})) {
+						var newChild = new Node();
+						if (depth > 1) {
+							newChild.setChildren(generateChildren(aiArray, depth - 1, getOppositeColor(color), initDepth));
+						} else {
+							newChild.setScore(boardScore(aiArray, chipColor));
+						}
 
-					//add it to the array
-					children.push(newChild);
-				} else {
-					var newChild = new Node();
-					newChild.setScore(null);
-					children.push(newChild);
+						//add it to the array
+						children.push(newChild);
+					} else {
+						var newChild = new Node();
+						newChild.setScore(null);
+						children.push(newChild);
+					}
 				}
 			}
 			return children;
