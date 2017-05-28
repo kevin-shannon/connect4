@@ -110,15 +110,10 @@ function gamemodeSelector() {
 
  	//$("#gamenum").html("Your game number is " + peerNum);
 
- 	$('#host').popover({
- 		html: true,
- 		trigger: 'hover',
- 		content: function() {
-       //start is called within hostOnlineGame
-       //hostOnlineGame();
- 			return $('#hostpop').html();
- 		},
- 		placement: 'bottom'
+	$('#host').click(function() {
+		start(new RemotePlayer(helperMethods, {
+			isHost: true
+		}), new LocalPlayer(helperMethods));
  	});
 
    function startJoin() {
@@ -129,8 +124,10 @@ function gamemodeSelector() {
  		//simulates clicking join online game button to close the popup
  		$('#join').click();
 
- 		joinOnlineGame(gn);
- 		start(new LocalPlayer(helperMethods), new RemotePlayer(helperMethods));
+ 		start(new LocalPlayer(helperMethods), new RemotePlayer(helperMethods, {
+			isHost: false,
+			gameCode: gn
+		}));
  	}
 
  	function startAI() {
@@ -222,9 +219,12 @@ function start(player1, player2) {
     //now we wait for a click event
 }
 
-function nextTurn(color, playerToTakeTurnNow, playerToTakeTurnAfter) {
+function nextTurn(color, playerToTakeTurnNow, playerToTakeTurnAfter, previousColumn) {
 	helperMethods.checkForWin(mainBoard, function (colorThatWon, xPos, yPos, direction) {
         //ran when someone has won
+		if (playerToTakeTurnNow.winningMove) {
+			playerToTakeTurnNow.winningMove(previousColumn);
+		}
         win(colorThatWon, xPos, yPos, direction);
       }, function () {
         //ran in the event of a tie
@@ -241,12 +241,12 @@ function nextTurn(color, playerToTakeTurnNow, playerToTakeTurnAfter) {
 
     setIndicatorColor(color);
 
-    tryTurn(color, playerToTakeTurnNow, playerToTakeTurnAfter);
+    tryTurn(color, playerToTakeTurnNow, playerToTakeTurnAfter, previousColumn);
 }
 
-function tryTurn(chipColor, playerToTakeTurnNow, playerToTakeTurnAfter) {
+function tryTurn(chipColor, playerToTakeTurnNow, playerToTakeTurnAfter, previousColumn) {
     //give the correct player control based on the gamemode
-    playerToTakeTurnNow.takeTurn(mainBoard, chipColor, function (columnToDropIn, shouldAnimate) {
+    playerToTakeTurnNow.takeTurn(mainBoard, chipColor, previousColumn, function (columnToDropIn, shouldAnimate) {
         //ran when the plauer makes their moves
 
         //the player has decided their move, so let's execute it.
@@ -264,10 +264,10 @@ function tryTurn(chipColor, playerToTakeTurnNow, playerToTakeTurnAfter) {
         if (chipWasDropped) {
             //player has successfully made their move,
             //so switch the color and players and keep going.
-            nextTurn(getOppositeColor(chipColor), playerToTakeTurnAfter, playerToTakeTurnNow);
+            nextTurn(getOppositeColor(chipColor), playerToTakeTurnAfter, playerToTakeTurnNow, columnToDropIn);
         } else {
             //try the same thing again
-            tryTurn(chipColor, playerToTakeTurnNow, playerToTakeTurnAfter);
+            tryTurn(chipColor, playerToTakeTurnNow, playerToTakeTurnAfter, previousColumn);
         }
 
     });
@@ -364,8 +364,15 @@ function Reset() {
 	//$("#LoadingAnimation").css('visibility', 'hidden');
 
 	resetBoard();
-	//closeConnection();
 	hidePlayAgainPopup();
+
+	if (lastPlayer1.clear) {
+		lastPlayer1.clear();
+	}
+
+	if (lastPlayer2.clear) {
+		lastPlayer2.clear();
+	}
 
 	//restart the game
 	gamemodeSelector();

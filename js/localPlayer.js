@@ -29,7 +29,7 @@ var LocalPlayer = function(helperMethods, data) {
 	}
 
 	return {
-		takeTurn: function(currentBoard, yourColor, makeMove) {
+		takeTurn: function(currentBoard, yourColor, previousColumn, makeMove) {
 
 			$('canvas').off('click');
 			helperMethods.allowUIChipDrop();
