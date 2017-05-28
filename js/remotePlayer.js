@@ -1,9 +1,10 @@
+var peerNum;
 var RemotePlayer = function(helperMethods, data) {
 
 	var peer;
 	var connection;
 
-	var peerNum = Math.floor(Math.random() * 900) + 100;
+	peerNum = Math.floor(Math.random() * 900) + 100;
 
 	peer = new Peer(peerNum, {
 		key: 'fe7e2757-bbef-4456-a934-ae93385502b9'
@@ -14,6 +15,7 @@ var RemotePlayer = function(helperMethods, data) {
 		console.log('Waiting for a player to join...');
 		peer.on('connection', function(conn) {
 			console.log('Connection received!');
+			$("#gamenum").css("visibility", 'hidden');
 			connection = conn;
 		});
 	} else {
