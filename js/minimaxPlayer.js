@@ -30,22 +30,22 @@ var MinimaxPlayer = function(helperMethods, data) {
 		var redscore = 0;
 		var bluescore = 0;
 		var score = 0;
+
 		var three = threeInRows(boardArray);
 		var redThreeInRows = three.redCount;
 		var blueThreeInRows = three.blueCount;
-		var two = threeInRows(boardArray);
-		var redTwoInRows = two.redCount;
-		var blueTwoInRows = two.blueCount;
-		var mid = middleScorer(boardArray, color);
-		var redMid = mid.redCount;
-		var blueMid = mid.blueCount;
-		if (helperMethods.checkForWin(boardArray) === color) {
+
+		var redMid = middleScorer(boardArray, RED);
+		var blueMid = middleScorer(boardArray, BLUE);
+
+		var winCheck = helperMethods.checkForWin(boardArray);
+		if (winCheck === color) {
 			score = Number.POSITIVE_INFINITY;
-		} else if (typeof helperMethods.checkForWin(boardArray) === "string" && helperMethods.checkForWin(boardArray) !== color) {
+		} else if (typeof winCheck === "string" && winCheck !== color) {
 			score = Number.NEGATIVE_INFINITY;
 		} else {
-			redscore += 100 * redThreeInRows + 50 * redTwoInRows + redMid;
-			bluescore += 100 * blueThreeInRows + 50 * blueTwoInRows + blueMid;
+			redscore += 150 * redThreeInRows + redMid;
+			bluescore += 150 * blueThreeInRows + blueMid;
 			if (color === RED) {
 				score = redscore - bluescore;
 			} else {
@@ -114,58 +114,32 @@ var MinimaxPlayer = function(helperMethods, data) {
 		};
 	}
 
-	function middleScorer(boardArray) {
-		var redCounter = 0;
-		var blueCounter = 0;
+	function middleScorer(boardArray, colorToScore) {
+		var counter = 0;
 		for (var i = 1; i <= boardArray[1].length; i++) {
-			//this fucking blows
-			if (boardArray[4][i] === RED) {
-				redCounter += 50;
+			if (boardArray[1][i] === colorToScore) {
+				counter += 5;
 			}
-			if (boardArray[4][i] === BLUE) {
-				blueCounter += 50;
+			if (boardArray[2][i] === colorToScore) {
+				counter += 10;
 			}
-			if (boardArray[3][i] === RED) {
-				redCounter += 20;
+			if (boardArray[3][i] === colorToScore) {
+				counter += 20;
 			}
-			if (boardArray[5][i] === RED) {
-				redCounter += 20;
+			if (boardArray[4][i] === colorToScore) {
+				counter += 50;
 			}
-			if (boardArray[3][i] === BLUE) {
-				blueCounter += 20;
+			if (boardArray[5][i] === colorToScore) {
+				counter += 20;
 			}
-			if (boardArray[5][i] === BLUE) {
-				blueCounter += 20;
+			if (boardArray[6][i] === colorToScore) {
+				counter += 10;
 			}
-			if (boardArray[2][i] === RED) {
-				redCounter += 10;
-			}
-			if (boardArray[6][i] === RED) {
-				redCounter += 10;
-			}
-			if (boardArray[2][i] === BLUE) {
-				blueCounter += 10;
-			}
-			if (boardArray[6][i] === BLUE) {
-				blueCounter += 10;
-			}
-			if (boardArray[1][i] === RED) {
-				redCounter += 5;
-			}
-			if (boardArray[7][i] === RED) {
-				redCounter += 5;
-			}
-			if (boardArray[1][i] === BLUE) {
-				blueCounter += 5;
-			}
-			if (boardArray[7][i] === BLUE) {
-				blueCounter += 5;
+			if (boardArray[7][i] === colorToScore) {
+				counter += 5;
 			}
 		}
-		return {
-			redCount: redCounter,
-			blueCount: blueCounter
-		};
+		return counter;
 	}
 
 	function Tree(board, depth) {
