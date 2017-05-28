@@ -43,7 +43,24 @@ var blueVictories = 0;
 var lastPlayer1;
 var lastPlayer2;
 
+//event blocker: when false, click and hover events do not work
+var playerCanDropChips = false;
+
+var allImagesLoaded = false;
+var pageReady = false;
+
 //images
+var numOfImagesLoaded = 0;
+var TOTAL_IMAGES = 7;
+
+function imageLoaded () {
+	numOfImagesLoaded++;
+	if (numOfImagesLoaded >= TOTAL_IMAGES) {
+		allImagesLoaded = true;
+		checkForReady();
+	}
+}
+
 var redchip = new Image(),
 	bluechip = new Image(),
 	board = new Image(),
@@ -51,6 +68,15 @@ var redchip = new Image(),
 	bluewins = new Image(),
 	draw = new Image(),
 	XXX = new Image();
+
+redchip.onload = function() { imageLoaded(); };
+bluechip.onload = function() { imageLoaded(); };
+board.onload = function() { imageLoaded(); };
+redwins.onload = function() { imageLoaded(); };
+bluewins.onload = function() { imageLoaded(); };
+draw.onload = function() { imageLoaded(); };
+XXX.onload = function() { imageLoaded(); };
+
 redchip.src = "img/bestchipred.png";
 bluechip.src = "img/bestchipblue.png";
 board.src = "img/board.png";
@@ -59,40 +85,37 @@ bluewins.src = "img/bluewins.png";
 draw.src = "img/draw.png";
 XXX.src = "img/X.png";
 
-//event blocker: when false, click and hover events do not work
-var playerCanDropChips = false;
-
-
-/*
- * Main Code
- */
-
-// ran after all scripts are loaded
-
-//Draw the board upon load
-$(window).on("load", drawBoard);
-
 //Ran when the site is fully loaded
 $(document).ready(function() {
-
-	//or else everything will be under the canvas
-	makeCanvasAndItsContainerTheSameSize();
-
-	//makes it so the user cannot drop a chip or hover
-	playerCanDropChips = false;
-
-	//hide the loading screen
-	$('#loading').hide();
-
-	//popup the gamemode selector
-	gamemodeSelector();
+	pageReady = true;
+	checkForReady();
 });
+
+function checkForReady () {
+	if (allImagesLoaded && pageReady) {
+		initialize();
+	}
+}
 
 
 /*
  * Main Game Functions
  * --main
  */
+
+function initialize() {
+
+	drawBoard();
+
+	//or else everything will be under the canvas
+	makeCanvasAndItsContainerTheSameSize();
+
+	//hide the loading screen
+	$('#loading').hide();
+
+	//popup the gamemode selector
+	gamemodeSelector();
+}
 
 function gamemodeSelector() {
  	//var peerNum = setUpOnline();
