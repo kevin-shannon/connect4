@@ -1,126 +1,141 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+<head>
+	<!-- Required meta tags -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link rel="shortcut icon" type="image/ico" href="img/favicon.ico"/>
-    <link rel="stylesheet" type="text/css" href="css/connect4.css">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
 
-  </head>
-  <body>
+	<link rel="shortcut icon" type="image/ico" href="img/favicon.ico" />
+	<link rel="stylesheet" type="text/css" href="css/connect4.css">
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 
-    <div class="container">
-      <div class="text-center" id="loading">
-        <h1 class="display-4">Loading...</h1>
-      </div>
-      <div class="row">
-        <div class="col-lg-2"></div>
-        <div class="col-lg-8">
-          <div class="canvasContainer" id="game"></div>
-        </div>
-        <div class="col-lg-2"></div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <img id="redturnIn" src="img/bestchipred.png" class="chipIndicator img-fluid float-left">
-          <p id="redVic" class="chipIndicator">0</p>
-        </div>
-        <div class="col mx-auto my-auto text-center">
-          <button type="button" class="btn btn-primary" id="resetButton" onclick="Reset()">
+</head>
+
+<body>
+
+	<div class="container">
+		<div class="text-center" id="loading">
+			<h1 class="display-4">Loading...</h1>
+		</div>
+		<div class="row">
+			<div class="col-lg-2"></div>
+			<div class="col-lg-8">
+				<div class="canvasContainer" id="game"></div>
+			</div>
+			<div class="col-lg-2"></div>
+		</div>
+		<div class="row">
+			<div class="col">
+				<img id="redturnIn" src="img/bestchipred.png" class="chipIndicator img-fluid float-left">
+				<p id="redVic" class="chipIndicator">0</p>
+			</div>
+			<div class="col mx-auto my-auto text-center">
+				<button type="button" class="btn btn-primary big-screen-button" id="resetButton" onclick="Reset()">
             Reset
           </button>
-          <button type="button" class="btn btn-danger" id="playAgainButton">
+				<div class="col">
+					<button type="button" class="btn btn-danger big-screen-button" id="playAgainButton">
             Play Again
           </button>
-        </div>
-        <div class="col">
-          <img id="blueturnIn" src="img/bestchipblue.png" class="chipIndicator img-fluid float-right">
-          <p id="blueVic" class="chipIndicator float-right">0</p>
-        </div>
-      </div>
-    </div>
+          <h6 id="gamenum"></h6>
+				</div>
+			</div>
+			<div class="col">
+				<img id="blueturnIn" src="img/bestchipblue.png" class="chipIndicator img-fluid float-right">
+				<p id="blueVic" class="chipIndicator float-right">0</p>
+			</div>
+		</div>
+	</div>
 
-    <div class="modal fade" id="gamemodeSelector" data-keyboard="false" data-backdrop="static">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="row mx-auto">
-            <img src="img/spiningchip.gif" height="128px" style="max-width: 100%;">
-          </div>
-          <div class="row mx-auto">
-            <h4>Connect 4</h4>
-          </div>
-          <div class="modal-body mx-auto" style="text-align:center;">
-            <button type="button" class="btn btn-primary" id="single">Single Player</button>
-            <button type="button" class="btn btn-primary" id="local">Local Multiplayer</button>
-            <button type="button" class="btn btn-primary" id="aivsai" data-toggle="modal" data-target="#aipop">AI vs AI</button>
-            <button type="button" class="btn btn-primary" id="host">Host Online Game</button>
-            <button type="button" class="btn btn-primary" id="join" data-toggle="modal" data-target="#joinpop">Join Online Game</button>
-            <div class="popup" id="hostpop">
-              <h6 id="gamenum"></h6>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+	<div class="modal" id="gamemodeSelector" data-keyboard="false" data-backdrop="static">
+		<div style="text-align: center;">
+			<div class="modal-dialog" role="document" style="display: inline-block;">
+				<div class="modal-content">
+					<div class="row mx-auto">
+						<img id="logo" src="img/spinningchip.gif" height="128px" style="max-width: 100%;">
+					</div>
+					<div class="row mx-auto">
+						<h4>Connect 4</h4>
+					</div>
+					<div class="modal-body mx-auto" style="text-align:center;">
+						<div id="gamemodeSelectorButtons" role="group">
+							<button type="button" class="btn btn-primary" id="single">Single Player</button>
+							<button type="button" class="btn btn-primary" id="local">Local Multiplayer</button>
+							<button type="button" class="btn btn-primary" id="aivsai" data-toggle="modal" data-target="#aipop">AI vs AI</button>
+							<button type="button" class="btn btn-primary" id="host">Host Online Game</button>
+							<button type="button" class="btn btn-primary" id="join" data-toggle="modal" data-target="#joinpop">Join Online Game</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
-    <div class="modal fade" id="joinpop">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Enter game number:</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	<div class="modal" id="joinpop">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Enter game number:</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
-          </div>
-          <div class="modal-body">
-            <input type="text" class="form-control" id="joinin" placeholder="Game number">
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-primary" id="joinbut">Play</button>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-          </div>
-        </div>
-      </div>
-    </div>
+				</div>
+				<div class="modal-body">
+					<input type="text" class="form-control" id="joinin" placeholder="Game number">
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" id="joinbut">Play</button>
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
-    <div class="modal fade" id="aipop">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Enter AI delay:</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	<div class="modal" id="aipop">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Enter AI delay:</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
-          </div>
-          <div class="modal-body">
-            <input type="text" class="form-control" id="aiin" placeholder="milliseconds">
+				</div>
+				<div class="modal-body">
+					<input type="text" class="form-control" id="aiin" placeholder="milliseconds">
+					<!--
             <div class="form-check">
               <label class="form-check-label">
                 <input class="form-check-input" id="aivsaicb" type="checkbox" value="">
                 Auto Play Again
               </label>
             </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-primary" id="aibut">Play</button>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-          </div>
-        </div>
-      </div>
-    </div>
+            -->
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" id="aibut">Play</button>
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
-    <!-- jQuery first, then Tether, then Bootstrap JS. -->
-    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+	<!-- jQuery first, then Tether, then Bootstrap JS. -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
 
-    <script src="https://skyway.io/dist/0.3/peer.js"></script>
-    <script src="js/connect4.js"></script>
-  </body>
+	<script src="https://skyway.io/dist/0.3/peer.min.js" integrity="sha384-5Ifsf2GGnA7aHd5eGaWnxay+KCJO/vmT3TpMwICLkaCXy706y+gKOoIZiNE/A96l" crossorigin="anonymous"></script>
+
+	<!-- Player modules -->
+	<script src="js/localPlayer.js"></script>
+	<script src="js/minimaxPlayer.js"></script>
+	<script src="js/remotePlayer.js"></script>
+
+	<script src="js/connect4.js"></script>
+</body>
+
 </html>

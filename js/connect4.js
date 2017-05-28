@@ -6,23 +6,11 @@
  * Variable declarations
  */
 
-
-//gamemode (local multiplayer: 0, singleplayer: 1, p2p host: 2, p2p opponent: 3)
-var gamemode;
-var AIDelay = 1000;
-var maxMillisecondsToAnimateChipDropping = 120;
 var resetButtonActive = false;
 
-//online multiplayer
-var peer;
-var connection;
-var wantToPlayAgain = false;
-var isMultiplayerTurnEventInPlace = false;
-
 //colors and design
-var startingColor = ["red", "blue"][Math.floor(Math.random() * 2)];
-var playersColor;
-var opponentsColor;
+var RED = "red";
+var BLUE = "blue";
 
 //board dimensions
 var bw = 1400;
@@ -35,6 +23,7 @@ var chips = $('<canvas/>').attr({
 }).appendTo('#game');
 var chipCanvas = chips.get(0).getContext("2d");
 chipCanvas.translate(0, (bw / 7));
+
 var brd = $('<canvas/>').attr({
 	width: bw,
 	height: bw
@@ -43,18 +32,37 @@ var boardCanvas = brd.get(0).getContext("2d");
 
 $(window).on('resize', function() {
 	makeCanvasAndItsContainerTheSameSize();
+	repositionButtons();
 });
 
 //logic globals (these are bad practice and will probably have to be replaced)
-var pos_array;
-var possible = new Array(7);
-var avoid = new Array(7);
+var mainBoard;
 var moves = 0;
 var winner = false;
 var redVictories = 0;
 var blueVictories = 0;
 
+var lastPlayer1;
+var lastPlayer2;
+
+//event blocker: when false, click and hover events do not work
+var playerCanDropChips = false;
+
+var allImagesLoaded = false;
+var pageReady = false;
+
 //images
+var numOfImagesLoaded = 0;
+var TOTAL_IMAGES = 7;
+
+function imageLoaded () {
+	numOfImagesLoaded++;
+	if (numOfImagesLoaded >= TOTAL_IMAGES) {
+		allImagesLoaded = true;
+		checkForReady();
+	}
+}
+
 var redchip = new Image(),
 	bluechip = new Image(),
 	board = new Image(),
@@ -62,6 +70,15 @@ var redchip = new Image(),
 	bluewins = new Image(),
 	draw = new Image(),
 	XXX = new Image();
+
+redchip.onload = function() { imageLoaded(); };
+bluechip.onload = function() { imageLoaded(); };
+board.onload = function() { imageLoaded(); };
+redwins.onload = function() { imageLoaded(); };
+bluewins.onload = function() { imageLoaded(); };
+draw.onload = function() { imageLoaded(); };
+XXX.onload = function() { imageLoaded(); };
+
 redchip.src = "img/bestchipred.png";
 bluechip.src = "img/bestchipblue.png";
 board.src = "img/board.png";
@@ -70,41 +87,17 @@ bluewins.src = "img/bluewins.png";
 draw.src = "img/draw.png";
 XXX.src = "img/X.png";
 
-//event blocker: when false, click and hover events do not work
-var playerCanDropChips;
-
-
-/*
- * Main Code
- */
-
-//Draw the board upon load
-$(window).on("load", drawBoard);
-
 //Ran when the site is fully loaded
 $(document).ready(function() {
-
-	//or else everything will be under the canvas
-	makeCanvasAndItsContainerTheSameSize();
-
-	//Ran when user clicks on the canvas
-	$('canvas').click(canvasClick);
-
-	//called when the mouse moves across the canvas
-	$('canvas').mousemove(hoverChip);
-
-	//run reset function when button is clicked
-	$('#reset').click(Reset());
-
-	//makes it so the user cannot drop a chip or hover
-	playerCanDropChips = false;
-
-	//hide the loading screen
-	$('#loading').hide();
-
-	//popup the gamemode selector
-	gamemodeSelector();
+	pageReady = true;
+	checkForReady();
 });
+
+function checkForReady () {
+	if (allImagesLoaded && pageReady) {
+		initialize();
+	}
+}
 
 
 /*
@@ -112,186 +105,205 @@ $(document).ready(function() {
  * --main
  */
 
-function start(gm) {
+function initialize() {
 
-  $("#resetButton").css("visibility", "visible");
-  $('#gamemodeSelector').modal('hide');
+	drawBoard();
 
-	//received gamemode from the selector
-	gamemode = gm;
+	//or else everything will be under the canvas
+	makeCanvasAndItsContainerTheSameSize();
 
-	//actual board width and height
-	var w = chips.get(0).scrollWidth;
-	var h = chips.get(0).scrollHeight;
+	repositionButtons();
 
-	//sets postion of indicator tiles
-	$("#redturnIn").css('left', ($(window).width() / 10) + 'px');
-	$("#blueturnIn").css('left', ($(window).width() / 6) + 'px');
-	$("#redturnIn").css('top', ($(window).height() / 6) + 'px');
-	$("#blueturnIn").css('top', ($(window).height() / 6) + 'px');
-	//sets size of indicator tiles
-	$("#redturnIn").css('height', (h / 6) + 'px');
-	$("#blueturnIn").css('height', (h / 6) + 'px');
-	$("#redturnIn").css('width', (w / 6) + 'px');
-	$("#blueturnIn").css('width', (w / 6) + 'px');
-	//makes tiles visible once gamplay has commensed
-	$("#redturnIn").css('visibility', 'visible');
-	$("#blueturnIn").css('visibility', 'visible');
-	$("#redVic").css('visibility', 'visible');
-	$("#blueVic").css('visibility', 'visible');
-	$("#resetButton").css('visibility', 'visible');
-	//sets postion of win counter text
-	$("#redVic").css('left', ($(window).width() / 10) + (w / 24) + 'px');
-	$("#blueVic").css('left', ($(window).width() / 6) + (w / 24) + 'px');
-	$("#redVic").css('top', ($(window).height() / 6) + (h / 96) + 'px');
-	$("#blueVic").css('top', ($(window).height() / 6) + (h / 96) + 'px');
-	//sizes the loading animation
-	$("#LoadingAnimation").css('height', (h / 6) + 'px');
-	$("#LoadingAnimation").css('width', (w / 7) + 'px');
-	//postions play again button
-	$("#playpop").css('right', ($(window).width() / 10) + 'px');
-	$("#playpop").css('top', ($(window).height() / 5) + 'px');
-	//figure out which gamemode the user wants to play
-	console.log("Gamemode " + gamemode + " selected.");
+	//hide the loading screen
+	$('#loading').hide();
 
-	/*
-  //if the gamemode is online multiplayer, let's set that up
-  if (gamemode === 2 || gamemode === 3) {
-  setUpOnlineMultiplayer();
-}*/
-
-	//assign colors to players
-	assignColors();
-	if (gm !== 2 && gm !== 3) {
-		startingColor = ["red", "blue"][Math.floor(Math.random() * 2)];
-	}
-	//get the pos_array ready for some epic connect4 action
-	pos_array = fillArray();
-
-	//activate reset button
-	resetButtonActive = true;
-
-	//start turn one
-	nextTurn();
-	//now we wait for a click event
+	//popup the gamemode selector
+	gamemodeSelector();
 }
 
-function canvasClick(e) {
-	if (playerCanDropChips === false) {
-		return false;
-	}
+function gamemodeSelector() {
 
-	//if this is online multiplayer, make sure the connection is open
-	if ((gamemode === 2 || gamemode === 3) && !connection.open) {
-		return false;
-	}
+ 	$('#gamemodeSelector').modal('show');
 
-	//actual board width and height
-	//bw bh are the "initial" size of the canvas or
-	//whatever idk
-	var w = chips.get(0).scrollWidth;
+ 	$("#single").click(function() {
+		var computerPlayerDelay = 1000;
+ 		start(new LocalPlayer(helperMethods), new MinimaxPlayer(helperMethods, computerPlayerDelay));
+ 	});
 
-	//determine where the chip was dropped
-	var offset = $(this).offset();
-	var xPos = (e.pageX - offset.left);
-	for (var i = 1; i < 8; i++) {
-		if (((i - 1) * (w / 7)) < xPos && xPos < ((i) * (w / 7))) {
-			//if the chip drop was successful
-			if (dropChip(i, currentTurn(), pos_array, false)) {
-				if (gamemode === 2 || gamemode === 3) {
-					sendMove(i);
-				}
-				nextTurn();
-			}
+ 	$("#local").click(function() {
+ 		start(new LocalPlayer(helperMethods), new LocalPlayer(helperMethods));
+ 	});
+
+	$('#host').click(function() {
+		start(new RemotePlayer(helperMethods, {
+			isHost: true
+		}), new LocalPlayer(helperMethods));
+		$("#gamenum").css("visibility", 'visible');
+		$("#gamenum").html("Your game number is " + peerNum);
+ 	});
+
+   function startJoin() {
+ 		//get the game number from the input box in the popup and send
+ 		//it to the join online game function
+ 		var gn = $('#joinin').val();
+
+ 		//simulates clicking join online game button to close the popup
+ 		$('#join').click();
+
+ 		start(new LocalPlayer(helperMethods), new RemotePlayer(helperMethods, {
+			isHost: false,
+			gameCode: gn
+		}));
+ 	}
+
+ 	function startAI() {
+        //close the modal
+        $('#aipop').modal('hide');
+
+ 		//get the delay from the input box in the popup and send
+ 		//it to the join online game function
+ 		var aid = $('#aiin').val();
+
+ 		start(new MinimaxPlayer(helperMethods, aid), new MinimaxPlayer(helperMethods, aid));
+ 	}
+
+ 	$("#joinbut").click(startJoin);
+
+ 	//checks for enter key press on input box
+ 	$('#joinin').keypress(function(e) {
+ 		if (e.which == 13) {
+ 			startJoin();
+ 			return false;
+ 		}
+ 	});
+
+ 	$("#aibut").click(startAI);
+
+ 	//checks for enter key press on input box
+ 	$('#aiin').keypress(function(e) {
+ 		if (e.which == 13) {
+ 			startAI();
+ 			return false;
+ 		}
+ 	});
+}
+
+function start(player1, player2) {
+    lastPlayer1 = player1;
+    lastPlayer2 = player2;
+
+    $("#resetButton").css("visibility", "visible");
+
+    $('#gamemodeSelector').modal('hide');
+
+    $("#single").off("click");
+    $("#local").off("click");
+    $("#host").off("click");
+    $("#joinbut").off("click");
+    $("#aibut").off("click");
+
+    //actual board width and height
+    var w = chips.get(0).scrollWidth;
+    var h = chips.get(0).scrollHeight;
+
+    //sets postion of indicator tiles
+    $("#redturnIn").css('left', ($(window).width() / 10) + 'px');
+    $("#blueturnIn").css('left', ($(window).width() / 6) + 'px');
+    $("#redturnIn").css('top', ($(window).height() / 6) + 'px');
+    $("#blueturnIn").css('top', ($(window).height() / 6) + 'px');
+    //sets size of indicator tiles
+    $("#redturnIn").css('height', (h / 6) + 'px');
+    $("#blueturnIn").css('height', (h / 6) + 'px');
+    $("#redturnIn").css('width', (w / 6) + 'px');
+    $("#blueturnIn").css('width', (w / 6) + 'px');
+    //makes tiles visible once gamplay has commensed
+    $("#redturnIn").css('visibility', 'visible');
+    $("#blueturnIn").css('visibility', 'visible');
+    $("#redVic").css('visibility', 'visible');
+    $("#blueVic").css('visibility', 'visible');
+    $("#resetButton").css('visibility', 'visible');
+    //sets postion of win counter text
+    $("#redVic").css('left', ($(window).width() / 10) + (w / 24) + 'px');
+    $("#blueVic").css('left', ($(window).width() / 6) + (w / 24) + 'px');
+    $("#redVic").css('top', ($(window).height() / 6) + (h / 96) + 'px');
+    $("#blueVic").css('top', ($(window).height() / 6) + (h / 96) + 'px');
+    //sizes the loading animation
+    $("#LoadingAnimation").css('height', (h / 6) + 'px');
+    $("#LoadingAnimation").css('width', (w / 7) + 'px');
+    //postions play again button
+    $("#playpop").css('right', ($(window).width() / 10) + 'px');
+    $("#playpop").css('top', ($(window).height() / 5) + 'px');
+
+    //get the mainBoard ready for some epic connect4 action
+    mainBoard = fillArray();
+
+    //activate reset button
+    resetButtonActive = true;
+
+    //start turn one
+    nextTurn(RED, player1, player2);
+    //now we wait for a click event
+}
+
+function nextTurn(color, playerToTakeTurnNow, playerToTakeTurnAfter, previousColumn) {
+	helperMethods.checkForWin(mainBoard, function (colorThatWon, xPos, yPos, direction) {
+        //ran when someone has won
+		if (playerToTakeTurnNow.winningMove) {
+			playerToTakeTurnNow.winningMove(previousColumn);
 		}
-	}
-}
+        win(colorThatWon, xPos, yPos, direction);
+      }, function () {
+        //ran in the event of a tie
+        tie();
+      });
 
-function nextTurn() {
-	winCondition(pos_array, false);
 	//if there's a winner, get outta here
 	if (winner || resetButtonActive === false) {
 		return;
 	}
 
 	advanceTurn();
-	console.log("Turn " + moves + ", " + currentTurn() + "'s turn.");
+	console.log("Turn " + moves + ", " + color + "'s turn.");
 
-	if (currentTurn() === "red") {
-		$("#redturnIn").css('WebkitFilter', 'grayscale(0%) opacity(100%) blur(0px)');
-		$("#blueturnIn").css('WebkitFilter', 'grayscale(50%) opacity(70%) blur(2px)');
-	} else {
-		$("#redturnIn").css('WebkitFilter', 'grayscale(50%) opacity(70%) blur(2px)');
-		$("#blueturnIn").css('WebkitFilter', 'grayscale(0%) opacity(100%) blur(0px)');
-	}
+    setIndicatorColor(color);
 
-	//give the correct player control based on the gamemode
-	switch (gamemode) {
-    case 0: //local multiplayer
-			playerCanDropChips = true;
-			break;
-		case 1: //singleplayer
-			if (currentTurn() === playersColor) {
-				playerCanDropChips = true;
-			} else {
-				playerCanDropChips = false;
-
-				//remember, randomAI is non-blocking because it is in a timeout
-				winningMoveAI();
-			}
-			break;
-		case 2: //p2p host
-			if (currentTurn() === playersColor) {
-				//for first turn, openConnection function sets it to true
-				if (connection === undefined) {
-					playerCanDropChips = false;
-				} else {
-					playerCanDropChips = true;
-				}
-			} else {
-				playerCanDropChips = false;
-
-				multiplayerTurn();
-			}
-			break;
-		case 3: //p2p opponent
-			if (currentTurn() === playersColor) {
-				playerCanDropChips = true;
-			} else {
-				playerCanDropChips = false;
-				//remember, randomAI is non-blocking because it is in a timeout
-				multiplayerTurn();
-			}
-			break;
-		case 4: //ai vs ai
-			winningMoveAI();
-			break;
-	}
+    tryTurn(color, playerToTakeTurnNow, playerToTakeTurnAfter, previousColumn);
 }
 
-//Draws the chip, adds it to the array, returns true if successful
-function dropChip(x, color, boardArray, AICheck, noAnimation) {
-	//for loop that checks array starting at bottom of board which is at 6 going up to 1
-	for (var j = 6; j > 0; j--) {
-		//the position in the array will be undefined when there is an open space to drop the chip
-		if (boardArray[x][j] === undefined && !winCondition(boardArray, AICheck)) {
-			if (!AICheck) {
-				console.log(color.charAt(0).toUpperCase() + color.slice(1) + " dropped in column " + x);
-				drawChip(x, j, color, noAnimation);
-			}
-			boardArray[x][j] = color;
-			return true;
-		}
-	}
-	//chip wasn't successfully dropped
-	return false;
+function tryTurn(chipColor, playerToTakeTurnNow, playerToTakeTurnAfter, previousColumn) {
+    //give the correct player control based on the gamemode
+    playerToTakeTurnNow.takeTurn(mainBoard, chipColor, previousColumn, function (columnToDropIn, shouldAnimate) {
+        //ran when the plauer makes their moves
+
+        //the player has decided their move, so let's execute it.
+        var chipWasDropped = helperMethods.dropChip(
+            mainBoard,
+            columnToDropIn,
+            chipColor,
+            function (column, j, colorOfChip) {
+                //ran when the chip has been dropped into the board array
+                console.log(colorOfChip.charAt(0).toUpperCase() + colorOfChip.slice(1) + " dropped in column " + column);
+            	drawChip(column, j, colorOfChip, shouldAnimate);
+            }
+        );
+
+        if (chipWasDropped) {
+            //player has successfully made their move,
+            //so switch the color and players and keep going.
+            nextTurn(getOppositeColor(chipColor), playerToTakeTurnAfter, playerToTakeTurnNow, columnToDropIn);
+        } else {
+            //try the same thing again
+            tryTurn(chipColor, playerToTakeTurnNow, playerToTakeTurnAfter, previousColumn);
+        }
+
+    });
 }
 
-function drawChip(x, y, chipColor, noAnimation) {
+function drawChip(x, y, chipColor, shouldAnimate) {
 	var chipImage = new Image();
 
 	//Set the correct color chip to draw
-	chipImage = chipColor === "red" ? redchip : bluechip;
+	chipImage = chipColor === RED ? redchip : bluechip;
 
 	x = (bw / 7) * (x - 1);
 	y = (bh / 6) * (y - 1);
@@ -303,7 +315,7 @@ function drawChip(x, y, chipColor, noAnimation) {
 	};
 	var startTime = (new Date()).getTime();
 
-	if (!noAnimation) {
+	if (shouldAnimate) {
 		window.requestAnimFrame = (function(callback) {
 			return window.requestAnimationFrame ||
 				window.webkitRequestAnimationFrame ||
@@ -351,13 +363,17 @@ function drawChip(x, y, chipColor, noAnimation) {
 	}
 }
 
-function Reset() {
+function setIndicatorColor(newColor) {
+    if (newColor === RED) {
+        $("#redturnIn").css('WebkitFilter', 'grayscale(0%) opacity(100%) blur(0px)');
+        $("#blueturnIn").css('WebkitFilter', 'grayscale(50%) opacity(70%) blur(2px)');
+    } else {
+        $("#redturnIn").css('WebkitFilter', 'grayscale(50%) opacity(70%) blur(2px)');
+        $("#blueturnIn").css('WebkitFilter', 'grayscale(0%) opacity(100%) blur(0px)');
+    }
+}
 
-	//if the button is somehow displayed even though it shouldn't be
-	//make sure reset doesn't run?? -Tanner
-	if (resetButtonActive === false) {
-		return false;
-	}
+function Reset() {
 
 	AIDelay = 1000;
 
@@ -371,26 +387,21 @@ function Reset() {
 	$("#redVic").css('visibility', 'hidden');
 	$("#blueVic").css('visibility', 'hidden');
 	$("#resetButton").css("visibility", 'hidden');
-	//$("#LoadingAnimation").css('visibility', 'hidden');
+	$("#gamenum").css("visibility", 'hidden');
 
 	resetBoard();
-	closeConnection();
 	hidePlayAgainPopup();
+
+	if (lastPlayer1.clear) {
+		lastPlayer1.clear();
+	}
+
+	if (lastPlayer2.clear) {
+		lastPlayer2.clear();
+	}
 
 	//restart the game
 	gamemodeSelector();
-}
-
-function playAgain() {
-	console.log("Playing again");
-
-	hidePlayAgainPopup();
-
-	//resetting this variable for next time
-	wantToPlayAgain = false;
-
-	resetBoard();
-	start(gamemode);
 }
 
 function showPlayAgainPopup(functionToRunOnClick) {
@@ -400,12 +411,13 @@ function showPlayAgainPopup(functionToRunOnClick) {
 
 function hidePlayAgainPopup() {
 	$("#playAgainButton").hide();
+    $("#playAgainButton").off();
 }
 
 function resetBoard() {
-	console.log("Resetting game");
-	pos_array.length = 0;
-	pos_array = fillArray();
+	console.log("Resetting board");
+	mainBoard.length = 0;
+	mainBoard = fillArray();
 	winner = false;
 	moves = 0;
 	playerCanDropChips = false;
@@ -425,51 +437,45 @@ function fillArray() {
 }
 
 //i and j are the coord of the first chip in the winning four
-function win(i, j, direction) {
+function win(color, i, j, direction) {
 	winner = true;
-	console.log(currentTurn() + " wins on turn " + moves);
-	winAdder(currentTurn());
+	console.log(color + " wins on turn " + moves);
+	winAdder(color);
 	//this is to make sure that the events are blocked
 	playerCanDropChips = false;
 	//Draw the win pic based on the color of the chip that won after a delay
-	setTimeout(drawWinBanner, 500, pos_array[i][j]);
+	setTimeout(drawWinBanner, 500, mainBoard[i][j]);
 	//delay
 	setTimeout(drawWinXs, 1000, i, j, direction);
 	displayPlay();
 }
 
-function displayPlay() {
+function tie() {
+    setTimeout(function() {
+        //manual win event instead of using win function
+        console.log("the game is a draw");
+        winner = true;
+        setTimeout(function() {
+            chipCanvas.drawImage(draw, (3 * bw / 10), -(bh / 6), (bw / 2.5), (bh / 6));
+        }, 450);
+        displayPlay();
+    }, 50);
+}
 
-	if (gamemode === 4) {
-		var shouldAutoPlayAgain = $('#aivsaicb').prop('checked');
-		if (shouldAutoPlayAgain) {
-			setTimeout(function() {
+function displayPlay() {
+	setTimeout(function() {
+		if (resetButtonActive) {
+			showPlayAgainPopup(function() {
 				resetBoard();
-				start(gamemode);
-			}, 1200);
+				start(lastPlayer1, lastPlayer2);
+				hidePlayAgainPopup();
+			});
 		}
-	} else {
-		setTimeout(function() {
-			if (resetButtonActive) {
-				if (gamemode === 2 || gamemode === 3) {
-					showPlayAgainPopup(function() {
-						askToPlayAgain();
-						hidePlayAgainPopup();
-					});
-				} else {
-					showPlayAgainPopup(function() {
-						resetBoard();
-						start(gamemode);
-						hidePlayAgainPopup();
-					});
-				}
-			}
-		}, 1000);
-	}
+	}, 1000);
 }
 
 function winAdder(color) {
-	if (color === "red") {
+	if (color === RED) {
 		redVictories++;
 		$("#redVic").text(redVictories);
 	} else {
@@ -481,7 +487,7 @@ function winAdder(color) {
 function drawWinBanner(color) {
 
 	//choose the correct picture for either red or blue
-	var bannerImage = (color === "red") ? redwins : bluewins;
+	var bannerImage = (color === RED) ? redwins : bluewins;
 
 	//draw that sucker
 	if (resetButtonActive === true) {
@@ -526,670 +532,133 @@ function makeCanvasAndItsContainerTheSameSize() {
 	$('.canvasContainer').height(canvasHeight);
 }
 
-function hoverChip(e) {
-	if (playerCanDropChips === false) {
-		return false;
-	}
+function repositionButtons() {
+	var width = $(window).width();
+	var buttons = $('#gamemodeSelectorButtons');
 
-	var offset = $(this).offset();
-	var xPos = (e.pageX - offset.left);
-	var image = new Image();
+	if (width < 544) {
+		//if its a small screen
+		buttons.addClass('btn-group-vertical');
+		buttons.find('*').addClass('btn-lg');
 
-	//Set the correct color chip to draw
-	image = currentTurn() === "red" ? redchip : bluechip;
+		buttons.find('*').addClass('small-screen-button');
+		buttons.find('*').removeClass('big-screen-button');
+	} else {
+		//if its a big screen
+		buttons.removeClass('btn-group-vertical');
+		buttons.find('*').removeClass('btn-lg');
 
-	//actual board width and height
-	//bw bh are the "initial" size of the canvas or
-	//whatever idk
-	var w = chips.get(0).scrollWidth;
-
-	//draw the image of the chip to be dropped
-	for (var i = 1; i < 8; i++) {
-		if (xPos > ((i - 1) * (w / 7)) && xPos < (i * (w / 7)) && winner === false) {
-			chipCanvas.clearRect(0, -(bh / 6), bw, (bh / 6));
-			chipCanvas.drawImage(image, ((i - 1) * (bw / 7)), -(bh / 6), (bw / 7), (bh / 6));
-		}
+		buttons.find('*').addClass('big-screen-button');
+		buttons.find('*').removeClass('small-screen-button');
 	}
 }
 
-function currentTurn() {
-	if (moves % 2 === 0) {
-		return startingColor === "red" ? "blue" : "red";
-	} else {
-		return startingColor;
-	}
+function getOppositeColor(color) {
+  return color === RED ? BLUE : RED;
 }
 
 //returns who's turn it is now
 function advanceTurn() {
 	moves++;
-	return currentTurn();
 }
 
-function assignColors() {
-	switch (gamemode) {
-		case 0: //local mulitplayer
-			//doesn't matter because it won't be checked in nextTurn
-			break;
-		case 1: //singleplayer
-			playersColor = "red";
-			opponentsColor = "blue";
-			break;
-		case 2: //p2p host
-			startingColor = "red"
-			playersColor = "red";
-			opponentsColor = "blue";
-			break;
-		case 3: //p2p opponent
-			startingColor = "red"
-			playersColor = "blue";
-			opponentsColor = "red";
-			break;
-	}
-}
+var helperMethods = {
 
-function gamemodeSelector() {
-	var peerNum = setUpOnline();
-
-	$('#gamemodeSelector').modal('show');
-
-	$("#single").click(function() {
-		start(1);
-	});
-
-	$("#local").click(function() {
-		start(0);
-	});
-
-	$("#gamenum").html("Your game number is " + peerNum);
-
-	$('#host').popover({
-		html: true,
-		trigger: 'hover',
-		content: function() {
-      //start is called within hostOnlineGame
-      hostOnlineGame();
-			return $('#hostpop').html();
-		},
-		placement: 'bottom'
-	});
-
-  function startJoin() {
-		//get the game number from the input box in the popup and send
-		//it to the join online game function
-		var gn = $('#joinin').val();
-
-		//simulates clicking join online game button to close the popup
-		$('#join').click();
-
-		joinOnlineGame(gn);
-		start(3);
-	}
-
-	function startAI() {
-		//get the delay from the input box in the popup and send
-		//it to the join online game function
-		var aid = $('#aiin').val();
-
-		//simulates clicking join online game button to close the popup
-		$('#aivsai').click();
-
-		AIDelay = aid;
-		start(4);
-	}
-
-	$("#joinbut").click(startJoin);
-
-	//checks for enter key press on input box
-	$('#joinin').keypress(function(e) {
-		if (e.which == 13) {
-			startJoin();
-			return false;
-		}
-	});
-
-	$("#aibut").click(startAI);
-
-	//checks for enter key press on input box
-	$('#aiin').keypress(function(e) {
-		if (e.which == 13) {
-			startAI();
-			return false;
-		}
-	});
-}
-
-// END OF --main
-
-
-/*
- * Multiplayer Functions
- * --mp
- */
-
-function askToPlayAgain() {
-	wantToPlayAgain = true;
-	console.log("sending 0 from ask");
-	sendMove(0);
-}
-
-function receivePlayAgainRequest() {
-	//if wantToPlayAgain is true, then this means both players want to play
-	//      again and we can start the new game.
-	//else we will ask the player if they want to play again, and if they do,
-	//      we will play.
-	if (wantToPlayAgain) {
-		playAgain();
-	} else {
-		//TODO: ask the player to respond to the request from their oppenent to
-		//      player again.
-		//if they say yes:
-		console.log("sending 0 from receive");
-		sendMove(0);
-		playAgain();
-	}
-}
-
-function setUpOnline() {
-	var peerNum = Math.floor(Math.random() * 900) + 100;
-	console.log("Peer id: " + peerNum);
-	peer = new Peer(peerNum, {
-		key: 'fe7e2757-bbef-4456-a934-ae93385502b9'
-	});
-	return peerNum;
-}
-
-function hostOnlineGame() {
-	//start new game
-	//alert("Your game number is " + peerNum);
-	if ($('#popup').css('visibility') === "hidden") {
-		$("#LoadingAnimation").css('visibility', 'visible');
-	}
-	peer.on('connection', function(conn) {
-		connection = conn;
-		openConnection();
-		start(2);
-	});
-}
-
-function joinOnlineGame(gameNum) {
-	setUpOnline();
-
-	//join game
-	//var gameNum = window.prompt("Enter an game number to join");
-	$("#LoadingAnimation").css('visibility', 'visible');
-	connection = peer.connect(gameNum);
-	peer.on('error', function(err) {
-		if (err.type === 'peer-unavailable') {
-			Reset();
-			alert('Game does not exist.');
-		}
-	});
-	openConnection();
-}
-
-function multiplayerTurn() {
-	//prevent duplicates
-	if (!isMultiplayerTurnEventInPlace) {
-		connection.on('data', function(data) {
-			console.log("Received " + data + " from peer");
-			//0 is sent when a player wants to play again and the game has been won
-			if (data === 0 && winner) {
-				receivePlayAgainRequest();
-			} else if (currentTurn() === opponentsColor) {
-				dropChip(data, currentTurn(), pos_array, false);
-				nextTurn();
+  //Tries to add the chip to the array, returns true if successful
+  dropChip: function (boardArray, column, color, onDrop) {
+  	//for loop that checks array starting at bottom of board which is at 6 going up to 1
+  	for (var j = 6; j > 0; j--) {
+  		//the position in the array will be undefined when there is an open space to drop the chip
+  		if (boardArray[column][j] === undefined) {
+			if (onDrop) {
+  				onDrop(column, j, color);
 			}
-		});
-		isMultiplayerTurnEventInPlace = true;
-	}
-}
+  			boardArray[column][j] = color;
+  			return true;
+  		}
+  	}
+  	//chip wasn't successfully dropped
+  	return false;
+  },
 
-function sendMove(data) {
-	console.log("Sent " + data + " to peer");
-	connection.send(data);
-}
+  copyBoard: function (boardToCopy) {
+  	return boardToCopy.map(function(arr) {
+  		return arr.slice();
+  	});
+  },
 
-function openConnection() {
-	connection.on('open', function() {
-		console.log("Connection open");
-		$("#LoadingAnimation").css('visibility', 'hidden');
-		playerCanDropChips = currentTurn() === playersColor;
-		$('#host').click();
-	});
-
-	connection.on('close', function() {
-		//make sure that the person who clicked the reset button doesn't
-		//  get this message
-		if (resetButtonActive) {
-			console.log('Connection lost');
-			popupConnectionLost();
-
-			Reset();
-		}
-	});
-}
-
-function closeConnection() {
-	if (gamemode === 2 || gamemode === 3) {
-		try {
-			peer.destroy();
-			connection.close();
-			isMultiplayerTurnEventInPlace = false;
-		} catch (err) {
-			console.log("error closing connection");
-		}
-	}
-}
-
-function popupConnectionLost() {
-	alert('Your opponent ended the match.');
-}
-
-// END OF --mp
-
-
-/*
- * AI Functions
- * --ai
- */
-
-//[columns][rows]
-//if AICheck is true, a win will not be triggered
-//this is for AI
-function winCondition(boardArray, AICheck) {
-	var victory = false;
-	//horizontal
-	for (var i = 1; i < 5; i++) {
-		for (var j = 1; j < 7; j++) {
-			if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j] && boardArray[i][j] === boardArray[i + 2][j] && boardArray[i][j] === boardArray[i + 3][j]) {
-				if (!AICheck)
-					win(i, j, "h");
+  checkForWin: function (boardArray, onWin, onTie) {
+    //[columns][rows]
+  	var victory = false;
+  	//horizontal
+  	for (var i = 1; i < 5; i++) {
+  		for (var j = 1; j < 7; j++) {
+  			if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j] && boardArray[i][j] === boardArray[i + 2][j] && boardArray[i][j] === boardArray[i + 3][j]) {
+				if (onWin) {
+					onWin(boardArray[i][j], i, j, "h");
+				}
 				victory = boardArray[i][j];
-			}
-		}
-	}
+  			}
+  		}
+  	}
 
-	//vertical
-	for (var i = 1; i < 8; i++) {
-		for (var j = 1; j < 4; j++) {
-			if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i][j + 1] && boardArray[i][j] === boardArray[i][j + 2] && boardArray[i][j] === boardArray[i][j + 3]) {
-				if (!AICheck)
-					win(i, j, "v");
-				victory = boardArray[i][j]
-			}
-		}
-	}
-	// /diagonals
-	for (var i = 1; i < 5; i++) {
-		for (var j = 4; j < 7; j++) {
-			if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j - 1] && boardArray[i][j] === boardArray[i + 2][j - 2] && boardArray[i][j] === boardArray[i + 3][j - 3]) {
-				if (!AICheck)
-					win(i, j, "//");
-				victory = boardArray[i][j]
-			}
-		}
-	}
-	// \diagonals
-	for (var i = 1; i < 5; i++) {
-		for (var j = 1; j < 4; j++) {
-			if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j + 1] && boardArray[i][j] === boardArray[i + 2][j + 2] && boardArray[i][j] === boardArray[i + 3][j + 3]) {
-				if (!AICheck)
-					win(i, j, "\\");
-				victory = boardArray[i][j]
-			}
-		}
-	}
-	// tie
-	setTimeout(function() {
-		if (moves === 43 && winner === false && !AICheck) {
-			//manual win event instead of using win function
-			console.log("the game is a draw");
-			winner = true;
-			setTimeout(function() {
-				chipCanvas.drawImage(draw, (3 * bw / 10), -(bh / 6), (bw / 2.5), (bh / 6));
-			}, 450);
-			displayPlay();
-		}
-	}, 50);
-	return victory;
-}
-
-function winningMoveAI() {
-	setTimeout(function() {
-		//decide chip dropping animation should play
-		var shouldNotAnimate = AIDelay <= maxMillisecondsToAnimateChipDropping;
-		//not completely necessary, but whatever
-		var column = makeTree(pos_array, Math.round(Math.log(30000) / Math.log(7 - possibleMoves(pos_array, false))), currentTurn(), currentTurn()) + 1;
-		if (winner === false) {
-			while (!dropChip(column, currentTurn(), pos_array, false, shouldNotAnimate)) {}
-		} else {
-			return;
-		}
-		nextTurn();
-	}, AIDelay);
-}
-
-function possibleMoves(boardArray, arrayOrNo) {
-	var counter = 0;
-	possible = new Array(7);
-	for (var i = 1; i < 8; i++) {
-		var testingArray = copyArray(boardArray);
-		if (dropChip(i, currentTurn(), testingArray, true)) {
-			possible[i - 1] = true;
-		} else {
-			possible[i - 1] = false;
-			counter++;
-		}
-	}
-	if (counter === 7) {
-		return false;
-	} else if (arrayOrNo) {
-		return possible;
-	} else {
-		return counter;
-	}
-}
-
-function boardScore(boardArray, color) {
-	var redscore = 0;
-	var bluescore = 0;
-	var score = 0;
-	var three = threeInRows(boardArray);
-	var redThreeInRows = three.redCount;
-	var blueThreeInRows = three.blueCount;
-	var two = threeInRows(boardArray);
-	var redTwoInRows = two.redCount;
-	var blueTwoInRows = two.blueCount;
-	var mid = middleScorer(boardArray, color);
-	var redMid = mid.redCount;
-	var blueMid = mid.blueCount;
-	if (winCondition(boardArray, true) === color) {
-		score = Number.POSITIVE_INFINITY;
-	} else if (typeof winCondition(boardArray, true) === "string" && winCondition(boardArray, true) !== color) {
-		score = Number.NEGATIVE_INFINITY;
-	} else {
-		redscore += 100 * redThreeInRows + 50 * redTwoInRows + redMid;
-		bluescore += 100 * blueThreeInRows + 50 * blueTwoInRows + blueMid;
-		if (color === "red") {
-			score = redscore - bluescore;
-		} else {
-			score = bluescore - redscore;
-		}
-	}
-	return score;
-}
-
-function threeInRows(boardArray) {
-	var redCounter = 0;
-	var blueCounter = 0;
-	//horizontal
-	for (var i = 1; i < 6; i++) {
-		for (var j = 1; j < 7; j++) {
-			if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j] && boardArray[i][j] === boardArray[i + 2][j]) {
-				if (boardArray[i][j] === "red") {
-					redCounter++;
-				} else {
-					blueCounter++;
+  	//vertical
+  	for (var i = 1; i < 8; i++) {
+  		for (var j = 1; j < 4; j++) {
+  			if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i][j + 1] && boardArray[i][j] === boardArray[i][j + 2] && boardArray[i][j] === boardArray[i][j + 3]) {
+				if (onWin) {
+					onWin(boardArray[i][j], i, j, "v");
 				}
-			}
-		}
-	}
-
-	//vertical
-	for (var i = 1; i < 8; i++) {
-		for (var j = 1; j < 5; j++) {
-			if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i][j + 1] && boardArray[i][j] === boardArray[i][j + 2]) {
-				if (boardArray[i][j] === "red") {
-					redCounter++;
-				} else {
-					blueCounter++;
+				victory = boardArray[i][j];
+  			}
+  		}
+  	}
+  	// /diagonals
+  	for (var i = 1; i < 5; i++) {
+  		for (var j = 4; j < 7; j++) {
+  			if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j - 1] && boardArray[i][j] === boardArray[i + 2][j - 2] && boardArray[i][j] === boardArray[i + 3][j - 3]) {
+				if (onWin) {
+					onWin(boardArray[i][j], i, j, "//");
 				}
-			}
-		}
-	}
-	// /diagonals
-	for (var i = 1; i < 6; i++) {
-		for (var j = 3; j < 7; j++) {
-			if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j - 1] && boardArray[i][j] === boardArray[i + 2][j - 2]) {
-				if (boardArray[i][j] === "red") {
-					redCounter++;
-				} else {
-					blueCounter++;
+				victory = boardArray[i][j];
+  			}
+  		}
+  	}
+  	// \diagonals
+  	for (var i = 1; i < 5; i++) {
+  		for (var j = 1; j < 4; j++) {
+  			if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j + 1] && boardArray[i][j] === boardArray[i + 2][j + 2] && boardArray[i][j] === boardArray[i + 3][j + 3]) {
+				if (onWin) {
+					onWin(boardArray[i][j], i, j, "\\");
 				}
-			}
-		}
-	}
-	// \diagonals
-	for (var i = 1; i < 6; i++) {
-		for (var j = 1; j < 5; j++) {
-			if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j + 1] && boardArray[i][j] === boardArray[i + 2][j + 2]) {
-				if (boardArray[i][j] === "red") {
-					redCounter++;
-				} else {
-					blueCounter++;
-				}
-			}
-		}
-	}
+				victory = boardArray[i][j];
+  			}
+  		}
+  	}
 
-	return {
-		redCount: redCounter,
-		blueCount: blueCounter
-	};
+  	//check for a tie
+    if (!victory) {
+      var boardIsNotFull = false;
+      for (var i = 1; i < 8; i++) {
+    		for (var j = 1; j < 7; j++) {
+          if (boardArray[i][j] === undefined) {
+            boardIsNotFull = true;
+          }
+        }
+      }
+
+      if (!boardIsNotFull && onTie) {
+        onTie();
+      }
+    }
+
+    return victory;
+
+  },
+  allowUIChipDrop: function () {
+    playerCanDropChips = true;
+  },
+  disallowUIChipDrop: function () {
+    playerCanDropChips = false;
+  }
 }
-
-function middleScorer(boardArray) {
-	var redCounter = 0;
-	var blueCounter = 0;
-	for (var i = 1; i <= boardArray[1].length; i++) {
-		//this fucking blows
-		if (boardArray[4][i] === "red") {
-			redCounter += 50;
-		}
-		if (boardArray[4][i] === "blue") {
-			blueCounter += 50;
-		}
-		if (boardArray[3][i] === "red") {
-			redCounter += 20;
-		}
-		if (boardArray[5][i] === "red") {
-			redCounter += 20;
-		}
-		if (boardArray[3][i] === "blue") {
-			blueCounter += 20;
-		}
-		if (boardArray[5][i] === "blue") {
-			blueCounter += 20;
-		}
-		if (boardArray[2][i] === "red") {
-			redCounter += 10;
-		}
-		if (boardArray[6][i] === "red") {
-			redCounter += 10;
-		}
-		if (boardArray[2][i] === "blue") {
-			blueCounter += 10;
-		}
-		if (boardArray[6][i] === "blue") {
-			blueCounter += 10;
-		}
-		if (boardArray[1][i] === "red") {
-			redCounter += 5;
-		}
-		if (boardArray[7][i] === "red") {
-			redCounter += 5;
-		}
-		if (boardArray[1][i] === "blue") {
-			blueCounter += 5;
-		}
-		if (boardArray[7][i] === "blue") {
-			blueCounter += 5;
-		}
-	}
-	return {
-		redCount: redCounter,
-		blueCount: blueCounter
-	};
-}
-
-function copyArray(arrayToCopy) {
-	return arrayToCopy.map(function(arr) {
-		return arr.slice();
-	});
-}
-
-function getOppositeColor(color) {
-	return color === "red" ? "blue" : "red";
-}
-
-function Tree(board, depth) {
-	this.depth = depth;
-	this.path = new Array();
-
-	//generate the tree
-	this.tree = new Node();
-	this.tree.setChildren(generateChildren(board, this.depth, currentTurn(), this.depth));
-
-	function generateChildren(boardArray, depth, color, initDepth) {
-		var children = [];
-		//for each child we need to create
-		for (var i = 1; i < 8; i++) {
-			var aiArray = copyArray(boardArray);
-			if (dropChip(i, color, aiArray, true)) {
-				var newChild = new Node();
-				if (depth > 1) {
-					newChild.setChildren(generateChildren(aiArray, depth - 1, getOppositeColor(color), initDepth));
-				} else {
-					newChild.setScore(boardScore(aiArray, currentTurn()));
-				}
-
-				//add it to the array
-				children.push(newChild);
-			} else {
-				var newChild = new Node();
-				newChild.setScore(null);
-				children.push(newChild);
-			}
-		}
-		return children;
-	}
-}
-
-Tree.prototype.getBestValue = function(colorToMax, currentColor) {
-	var mm = this.minmax(this.tree, this.depth, colorToMax, currentColor);
-	for (var i = 0; i < 7; i++) {
-		if (!possibleMoves(pos_array, true)[i]) {
-			this.path.splice(i, 0, {
-				score: null
-			});
-		}
-	}
-	return mm;
-};
-
-Tree.prototype.minmax = function(node, depth, colorToMax, currentColor) {
-	if (depth == 0 || !("children" in node)) {
-		return {
-			score: node.score,
-			depth: depth
-		};
-	}
-	var best_value, v;
-	if (colorToMax === currentColor) {
-		//maximizing player
-
-		best_value = {
-			score: Number.NEGATIVE_INFINITY,
-			depth: depth
-		};
-
-		for (var child in node.children) {
-			if (node.children[child].score !== null) {
-				v = this.minmax(node.children[child], depth - 1, getOppositeColor(colorToMax), currentColor);
-				var bestScore = Math.max(v.score, best_value.score);
-				var bestDepth;
-				if (v.score === best_value.score) {
-					if (best_value.score === Number.POSITIVE_INFINITY) {
-						bestDepth = v.depth > best_value.depth ? v.depth : best_value.depth;
-					} else if (best_value.score === Number.NEGATIVE_INFINITY) {
-						bestDepth = v.depth < best_value.depth ? v.depth : best_value.depth;
-					} else {
-						bestDepth = best_value.depth;
-					}
-				} else {
-					bestDepth = bestScore === v.score ? v.depth : best_value.depth;
-				}
-				best_value = {
-					score: bestScore,
-					depth: bestDepth
-				};
-			}
-		}
-		if (depth === this.depth - 1) {
-			this.path.push(best_value);
-		}
-		return best_value;
-	} else {
-		//minimizing player
-		best_value = {
-			score: Number.POSITIVE_INFINITY,
-			depth: depth
-		};
-
-		for (var child in node.children) {
-			if (node.children[child].score !== null) {
-				v = this.minmax(node.children[child], depth - 1, getOppositeColor(colorToMax), currentColor);
-				var bestScore = Math.min(v.score, best_value.score);
-				var bestDepth;
-				if (v.score === best_value.score) {
-					if (best_value.score === Number.POSITIVE_INFINITY) {
-						bestDepth = v.depth < best_value.depth ? v.depth : best_value.depth;
-					} else if (best_value.score === Number.NEGATIVE_INFINITY) {
-						bestDepth = v.depth > best_value.depth ? v.depth : best_value.depth;
-					} else {
-						bestDepth = best_value.depth;
-					}
-				} else {
-					bestDepth = bestScore === v.score ? v.depth : best_value.depth;
-				}
-				best_value = {
-					score: bestScore,
-					depth: bestDepth
-				};
-			}
-		}
-		if (depth === this.depth - 1) {
-			this.path.push(best_value);
-		}
-		return best_value;
-	}
-};
-
-Tree.prototype.bestMove = function(tree, best) {
-	var dupes = [];
-	for (var i = 0; i < 7; i++) {
-		if (this.path[i].score === best.score && this.path[i].depth === best.depth) {
-			dupes.push(i);
-		}
-	}
-	return dupes[Math.floor(Math.random() * dupes.length)];
-};
-
-function Node() {}
-
-Node.prototype.setChildren = function(children) {
-	this.children = children;
-};
-
-Node.prototype.setScore = function(score) {
-	this.score = score;
-};
-
-function makeTree(board, depth, colorToMax, currentColor) {
-	var tree = new Tree(board, depth);
-	var best = tree.getBestValue(colorToMax, currentColor);
-	return tree.bestMove(tree, best);
-}
-
-// END OF --ai

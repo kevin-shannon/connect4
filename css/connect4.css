@@ -1,40 +1,62 @@
 .canvasContainer {
-  width:100%;
-  margin:0 auto;
-  position: relative;
-  font-family: 'Open Sans', sans-serif;
+    width: 100%;
+    margin: 0 auto;
+    position: relative;
+    font-family: 'Open Sans', sans-serif;
 }
 
 .canvasContainer canvas {
-  width: 100%;
-  height: auto;
-  position: absolute;
-  left: 0;
-  top: 0;
+    width: 100%;
+    height: auto;
+    position: absolute;
+    left: 0;
+    top: 0;
 }
 
 .btn {
-  margin: .25em;
-  font-size: 1em;
-  font-family: 'Open Sans', sans-serif;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.big-screen-button {
+    margin: .25em;
+    font-size: 1em;
+}
+
+.small-screen-button {
+    border-color: white;
+    border-width: 1px;
 }
 
 #playAgainButton {
-  display: none;
+    display: none;
 }
 
 #resetButton {
-  visibility: hidden;
+    visibility: hidden;
 }
 
 .popup {
-  display: none;
+    display: none;
 }
 
 .chipIndicator {
-  visibility: hidden;
+    visibility: hidden;
+    pointer-events: none; /* Prevent dragging */
+}
+
+#logo {
+    pointer-events: none; /* Prevent dragging */
 }
 
 #loading {
-  margin: 64px;
+    margin: 64px;
+}
+
+body {
+    /* Prevent text selection */
+    -webkit-touch-callout: none;-webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
