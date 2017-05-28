@@ -14,9 +14,17 @@
 }
 
 .btn {
+    font-family: 'Open Sans', sans-serif;
+}
+
+.big-screen-button {
     margin: .25em;
     font-size: 1em;
-    font-family: 'Open Sans', sans-serif;
+}
+
+.small-screen-button {
+    border-color: white;
+    border-width: 1px;
 }
 
 #playAgainButton {

@@ -32,6 +32,7 @@ var boardCanvas = brd.get(0).getContext("2d");
 
 $(window).on('resize', function() {
 	makeCanvasAndItsContainerTheSameSize();
+	repositionButtons();
 });
 
 //logic globals (these are bad practice and will probably have to be replaced)
@@ -110,6 +111,8 @@ function initialize() {
 
 	//or else everything will be under the canvas
 	makeCanvasAndItsContainerTheSameSize();
+
+	repositionButtons();
 
 	//hide the loading screen
 	$('#loading').hide();
@@ -524,6 +527,27 @@ function drawBoard() {
 function makeCanvasAndItsContainerTheSameSize() {
 	var canvasHeight = brd.get(0).scrollHeight;
 	$('.canvasContainer').height(canvasHeight);
+}
+
+function repositionButtons() {
+	var width = $(window).width();
+	var buttons = $('#gamemodeSelectorButtons');
+
+	if (width < 544) {
+		//if its a small screen
+		buttons.addClass('btn-group-vertical');
+		buttons.find('*').addClass('btn-lg');
+
+		buttons.find('*').addClass('small-screen-button');
+		buttons.find('*').removeClass('big-screen-button');
+	} else {
+		//if its a big screen
+		buttons.removeClass('btn-group-vertical');
+		buttons.find('*').removeClass('btn-lg');
+
+		buttons.find('*').addClass('big-screen-button');
+		buttons.find('*').removeClass('small-screen-button');
+	}
 }
 
 function getOppositeColor(color) {

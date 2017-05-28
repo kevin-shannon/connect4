@@ -34,10 +34,10 @@
 				<p id="redVic" class="chipIndicator">0</p>
 			</div>
 			<div class="col mx-auto my-auto text-center">
-				<button type="button" class="btn btn-primary" id="resetButton" onclick="Reset()">
+				<button type="button" class="btn btn-primary big-screen-button" id="resetButton" onclick="Reset()">
             Reset
           </button>
-				<button type="button" class="btn btn-danger" id="playAgainButton">
+				<button type="button" class="btn btn-danger big-screen-button" id="playAgainButton">
             Play Again
           </button>
 			</div>
@@ -49,20 +49,24 @@
 	</div>
 
 	<div class="modal" id="gamemodeSelector" data-keyboard="false" data-backdrop="static">
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="row mx-auto">
-					<img id="logo" src="img/spinningchip.gif" height="128px" style="max-width: 100%;">
-				</div>
-				<div class="row mx-auto">
-					<h4>Connect 4</h4>
-				</div>
-				<div class="modal-body mx-auto" style="text-align:center;">
-					<button type="button" class="btn btn-primary" id="single">Single Player</button>
-					<button type="button" class="btn btn-primary" id="local">Local Multiplayer</button>
-					<button type="button" class="btn btn-primary" id="aivsai" data-toggle="modal" data-target="#aipop">AI vs AI</button>
-					<button type="button" class="btn btn-primary" id="host">Host Online Game</button>
-					<button type="button" class="btn btn-primary" id="join" data-toggle="modal" data-target="#joinpop">Join Online Game</button>
+		<div style="text-align: center;">
+			<div class="modal-dialog" role="document" style="display: inline-block;">
+				<div class="modal-content">
+					<div class="row mx-auto">
+						<img id="logo" src="img/spinningchip.gif" height="128px" style="max-width: 100%;">
+					</div>
+					<div class="row mx-auto">
+						<h4>Connect 4</h4>
+					</div>
+					<div class="modal-body mx-auto" style="text-align:center;">
+						<div id="gamemodeSelectorButtons" role="group">
+							<button type="button" class="btn btn-primary" id="single">Single Player</button>
+							<button type="button" class="btn btn-primary" id="local">Local Multiplayer</button>
+							<button type="button" class="btn btn-primary" id="aivsai" data-toggle="modal" data-target="#aipop">AI vs AI</button>
+							<button type="button" class="btn btn-primary" id="host">Host Online Game</button>
+							<button type="button" class="btn btn-primary" id="join" data-toggle="modal" data-target="#joinpop">Join Online Game</button>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
