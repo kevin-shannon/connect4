@@ -23,6 +23,7 @@ var chips = $('<canvas/>').attr({
 }).appendTo('#game');
 var chipCanvas = chips.get(0).getContext("2d");
 chipCanvas.translate(0, (bw / 7));
+
 var brd = $('<canvas/>').attr({
 	width: bw,
 	height: bw
@@ -118,7 +119,6 @@ function initialize() {
 }
 
 function gamemodeSelector() {
- 	//var peerNum = setUpOnline();
 
  	$('#gamemodeSelector').modal('show');
 
@@ -130,8 +130,6 @@ function gamemodeSelector() {
  	$("#local").click(function() {
  		start(new LocalPlayer(helperMethods), new LocalPlayer(helperMethods));
  	});
-
- 	//$("#gamenum").html("Your game number is " + peerNum);
 
 	$('#host').click(function() {
 		start(new RemotePlayer(helperMethods, {
@@ -384,7 +382,6 @@ function Reset() {
 	$("#redVic").css('visibility', 'hidden');
 	$("#blueVic").css('visibility', 'hidden');
 	$("#resetButton").css("visibility", 'hidden');
-	//$("#LoadingAnimation").css('visibility', 'hidden');
 
 	resetBoard();
 	hidePlayAgainPopup();
