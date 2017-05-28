@@ -10,7 +10,7 @@ var MinimaxPlayer = function(helperMethods, data) {
 
             // we drop RED because color doesn't matter, we're just
             // seeing if the column is full or not
-			if (helperMethods.dropChip(testingArray, i, RED, function() {})) {
+			if (helperMethods.dropChip(testingArray, i, RED)) {
 				possible[i - 1] = true;
 			} else {
 				possible[i - 1] = false;
@@ -39,9 +39,9 @@ var MinimaxPlayer = function(helperMethods, data) {
 		var mid = middleScorer(boardArray, color);
 		var redMid = mid.redCount;
 		var blueMid = mid.blueCount;
-		if (helperMethods.checkForWin(boardArray, function() {}, function() {}) === color) {
+		if (helperMethods.checkForWin(boardArray) === color) {
 			score = Number.POSITIVE_INFINITY;
-		} else if (typeof helperMethods.checkForWin(boardArray, function() {}, function() {}) === "string" && helperMethods.checkForWin(boardArray, function() {}, function() {}) !== color) {
+		} else if (typeof helperMethods.checkForWin(boardArray) === "string" && helperMethods.checkForWin(boardArray) !== color) {
 			score = Number.NEGATIVE_INFINITY;
 		} else {
 			redscore += 100 * redThreeInRows + 50 * redTwoInRows + redMid;
@@ -182,8 +182,8 @@ var MinimaxPlayer = function(helperMethods, data) {
 			//for each child we need to create
 			for (var i = 1; i < 8; i++) {
 				var aiArray = helperMethods.copyBoard(boardArray);
-				if (!helperMethods.checkForWin(aiArray, function() {}, function() {})) {
-					if (helperMethods.dropChip(aiArray, i, color, function() {})) {
+				if (!helperMethods.checkForWin(aiArray)) {
+					if (helperMethods.dropChip(aiArray, i, color)) {
 						var newChild = new Node();
 						if (depth > 1) {
 							newChild.setChildren(generateChildren(aiArray, depth - 1, getOppositeColor(color), initDepth));

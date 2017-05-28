@@ -523,7 +523,9 @@ var helperMethods = {
   	for (var j = 6; j > 0; j--) {
   		//the position in the array will be undefined when there is an open space to drop the chip
   		if (boardArray[column][j] === undefined) {
-  			onDrop(column, j, color);
+			if (onDrop) {
+  				onDrop(column, j, color);
+			}
   			boardArray[column][j] = color;
   			return true;
   		}
@@ -545,8 +547,10 @@ var helperMethods = {
   	for (var i = 1; i < 5; i++) {
   		for (var j = 1; j < 7; j++) {
   			if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j] && boardArray[i][j] === boardArray[i + 2][j] && boardArray[i][j] === boardArray[i + 3][j]) {
-          onWin(boardArray[i][j], i, j, "h");
-          victory = boardArray[i][j];
+				if (onWin) {
+					onWin(boardArray[i][j], i, j, "h");
+				}
+				victory = boardArray[i][j];
   			}
   		}
   	}
@@ -555,8 +559,10 @@ var helperMethods = {
   	for (var i = 1; i < 8; i++) {
   		for (var j = 1; j < 4; j++) {
   			if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i][j + 1] && boardArray[i][j] === boardArray[i][j + 2] && boardArray[i][j] === boardArray[i][j + 3]) {
-          onWin(boardArray[i][j], i, j, "v");
-          victory = boardArray[i][j];
+				if (onWin) {
+					onWin(boardArray[i][j], i, j, "v");
+				}
+				victory = boardArray[i][j];
   			}
   		}
   	}
@@ -564,8 +570,10 @@ var helperMethods = {
   	for (var i = 1; i < 5; i++) {
   		for (var j = 4; j < 7; j++) {
   			if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j - 1] && boardArray[i][j] === boardArray[i + 2][j - 2] && boardArray[i][j] === boardArray[i + 3][j - 3]) {
-          onWin(boardArray[i][j], i, j, "//");
-          victory = boardArray[i][j];
+				if (onWin) {
+					onWin(boardArray[i][j], i, j, "//");
+				}
+				victory = boardArray[i][j];
   			}
   		}
   	}
@@ -573,8 +581,10 @@ var helperMethods = {
   	for (var i = 1; i < 5; i++) {
   		for (var j = 1; j < 4; j++) {
   			if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j + 1] && boardArray[i][j] === boardArray[i + 2][j + 2] && boardArray[i][j] === boardArray[i + 3][j + 3]) {
-          onWin(boardArray[i][j], i, j, "\\");
-          victory = boardArray[i][j];
+				if (onWin) {
+					onWin(boardArray[i][j], i, j, "\\");
+				}
+				victory = boardArray[i][j];
   			}
   		}
   	}
@@ -590,7 +600,7 @@ var helperMethods = {
         }
       }
 
-      if (!boardIsNotFull) {
+      if (!boardIsNotFull && onTie) {
         onTie();
       }
     }
