@@ -35,6 +35,10 @@ var MinimaxPlayer = function(helperMethods, data) {
 		var redThreeInRows = three.redCount;
 		var blueThreeInRows = three.blueCount;
 
+		var two = twoInRows(boardArray);
+		var redTwoInRows = two.redCount;
+		var blueTwoInRows = two.blueCount;
+
 		var redMid = middleScorer(boardArray, RED);
 		var blueMid = middleScorer(boardArray, BLUE);
 
@@ -44,8 +48,8 @@ var MinimaxPlayer = function(helperMethods, data) {
 		} else if (typeof winCheck === "string" && winCheck !== color) {
 			score = Number.NEGATIVE_INFINITY;
 		} else {
-			redscore += 150 * redThreeInRows + redMid;
-			bluescore += 150 * blueThreeInRows + blueMid;
+			redscore += 100 * redThreeInRows + 50 * redTwoInRows + redMid;
+		  bluescore += 100 * blueThreeInRows + 50 * blueTwoInRows + blueMid;
 			if (color === RED) {
 				score = redscore - bluescore;
 			} else {
@@ -113,6 +117,69 @@ var MinimaxPlayer = function(helperMethods, data) {
 			blueCount: blueCounter
 		};
 	}
+
+	function twoInRows(boardArray){
+  var redCounter = 0;
+  var blueCounter = 0;
+  //horizontal
+  for (var i = 1; i < 7; i++) {
+    for (var j = 1; j < 7; j++) {
+      if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j]) {
+        if (boardArray[i][j] === "red"){
+          redCounter++;
+        }
+        else {
+          blueCounter++;
+        }
+      }
+    }
+  }
+
+  //vertical
+  for (var i = 1; i < 8; i++) {
+    for (var j = 1; j < 6; j++) {
+      if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i][j + 1]) {
+        if (boardArray[i][j] === "red"){
+          redCounter++;
+        }
+        else {
+          blueCounter++;
+        }
+      }
+    }
+  }
+  // /diagonals
+  for (var i = 1; i < 7; i++) {
+    for (var j = 2; j < 7; j++) {
+      if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j - 1]) {
+        if (boardArray[i][j] === "red"){
+          redCounter++;
+        }
+        else {
+          blueCounter++;
+        }
+      }
+    }
+  }
+  // \diagonals
+  for (var i = 1; i < 7; i++) {
+    for (var j = 1; j < 6; j++) {
+      if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j + 1]) {
+        if (boardArray[i][j] === "red"){
+          redCounter++;
+        }
+        else {
+          blueCounter++;
+        }
+      }
+    }
+  }
+
+  return {
+    redCount: redCounter,
+    blueCount: blueCounter
+  };
+}
 
 	function middleScorer(boardArray, colorToScore) {
 		var counter = 0;
