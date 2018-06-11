@@ -12,7 +12,7 @@ var resetButtonActive = false;
 var RED = "red";
 var BLUE = "blue";
 
-//board dimensions
+//board resolution
 var bw = 1400;
 var bh = bw * (6 / 7);
 
@@ -22,6 +22,8 @@ var chips = $('<canvas/>').attr({
 	height: bh + (bh / 6)
 }).appendTo('#game');
 var chipCanvas = chips.get(0).getContext("2d");
+
+// move the chip canvas down one chip length
 chipCanvas.translate(0, (bw / 7));
 
 var brd = $('<canvas/>').attr({
@@ -524,7 +526,7 @@ function drawWinXs(i, j, direction) {
 }
 
 function drawBoard() {
-	boardCanvas.drawImage(board, 0, 0, bw, bh + (bh / 6));
+	boardCanvas.drawImage(board, 0, 0, bw,  bh + (bh / 6));
 }
 
 function makeCanvasAndItsContainerTheSameSize() {

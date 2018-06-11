@@ -60,3 +60,7 @@ body {
     -ms-user-select: none;
     user-select: none;
 }
+
+.container {
+    max-width: 85vh;
+}
