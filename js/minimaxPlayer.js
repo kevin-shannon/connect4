@@ -1,4 +1,4 @@
-var MinimaxPlayer = function(helperMethods, data) {
+var MinmaxPlayer = function(helperMethods, data) {
 
 	var chipColor;
 
@@ -31,14 +31,6 @@ var MinimaxPlayer = function(helperMethods, data) {
 		var bluescore = 0;
 		var score = 0;
 
-		var three = threeInRows(boardArray);
-		var redThreeInRows = three.redCount;
-		var blueThreeInRows = three.blueCount;
-
-		var two = twoInRows(boardArray);
-		var redTwoInRows = two.redCount;
-		var blueTwoInRows = two.blueCount;
-
 		var redMid = middleScorer(boardArray, RED);
 		var blueMid = middleScorer(boardArray, BLUE);
 
@@ -48,8 +40,8 @@ var MinimaxPlayer = function(helperMethods, data) {
 		} else if (typeof winCheck === "string" && winCheck !== color) {
 			score = Number.NEGATIVE_INFINITY;
 		} else {
-			redscore += 100 * redThreeInRows + 50 * redTwoInRows + redMid;
-		  bluescore += 100 * blueThreeInRows + 50 * blueTwoInRows + blueMid;
+			redscore += redMid;
+		  bluescore += blueMid;
 			if (color === RED) {
 				score = redscore - bluescore;
 			} else {
@@ -59,151 +51,14 @@ var MinimaxPlayer = function(helperMethods, data) {
 		return score;
 	}
 
-	function threeInRows(boardArray) {
-		var redCounter = 0;
-		var blueCounter = 0;
-		//horizontal
-		for (var i = 1; i < 6; i++) {
-			for (var j = 1; j < 7; j++) {
-				if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j] && boardArray[i][j] === boardArray[i + 2][j]) {
-					if (boardArray[i][j] === RED) {
-						redCounter++;
-					} else {
-						blueCounter++;
-					}
-				}
-			}
-		}
-
-		//vertical
-		for (var i = 1; i < 8; i++) {
-			for (var j = 1; j < 5; j++) {
-				if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i][j + 1] && boardArray[i][j] === boardArray[i][j + 2]) {
-					if (boardArray[i][j] === RED) {
-						redCounter++;
-					} else {
-						blueCounter++;
-					}
-				}
-			}
-		}
-		// /diagonals
-		for (var i = 1; i < 6; i++) {
-			for (var j = 3; j < 7; j++) {
-				if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j - 1] && boardArray[i][j] === boardArray[i + 2][j - 2]) {
-					if (boardArray[i][j] === RED) {
-						redCounter++;
-					} else {
-						blueCounter++;
-					}
-				}
-			}
-		}
-		// \diagonals
-		for (var i = 1; i < 6; i++) {
-			for (var j = 1; j < 5; j++) {
-				if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j + 1] && boardArray[i][j] === boardArray[i + 2][j + 2]) {
-					if (boardArray[i][j] === RED) {
-						redCounter++;
-					} else {
-						blueCounter++;
-					}
-				}
-			}
-		}
-
-		return {
-			redCount: redCounter,
-			blueCount: blueCounter
-		};
-	}
-
-	function twoInRows(boardArray){
-  var redCounter = 0;
-  var blueCounter = 0;
-  //horizontal
-  for (var i = 1; i < 7; i++) {
-    for (var j = 1; j < 7; j++) {
-      if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j]) {
-        if (boardArray[i][j] === "red"){
-          redCounter++;
-        }
-        else {
-          blueCounter++;
-        }
-      }
-    }
-  }
-
-  //vertical
-  for (var i = 1; i < 8; i++) {
-    for (var j = 1; j < 6; j++) {
-      if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i][j + 1]) {
-        if (boardArray[i][j] === "red"){
-          redCounter++;
-        }
-        else {
-          blueCounter++;
-        }
-      }
-    }
-  }
-  // /diagonals
-  for (var i = 1; i < 7; i++) {
-    for (var j = 2; j < 7; j++) {
-      if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j - 1]) {
-        if (boardArray[i][j] === "red"){
-          redCounter++;
-        }
-        else {
-          blueCounter++;
-        }
-      }
-    }
-  }
-  // \diagonals
-  for (var i = 1; i < 7; i++) {
-    for (var j = 1; j < 6; j++) {
-      if (boardArray[i][j] !== undefined && boardArray[i][j] === boardArray[i + 1][j + 1]) {
-        if (boardArray[i][j] === "red"){
-          redCounter++;
-        }
-        else {
-          blueCounter++;
-        }
-      }
-    }
-  }
-
-  return {
-    redCount: redCounter,
-    blueCount: blueCounter
-  };
-}
-
 	function middleScorer(boardArray, colorToScore) {
 		var counter = 0;
-		for (var i = 1; i <= boardArray[1].length; i++) {
-			if (boardArray[1][i] === colorToScore) {
-				counter += 5;
-			}
-			if (boardArray[2][i] === colorToScore) {
-				counter += 10;
-			}
-			if (boardArray[3][i] === colorToScore) {
-				counter += 20;
-			}
-			if (boardArray[4][i] === colorToScore) {
-				counter += 50;
-			}
-			if (boardArray[5][i] === colorToScore) {
-				counter += 20;
-			}
-			if (boardArray[6][i] === colorToScore) {
-				counter += 10;
-			}
-			if (boardArray[7][i] === colorToScore) {
-				counter += 5;
+		for (var i = 1; i <= 7; i++) {
+			for (var j = 6; j >= 1; j--) {
+				if(boardArray[i][j] == null)
+					break;
+				if(boardArray[i][j] === colorToScore)
+					counter += 48/(Math.abs(i-4)+1);
 			}
 		}
 		return counter;
@@ -216,7 +71,10 @@ var MinimaxPlayer = function(helperMethods, data) {
 
 		//generate the tree
 		this.tree = new Node();
+		var before = new Date();
 		this.tree.setChildren(generateChildren(this.board, this.depth, chipColor, this.depth));
+		var after = new Date();
+		console.log(after.getTime() - before.getTime());
 
 		function generateChildren(boardArray, depth, color, initDepth) {
 			var children = [];
@@ -257,7 +115,7 @@ var MinimaxPlayer = function(helperMethods, data) {
 		return mm;
 	};
 
-	Tree.prototype.minmax = function(node, depth, colorToMax, currentColor) {
+	Tree.prototype.minmax = function(node, depth, colorToMax, currentColor, alpha, beta) {
 		if (depth == 0 || !("children" in node)) {
 			return {
 				score: node.score,
@@ -275,8 +133,11 @@ var MinimaxPlayer = function(helperMethods, data) {
 
 			for (var child in node.children) {
 				if (node.children[child].score !== null) {
-					v = this.minmax(node.children[child], depth - 1, getOppositeColor(colorToMax), currentColor);
+					v = this.minmax(node.children[child], depth - 1, getOppositeColor(colorToMax), currentColor, alpha, beta);
 					var bestScore = Math.max(v.score, best_value.score);
+					alpha = Math.max(alpha, bestScore);
+					if(beta <= alpha)
+						break;
 					var bestDepth;
 					if (v.score === best_value.score) {
 						if (best_value.score === Number.POSITIVE_INFINITY) {
@@ -294,6 +155,7 @@ var MinimaxPlayer = function(helperMethods, data) {
 						depth: bestDepth
 					};
 				}
+
 			}
 			if (depth === this.depth - 1) {
 				this.path.push(best_value);
@@ -308,8 +170,11 @@ var MinimaxPlayer = function(helperMethods, data) {
 
 			for (var child in node.children) {
 				if (node.children[child].score !== null) {
-					v = this.minmax(node.children[child], depth - 1, getOppositeColor(colorToMax), currentColor);
+					v = this.minmax(node.children[child], depth - 1, getOppositeColor(colorToMax), currentColor, alpha, beta);
 					var bestScore = Math.min(v.score, best_value.score);
+					beta = Math.min(beta, bestScore);
+					if(beta <= alpha)
+						break;
 					var bestDepth;
 					if (v.score === best_value.score) {
 						if (best_value.score === Number.POSITIVE_INFINITY) {
@@ -327,6 +192,7 @@ var MinimaxPlayer = function(helperMethods, data) {
 						depth: bestDepth
 					};
 				}
+
 			}
 			if (depth === this.depth - 1) {
 				this.path.push(best_value);
@@ -355,7 +221,7 @@ var MinimaxPlayer = function(helperMethods, data) {
 		this.score = score;
 	};
 
-	function runMinimax(board, depth, colorToMax, currentColor) {
+	function runMinmax(board, depth, colorToMax, currentColor) {
 		var tree = new Tree(board, depth);
 		var best = tree.getBestValue(colorToMax, currentColor);
 		return tree.bestMove(best);
@@ -366,17 +232,20 @@ var MinimaxPlayer = function(helperMethods, data) {
 			chipColor = yourColor;
 			setTimeout(function() {
 				//decide if chip dropping animation should play
-                var maxMillisecondsToAnimateChipDropping = 120;
-                var delayEnteredByTheUser = data;
+        var maxMillisecondsToAnimateChipDropping = 120;
+        var delayEnteredByTheUser = data;
 				var shouldAnimate = delayEnteredByTheUser >= maxMillisecondsToAnimateChipDropping;
 
-                //run the ai on the board
-                var depth = Math.round(Math.log(30000) / Math.log(7 - possibleMoves(currentBoard, false)));
-				var column = runMinimax(currentBoard, depth, yourColor, yourColor) + 1;
-
+        //run the ai on the board
+        var depth = Math.round(Math.log(200000) / Math.log(7 - possibleMoves(currentBoard, false)));;
+				this.tree = new Node();
+				var b = new Date();
+				var column = runMinmax(currentBoard, depth, yourColor, yourColor, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY) + 1;
+				var a = new Date();
+				console.log(currentBoard);
+				console.log(a.getTime() - b.getTime());
 				makeMove(column, shouldAnimate);
 			}, data);
 		}
 	};
-
 };

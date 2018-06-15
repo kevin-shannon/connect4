@@ -129,7 +129,7 @@ function gamemodeSelector() {
 
  	$("#single").click(function() {
 		var computerPlayerDelay = 1000;
- 		start(new LocalPlayer(helperMethods), new MinimaxPlayer(helperMethods, computerPlayerDelay));
+ 		start(new LocalPlayer(helperMethods), new MinmaxPlayer(helperMethods, computerPlayerDelay));
  	});
 
  	$("#local").click(function() {
@@ -166,7 +166,7 @@ function gamemodeSelector() {
  		//it to the join online game function
  		var aid = $('#aiin').val();
 
- 		start(new MinimaxPlayer(helperMethods, aid), new MinimaxPlayer(helperMethods, aid));
+ 		start(new MinmaxPlayer(helperMethods, aid), new MinmaxPlayer(helperMethods, aid));
  	}
 
  	$("#joinbut").click(startJoin);
