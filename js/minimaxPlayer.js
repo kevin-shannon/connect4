@@ -27,31 +27,20 @@ var MinmaxPlayer = function(helperMethods, data) {
 	}
 
 	function boardScore(boardArray, color) {
-		var redscore = 0;
-		var bluescore = 0;
 		var score = 0;
-
-		var redMid = middleScorer(boardArray, RED);
-		var blueMid = middleScorer(boardArray, BLUE);
-
 		var winCheck = helperMethods.checkForWin(boardArray);
 		if (winCheck === color) {
 			score = Number.POSITIVE_INFINITY;
 		} else if (typeof winCheck === "string" && winCheck !== color) {
 			score = Number.NEGATIVE_INFINITY;
 		} else {
-			redscore += redMid;
-		  bluescore += blueMid;
-			if (color === RED) {
-				score = redscore - bluescore;
-			} else {
-				score = bluescore - redscore;
-			}
+			score = middleScorer(boardArray, color);
 		}
 		return score;
 	}
-
+	var hi = 0;
 	function middleScorer(boardArray, colorToScore) {
+		hi++;
 		var counter = 0;
 		for (var i = 1; i <= 7; i++) {
 			for (var j = 6; j >= 1; j--) {
@@ -59,6 +48,9 @@ var MinmaxPlayer = function(helperMethods, data) {
 					break;
 				if(boardArray[i][j] === colorToScore)
 					counter += 48/(Math.abs(i-4)+1);
+				else {
+					counter -= 48/(Math.abs(i-4)+1);
+				}
 			}
 		}
 		return counter;
@@ -155,7 +147,6 @@ var MinmaxPlayer = function(helperMethods, data) {
 						depth: bestDepth
 					};
 				}
-
 			}
 			if (depth === this.depth - 1) {
 				this.path.push(best_value);
@@ -192,7 +183,6 @@ var MinmaxPlayer = function(helperMethods, data) {
 						depth: bestDepth
 					};
 				}
-
 			}
 			if (depth === this.depth - 1) {
 				this.path.push(best_value);
@@ -237,12 +227,11 @@ var MinmaxPlayer = function(helperMethods, data) {
 				var shouldAnimate = delayEnteredByTheUser >= maxMillisecondsToAnimateChipDropping;
 
         //run the ai on the board
-        var depth = Math.round(Math.log(200000) / Math.log(7 - possibleMoves(currentBoard, false)));;
+        var depth = Math.round(Math.log(200000) / Math.log(7 - possibleMoves(currentBoard, false)));
 				this.tree = new Node();
 				var b = new Date();
 				var column = runMinmax(currentBoard, depth, yourColor, yourColor, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY) + 1;
 				var a = new Date();
-				console.log(currentBoard);
 				console.log(a.getTime() - b.getTime());
 				makeMove(column, shouldAnimate);
 			}, data);
