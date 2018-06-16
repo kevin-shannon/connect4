@@ -158,16 +158,9 @@ function gamemodeSelector() {
 		}));
  	}
 
- 	function startAI() {
-        //close the modal
-        $('#aipop').modal('hide');
-
- 		//get the delay from the input box in the popup and send
- 		//it to the join online game function
- 		var aid = $('#aiin').val();
-
- 		start(new MinmaxPlayer(helperMethods, aid), new MinmaxPlayer(helperMethods, aid));
- 	}
+ 	$("#aivsai").click(function() {
+ 		start(new MinmaxPlayer(helperMethods, 0), new MinmaxPlayer(helperMethods, 0));
+ 	});
 
  	$("#joinbut").click(startJoin);
 
@@ -175,16 +168,6 @@ function gamemodeSelector() {
  	$('#joinin').keypress(function(e) {
  		if (e.which == 13) {
  			startJoin();
- 			return false;
- 		}
- 	});
-
- 	$("#aibut").click(startAI);
-
- 	//checks for enter key press on input box
- 	$('#aiin').keypress(function(e) {
- 		if (e.which == 13) {
- 			startAI();
  			return false;
  		}
  	});
