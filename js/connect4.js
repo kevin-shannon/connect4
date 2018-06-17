@@ -335,7 +335,7 @@ function drawChip(x, y, chipColor, shouldAnimate) {
 				chip.y = y;
 				setTimeout(function() {
 					chipCanvas.drawImage(chipImage, chip.x, chip.y, chip.width, chip.height);
-				}, 50);
+				}, 100);
 			}
 			chipCanvas.clearRect(x, (chip.y - (bh / 6)), (bw / 7), ((bh / 6) + (bh / 12)));
 			chipCanvas.drawImage(chipImage, chip.x, chip.y, chip.width, chip.height);
@@ -344,7 +344,7 @@ function drawChip(x, y, chipColor, shouldAnimate) {
 		chipCanvas.drawImage(chipImage, chip.x, y, chip.width, chip.height);
 		setTimeout(function() {
 			chipCanvas.drawImage(chipImage, chip.x, y, chip.width, chip.height);
-		}, 50);
+		}, 10);
 	}
 }
 
