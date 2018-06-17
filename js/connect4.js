@@ -344,7 +344,7 @@ function drawChip(x, y, chipColor, shouldAnimate) {
 		chipCanvas.drawImage(chipImage, chip.x, y, chip.width, chip.height);
 		setTimeout(function() {
 			chipCanvas.drawImage(chipImage, chip.x, y, chip.width, chip.height);
-		}, 10);
+		}, 200);
 	}
 }
 
