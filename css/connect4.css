@@ -59,14 +59,12 @@ body {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    background: whit8
-    background: linear-gradient(rgba(100,150,255,.05), rgba(180,220,255,.75));
 }
 
 html, body {
   height: 100%;
   background: white;
-  background: linear-gradient(rgba(100,150,255,.05), rgba(180,220,255,.75));
+  background: linear-gradient(-45deg, rgba(244,255,182,.9), rgba(200,240,255,1));
 }
 
 .container {
