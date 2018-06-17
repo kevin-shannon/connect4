@@ -70,3 +70,8 @@ html, body {
 .container {
     max-width: 85vh;
 }
+
+.modal-footer {
+    font-size: 10pt;
+    justify-content: center;
+}
