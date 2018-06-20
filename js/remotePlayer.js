@@ -6,9 +6,7 @@ var RemotePlayer = function(helperMethods, data) {
 
 	peerNum = Math.floor(Math.random() * 900) + 100;
 
-	peer = new Peer(peerNum, {
-		key: 'fe7e2757-bbef-4456-a934-ae93385502b9'
-	});
+	peer = new Peer(peerNum);
 
 	if (data.isHost) {
 		console.log("Game number: " + peerNum);
