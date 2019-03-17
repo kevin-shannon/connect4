@@ -1,82 +1,83 @@
 .canvasContainer {
-    width: 100%;
-    margin: 0 auto;
-    position: relative;
-    font-family: 'Open Sans', sans-serif;
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+  font-family: "Open Sans", sans-serif;
 }
 
 .canvasContainer canvas {
-    width: 100%;
-    height: auto;
-    position: absolute;
-    left: 0;
-    top: 0;
+  width: 100%;
+  height: auto;
+  position: absolute;
+  left: 0;
+  top: 0;
 }
 
 .btn {
-    font-family: 'Open Sans', sans-serif;
+  font-family: "Open Sans", sans-serif;
 }
 
 .big-screen-button {
-    margin: .25em;
-    font-size: 1em;
+  margin: 0.25em;
+  font-size: 1em;
 }
 
 .small-screen-button {
-    border-color: white;
-    border-width: 1px;
+  border-color: white;
+  border-width: 1px;
 }
 
 #playAgainButton {
-    display: none;
+  display: none;
 }
 
 #resetButton {
-    visibility: hidden;
+  visibility: hidden;
 }
 
 .popup {
-    display: none;
+  display: none;
 }
 
 .chipIndicator {
-    visibility: hidden;
-    pointer-events: none; /* Prevent dragging */
+  visibility: hidden;
+  pointer-events: none; /* Prevent dragging */
 }
 
 #logo {
-    pointer-events: none; /* Prevent dragging */
+  pointer-events: none; /* Prevent dragging */
 }
 
 #loading {
-    margin: 64px;
+  margin: 64px;
 }
 
 body {
-    /* Prevent text selection */
-    -webkit-touch-callout: none;-webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+  /* Prevent text selection */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   background: white;
-  background: linear-gradient(-45deg, rgba(244,255,182,.9), rgba(200,240,255,1));
+  background: linear-gradient(-45deg, rgba(244, 255, 182, 0.9), rgba(200, 240, 255, 1));
 }
 
 .container {
-    max-width: 85vh;
-    
-    background: white;
-    padding: 1em;
-    box-shadow: 0 0 256px 200px white;
+  max-width: 85vh;
 
+  background: white;
+  padding: 1em;
+  box-shadow: 0 0 256px 200px white;
 }
 
 .modal-footer {
-    font-size: 10pt;
-    justify-content: center;
+  font-size: 10pt;
+  justify-content: center;
 }

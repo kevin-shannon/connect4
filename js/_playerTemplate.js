@@ -33,71 +33,61 @@
  */
 
 var TemplatePlayer = function(helperMethods, data) {
+  /** helperMethods:
+   * See what methods are availible at the
+   * bottom of connect4.js in its helperMethods object.
+   */
 
-	/** helperMethods:
-	  * See what methods are availible at the
-	  * bottom of connect4.js in its helperMethods object.
-	  */
+  /** data:
+   * the data parameter can be used to transfer any type
+   * of information gathered from the user when the gamemode
+   * is selected. In the case of multiplayer and
+   * remotePlayer.js, it is used to transfer info about if
+   * the player is the host or not, and the game number the
+   * player is to join.
+   */
 
-	/** data:
-	  * the data parameter can be used to transfer any type
-	  * of information gathered from the user when the gamemode
-	  * is selected. In the case of multiplayer and
-	  * remotePlayer.js, it is used to transfer info about if
-	  * the player is the host or not, and the game number the
-	  * player is to join.
-	  */
+  //
+  // Place any code that should only run once, before the
+  // starts, here. Also, place any functions here.
+  //
+  // Place any code you want to run every time this player
+  // takes a turn in the takeTurn function below. It can call
+  // functions placed up here.
+  //
 
-	//
-	// Place any code that should only run once, before the
-	// starts, here. Also, place any functions here.
-	//
-	// Place any code you want to run every time this player
-	// takes a turn in the takeTurn function below. It can call
-	// functions placed up here.
-	//
+  return {
+    /* REQUIRED */
+    // takeTurn is the only function you must implement.
 
-	return {
+    takeTurn: function(currentBoard, yourColor, previousColumn, makeMove) {
+      /* Example: an AI that drops randomly */
 
-		/* REQUIRED */
-		// takeTurn is the only function you must implement.
+      // wait half a second before sending the move
+      setTimeout(function() {
+        // pick a random column, between 1 and 7
+        var column = Math.floor(Math.random() * 7 + 1);
 
-		takeTurn: function(currentBoard, yourColor, previousColumn, makeMove) {
+        // send the move.
+        // set the 2nd param to true if the chip drop
+        // should be fully animated.
+        makeMove(column, true);
+      }, 500);
 
-			/* Example: an AI that drops randomly */
+      // NOTE: If the move that is sent through the makeMove
+      // function fails for any reason, such as dropping in
+      // a column that is full, takeTurn will be called again
+      // with the same parameters.
+    },
 
-			// wait half a second before sending the move
-			setTimeout(function() {
-				// pick a random column, between 1 and 7
-				var column = Math.floor((Math.random() * 7) + 1);
+    /* OPTIONAL */
+    // These are not required to be implemented, and may be
+    // deleted if you so wish.
 
-				// send the move.
-				// set the 2nd param to true if the chip drop
-				// should be fully animated.
-				makeMove(column, true);
-			}, 500);
+    // called when the other player wins
+    winningMove: function(theMove) {},
 
-			// NOTE: If the move that is sent through the makeMove
-			// function fails for any reason, such as dropping in
-			// a column that is full, takeTurn will be called again
-			// with the same parameters.
-
-		},
-
-		/* OPTIONAL */
-		// These are not required to be implemented, and may be
-		// deleted if you so wish.
-
-		// called when the other player wins
-		winningMove: function (theMove) {
-
-		},
-
-		// called when the game is reset
-		clear: function () {
-
-		}
-
-	};
-
+    // called when the game is reset
+    clear: function() {}
+  };
 };
