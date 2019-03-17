@@ -69,6 +69,11 @@ html, body {
 
 .container {
     max-width: 85vh;
+    
+    background: white;
+    padding: 1em;
+    box-shadow: 0 0 256px 200px white;
+
 }
 
 .modal-footer {
