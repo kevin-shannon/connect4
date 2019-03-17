@@ -555,9 +555,9 @@ var helperMethods = {
   	for (var j = 6; j > 0; j--) {
   		//the position in the array will be undefined when there is an open space to drop the chip
   		if (boardArray[column][j] === undefined) {
-			if (onDrop) {
-  				onDrop(column, j, color);
-			}
+				if (onDrop) {
+	  				onDrop(column, j, color);
+				}
   			boardArray[column][j] = color;
   			return true;
   		}
@@ -634,6 +634,7 @@ var helperMethods = {
 
       if (!boardIsNotFull && onTie) {
         onTie();
+				victory = "draw";
       }
     }
 
