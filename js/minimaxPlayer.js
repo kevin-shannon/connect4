@@ -3,11 +3,12 @@ var MinmaxPlayer = function(helperMethods, data) {
 
   function possibleMoves(boardArray) {
     var possible = new Array();
-    for (var i = 1; i < 8; i++) {
+    for (var i = 0; i < 7; i++) {
       var testingArray = helperMethods.copyBoard(boardArray);
       // we drop RED because color doesn't matter, we're just
       // seeing if the column is full or not
-      if (helperMethods.dropChip(testingArray, i, RED)) possible.push(i);
+      if (helperMethods.dropChip(testingArray, Math.round(7 / 2 + ((1 - 2 * (i % 2)) * (i + 1)) / 2), RED))
+        possible.push(Math.round(7 / 2 + ((1 - 2 * (i % 2)) * (i + 1)) / 2));
     }
     return possible;
   }
@@ -20,17 +21,52 @@ var MinmaxPlayer = function(helperMethods, data) {
     } else if (typeof winCheck == "string" && winCheck == getOppositeColor(color)) {
       score = -10000 + moves;
     } else {
-      score = middleScorer(boardArray, color);
+      score = middleScorer(boardArray, color) + 5 * availableWins(boardArray, color);
     }
     return score;
   }
 
-  function middleScorer(boardArray, colorToScore) {
+  function availableWins(boardArray, color) {
+    var numWins = 0;
+    for (var i = 1; i <= 7; i++) {
+      for (var j = 6; j >= 1; j--) {
+        if (boardArray[i][j] == null) break;
+        if (boardArray[i][j] == color) {
+          var x = 1;
+          var y = 1;
+          for (var t = -1; t < 2; t += 2) {
+            for (n = 0; n < 2; n++) {
+              x += t;
+              numWins += openCheck(boardArray, color, i, j, x, y);
+            }
+            for (n = 0; n < 2; n++) {
+              y += t;
+              numWins += openCheck(boardArray, color, i, j, x, y);
+            }
+          }
+        }
+      }
+    }
+    return numWins;
+  }
+
+  function openCheck(boardArray, color, i, j, x, y) {
+    for (var a = 1; a < 4; a++) {
+      if (i + a * x > 7 || j + a * y > 6 || i + a * x < 1 || j + a * y < 1) break;
+      if (boardArray[i + a * x][j + a * y] == getOppositeColor(color)) break;
+      if (a == 3) {
+        return 1;
+      }
+    }
+    return 0;
+  }
+
+  function middleScorer(boardArray, color) {
     var counter = 0;
     for (var i = 1; i <= 7; i++) {
       for (var j = 6; j >= 1; j--) {
         if (boardArray[i][j] == null) break;
-        if (boardArray[i][j] == colorToScore) counter += 48 / (Math.abs(i - 4) + 1);
+        if (boardArray[i][j] == color) counter += 48 / (Math.abs(i - 4) + 1);
         else {
           counter -= 48 / (Math.abs(i - 4) + 1);
         }
@@ -105,7 +141,7 @@ var MinmaxPlayer = function(helperMethods, data) {
         var delayEnteredByTheUser = data;
         var shouldAnimate = delayEnteredByTheUser >= maxMillisecondsToAnimateChipDropping;
         //run the ai on the board
-        var depth = Math.round(Math.log(1000000) / Math.log(possibleMoves(currentBoard).length));
+        var depth = Math.round(Math.log(3000000) / Math.log(possibleMoves(currentBoard).length));
         console.log(depth);
         var column = minimax(helperMethods.copyBoard(currentBoard), depth, yourColor, yourColor, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY).action;
         makeMove(column, shouldAnimate);
