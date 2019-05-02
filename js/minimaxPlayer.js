@@ -20,9 +20,8 @@ var MinmaxPlayer = function(helperMethods, data) {
     return possible;
   }
 
-  function boardScore(boardArray, color) {
+  function boardScore(boardArray, color, winCheck) {
     var score = 0;
-    var winCheck = helperMethods.checkForWin(boardArray);
     if (winCheck == color) {
       score = 10000 - moves;
     } else if (typeof winCheck == "string" && winCheck == getOppositeColor(color)) {
@@ -83,9 +82,10 @@ var MinmaxPlayer = function(helperMethods, data) {
   }
 
   function minimax(state, depth, colorToMax, currentColor, alpha, beta) {
-    if (depth == 0 || helperMethods.checkForWin(state)) {
+    var thisStateWinStatus = helperMethods.checkForWin(state);
+    if (depth == 0 || thisStateWinStatus) {
       return {
-        value: boardScore(state, colorToMax),
+        value: boardScore(state, colorToMax, thisStateWinStatus),
         action: 0
       };
     }
