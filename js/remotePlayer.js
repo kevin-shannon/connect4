@@ -12,7 +12,7 @@ var RemotePlayer = function(helperMethods, data) {
     console.log("Waiting for a player to join...");
     peer.on("connection", function(conn) {
       console.log("Connection received!");
-      $("#gamenum").css("visibility", "hidden");
+      $("#game-status").html("");
       connection = conn;
     });
   } else {

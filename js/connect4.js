@@ -158,8 +158,7 @@ function gamemodeSelector() {
       }),
       new LocalPlayer(helperMethods)
     );
-    $("#gamenum").css("visibility", "visible");
-    $("#gamenum").html("Your game number is " + peerNum);
+    $("#game-status").html("Your game number is " + peerNum);
   });
 
   function startJoin() {
@@ -392,7 +391,7 @@ function Reset() {
   $("#redVic").css("visibility", "hidden");
   $("#blueVic").css("visibility", "hidden");
   $("#resetButton").css("visibility", "hidden");
-  $("#gamenum").css("visibility", "hidden");
+  $("#game-status").html("");
 
   resetBoard();
   hidePlayAgainPopup();
