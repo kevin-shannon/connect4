@@ -3,12 +3,19 @@ var MinmaxPlayer = function(helperMethods, data) {
 
   function possibleMoves(boardArray) {
     var possible = new Array();
+
     for (var i = 0; i < 7; i++) {
-      var testingArray = helperMethods.copyBoard(boardArray);
-      // we drop RED because color doesn't matter, we're just
-      // seeing if the column is full or not
-      if (helperMethods.dropChip(testingArray, Math.round(7 / 2 + ((1 - 2 * (i % 2)) * (i + 1)) / 2), RED))
-        possible.push(Math.round(7 / 2 + ((1 - 2 * (i % 2)) * (i + 1)) / 2));
+      
+      // TODO: wtf is this
+      var whatIsThisNumberKevin = Math.round(7 / 2 + ((1 - 2 * (i % 2)) * (i + 1)) / 2);
+
+      // we drop RED because color doesn't matter,
+      // we're just seeing if the column is full or not
+      if (helperMethods.dropChip(boardArray, whatIsThisNumberKevin, RED)) {
+        possible.push(whatIsThisNumberKevin);
+        helperMethods.undropChip(boardArray, whatIsThisNumberKevin);
+      }
+
     }
     return possible;
   }
@@ -82,14 +89,14 @@ var MinmaxPlayer = function(helperMethods, data) {
         action: 0
       };
     }
-    var bestValue, bestAction, actionValue, successor;
+    var bestValue, bestAction, actionValue;
     if (colorToMax == currentColor) {
       //maximizing player
       bestValue = Number.NEGATIVE_INFINITY;
       for (let action of possibleMoves(state)) {
-        successor = helperMethods.copyBoard(state);
-        helperMethods.dropChip(successor, action, currentColor);
-        actionValue = minimax(successor, depth - 1, colorToMax, getOppositeColor(currentColor), alpha, beta).value;
+        helperMethods.dropChip(state, action, currentColor);
+        actionValue = minimax(state, depth - 1, colorToMax, getOppositeColor(currentColor), alpha, beta).value;
+        helperMethods.undropChip(state, action);
         if (actionValue >= bestValue) {
           bestValue = actionValue;
           bestAction = action;
@@ -110,9 +117,9 @@ var MinmaxPlayer = function(helperMethods, data) {
       //minimizing player
       bestValue = Number.POSITIVE_INFINITY;
       for (let action of possibleMoves(state)) {
-        successor = helperMethods.copyBoard(state);
-        helperMethods.dropChip(successor, action, currentColor);
-        actionValue = minimax(successor, depth - 1, colorToMax, getOppositeColor(currentColor), alpha, beta).value;
+        helperMethods.dropChip(state, action, currentColor);
+        actionValue = minimax(state, depth - 1, colorToMax, getOppositeColor(currentColor), alpha, beta).value;
+        helperMethods.undropChip(state, action);
         if (actionValue <= bestValue) {
           bestValue = actionValue;
           bestAction = action;
