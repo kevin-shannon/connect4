@@ -290,7 +290,7 @@ function tryTurn(chipColor, playerToTakeTurnNow, playerToTakeTurnAfter, previous
     //the player has decided their move, so let's execute it.
     var chipWasDropped = helperMethods.dropChip(mainBoard, columnToDropIn, chipColor, function(column, j, colorOfChip) {
       //ran when the chip has been dropped into the board array
-      
+
       // log how long it took to make the move
       var afterMove = new Date();
       var moveTime = (afterMove.getTime() - beforeMove.getTime()) / 1000;
@@ -588,6 +588,24 @@ var helperMethods = {
       }
     }
     //chip wasn't successfully dropped
+    return false;
+  },
+
+  undropChip: function(boardArray, column, onUndrop) {
+    //for loop that checks array starting at bottom of board which is at 6 going up to 1
+    for (var j = 1; j <= 6; j++) {
+      //the position in the array will be undefined when there is chipless space
+      if (boardArray[column][j] !== undefined) {
+        if (onUndrop) {
+          onUndrop(column, j, color);
+        }
+        
+        delete boardArray[column][j];
+
+        return true;
+      }
+    }
+    //there were no chips in the column
     return false;
   },
 
