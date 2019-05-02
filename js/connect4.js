@@ -280,6 +280,9 @@ function nextTurn(color, playerToTakeTurnNow, playerToTakeTurnAfter, previousCol
 }
 
 function tryTurn(chipColor, playerToTakeTurnNow, playerToTakeTurnAfter, previousColumn) {
+  // records the current time before the move is made
+  var beforeMove = new Date();
+
   //give the correct player control based on the gamemode
   playerToTakeTurnNow.takeTurn(mainBoard, chipColor, previousColumn, function(columnToDropIn, shouldAnimate) {
     //ran when the plauer makes their moves
@@ -287,7 +290,12 @@ function tryTurn(chipColor, playerToTakeTurnNow, playerToTakeTurnAfter, previous
     //the player has decided their move, so let's execute it.
     var chipWasDropped = helperMethods.dropChip(mainBoard, columnToDropIn, chipColor, function(column, j, colorOfChip) {
       //ran when the chip has been dropped into the board array
-      console.log(colorOfChip.charAt(0).toUpperCase() + colorOfChip.slice(1) + " dropped in column " + column);
+      
+      // log how long it took to make the move
+      var afterMove = new Date();
+      var moveTime = (afterMove.getTime() - beforeMove.getTime()) / 1000;
+      console.log(colorOfChip + " took " + moveTime + " seconds to drop in column " + column);
+
       drawChip(column, j, colorOfChip, shouldAnimate);
     });
 
