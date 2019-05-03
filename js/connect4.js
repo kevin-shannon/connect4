@@ -158,7 +158,7 @@ function gamemodeSelector() {
       }),
       new LocalPlayer(helperMethods)
     );
-    $("#game-status").html("Your game number is " + peerNum);
+    setGameStatus("Your game number is " + peerNum);
   });
 
   function startJoin() {
@@ -284,6 +284,8 @@ function tryTurn(chipColor, playerToTakeTurnNow, playerToTakeTurnAfter, previous
   var beforeMove = performance.now();
 
   //give the correct player control based on the gamemode
+  console.log(playerToTakeTurnNow);
+  
   playerToTakeTurnNow.takeTurn(mainBoard, chipColor, previousColumn, function(columnToDropIn, shouldAnimate) {
     //ran when the plauer makes their moves
 
@@ -399,10 +401,10 @@ function Reset() {
   $("#redVic").css("visibility", "hidden");
   $("#blueVic").css("visibility", "hidden");
   $("#resetButton").css("visibility", "hidden");
-  $("#game-status").html("");
-
+  
   resetBoard();
   hidePlayAgainPopup();
+  clearGameStatus();
 
   if (lastPlayer1.clear) {
     lastPlayer1.clear();
@@ -476,6 +478,7 @@ function tie() {
 
 function displayPlay() {
   setTimeout(function() {
+    clearGameStatus();
     if (resetButtonActive) {
       showPlayAgainPopup(function() {
         resetBoard();
@@ -571,6 +574,14 @@ function getOppositeColor(color) {
 //returns who's turn it is now
 function advanceTurn() {
   moves++;
+}
+
+function setGameStatus(status) {
+  $('#game-status').html(status);
+}
+
+function clearGameStatus() {
+  $('#game-status').html('');
 }
 
 var helperMethods = {
@@ -760,11 +771,13 @@ var helperMethods = {
 
     return victory;
   },
-  allowUIChipDrop: function() {
+  allowUIChipDrop: function(color) {
     playerCanDropChips = true;
+    setGameStatus('It is your turn, ' + color + '.');
   },
-  disallowUIChipDrop: function() {
+  disallowUIChipDrop: function(color) {
     playerCanDropChips = false;
+    setGameStatus('Waiting on ' + color + '...');
   },
   hashBoard: function(board, color) {
     var hash = color === RED ? 'r-' : 'b-';

@@ -30,7 +30,7 @@ var LocalPlayer = function(helperMethods, data) {
   return {
     takeTurn: function(currentBoard, yourColor, previousColumn, makeMove) {
       $("canvas").off("click");
-      helperMethods.allowUIChipDrop();
+      helperMethods.allowUIChipDrop(yourColor);
 
       //called when the mouse moves across the canvas
       $("canvas").mousemove(hoverChip);
@@ -49,7 +49,7 @@ var LocalPlayer = function(helperMethods, data) {
         for (var i = 1; i < 8; i++) {
           if ((i - 1) * (w / 7) < xPos && xPos < i * (w / 7)) {
             $("canvas").off();
-            helperMethods.disallowUIChipDrop();
+            helperMethods.disallowUIChipDrop(getOppositeColor(yourColor));
             makeMove(i, true);
           }
         }
