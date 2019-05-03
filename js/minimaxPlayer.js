@@ -81,8 +81,16 @@ var MinmaxPlayer = function(helperMethods, data) {
     return counter;
   }
 
-  function minimax(state, depth, colorToMax, currentColor, alpha, beta) {
-    var thisStateWinStatus = helperMethods.checkForWin(state);
+  function minimax(state, depth, colorToMax, currentColor, alpha, beta, lastDropColumn) {
+
+    var thisStateWinStatus;
+
+    if (lastDropColumn) {
+      thisStateWinStatus = helperMethods.checkForLastDropWin(state, lastDropColumn);
+    } else {
+      thisStateWinStatus = helperMethods.checkForWin(state);
+    }
+    
     if (depth == 0 || thisStateWinStatus) {
       return {
         value: boardScore(state, colorToMax, thisStateWinStatus),
@@ -95,7 +103,7 @@ var MinmaxPlayer = function(helperMethods, data) {
       bestValue = Number.NEGATIVE_INFINITY;
       for (let action of possibleMoves(state)) {
         helperMethods.dropChip(state, action, currentColor);
-        actionValue = minimax(state, depth - 1, colorToMax, getOppositeColor(currentColor), alpha, beta).value;
+        actionValue = minimax(state, depth - 1, colorToMax, getOppositeColor(currentColor), alpha, beta, action).value;
         helperMethods.undropChip(state, action);
         if (actionValue >= bestValue) {
           bestValue = actionValue;
@@ -118,7 +126,7 @@ var MinmaxPlayer = function(helperMethods, data) {
       bestValue = Number.POSITIVE_INFINITY;
       for (let action of possibleMoves(state)) {
         helperMethods.dropChip(state, action, currentColor);
-        actionValue = minimax(state, depth - 1, colorToMax, getOppositeColor(currentColor), alpha, beta).value;
+        actionValue = minimax(state, depth - 1, colorToMax, getOppositeColor(currentColor), alpha, beta, action).value;
         helperMethods.undropChip(state, action);
         if (actionValue <= bestValue) {
           bestValue = actionValue;
