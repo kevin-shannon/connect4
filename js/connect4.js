@@ -767,21 +767,71 @@ var helperMethods = {
     playerCanDropChips = false;
   },
   hashBoard: function(board, color) {
-    var hash = color === RED ? 'r-' : 'b-';
+    var hash = [];
 
     for (var i = 1; i <= 7; i++) {
       for (var j = 1; j <= 6; j++) {
         var color = board[i][j];
         if (color === RED) {
-          hash += 'r';
+          hash.push(1);
         } else if (color === BLUE) {
-          hash += 'b';
+          hash.push(2);
         } else {
-          hash += 'x'
+          hash.push(0);
         }
       }
     }
 
     return hash;
+  },
+  getScoreFromTree: function (tree, hash, color) {
+    var queue = hash.slice();
+
+    var node;
+    if (color === RED) {
+      node = tree.red;
+    } else {
+      node = tree.blue;
+    }
+
+    while (queue.length > 0) {
+      var next = queue.shift();
+
+      // https://stackoverflow.com/a/2672411
+      if (node[next] != null) {
+        node = node[next];
+      } else {
+        return false;
+      }
+    }
+
+    return node;
+  },
+  setScoreInTree: function (tree, hash, color, score) {
+    var queue = hash.slice();
+
+    var lastNode;
+    var node;
+    if (color === RED) {
+      node = tree.red;
+    } else {
+      node = tree.blue;
+    }
+
+    while (queue.length > 0) {
+      var next = queue.shift();
+      lastNode = node;
+
+      // https://stackoverflow.com/a/2672411
+      if (node[next] != null) {
+        node = node[next];
+      } else {
+        node[next] = [null, null, null];
+        node = node[next];
+      }
+    }
+  
+    lastNode[next] = score;
+    return node;
   }
 };
