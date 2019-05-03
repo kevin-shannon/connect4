@@ -155,6 +155,7 @@ var MinmaxPlayer = function(helperMethods, data) {
   return {
     takeTurn: function(currentBoard, yourColor, previousColumn, makeMove) {
       chipColor = yourColor;
+      helperMethods.disallowUIChipDrop(yourColor);
       setTimeout(function() {
         //decide if chip dropping animation should play
         var maxMillisecondsToAnimateChipDropping = 120;
@@ -164,6 +165,7 @@ var MinmaxPlayer = function(helperMethods, data) {
         var depth = Math.round(Math.log(3000000) / Math.log(possibleMoves(currentBoard).length));
         console.log('minimax depth: ' + depth);
         var column = minimax(helperMethods.copyBoard(currentBoard), depth, yourColor, yourColor, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY).action;
+
         makeMove(column, shouldAnimate);
       }, data);
     }
