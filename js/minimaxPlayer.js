@@ -162,7 +162,7 @@ var MinmaxPlayer = function(helperMethods, data) {
         var shouldAnimate = delayEnteredByTheUser >= maxMillisecondsToAnimateChipDropping;
         //run the ai on the board
         var depth = Math.round(Math.log(3000000) / Math.log(possibleMoves(currentBoard).length));
-        console.log(depth);
+        console.log('minimax depth: ' + depth);
         var column = minimax(helperMethods.copyBoard(currentBoard), depth, yourColor, yourColor, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY).action;
         makeMove(column, shouldAnimate);
       }, data);

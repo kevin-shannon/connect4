@@ -284,8 +284,6 @@ function tryTurn(chipColor, playerToTakeTurnNow, playerToTakeTurnAfter, previous
   var beforeMove = performance.now();
 
   //give the correct player control based on the gamemode
-  console.log(playerToTakeTurnNow);
-  
   playerToTakeTurnNow.takeTurn(mainBoard, chipColor, previousColumn, function(columnToDropIn, shouldAnimate) {
     //ran when the plauer makes their moves
 
