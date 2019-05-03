@@ -1,5 +1,6 @@
 var MinmaxPlayer = function(helperMethods, data) {
   var chipColor;
+  var scoreMap = new Map();
 
   function possibleMoves(boardArray) {
     var possible = new Array();
@@ -15,7 +16,6 @@ var MinmaxPlayer = function(helperMethods, data) {
         possible.push(whatIsThisNumberKevin);
         helperMethods.undropChip(boardArray, whatIsThisNumberKevin);
       }
-
     }
     return possible;
   }
@@ -27,7 +27,12 @@ var MinmaxPlayer = function(helperMethods, data) {
     } else if (typeof winCheck == "string" && winCheck == getOppositeColor(color)) {
       score = -10000 + moves;
     } else {
-      score = middleScorer(boardArray, color) + 5 * availableWins(boardArray, color);
+      var hash = helperMethods.hashBoard(boardArray, color);
+      score = scoreMap.get(hash);
+      if (score === undefined) {
+        score = middleScorer(boardArray, color) + 5 * availableWins(boardArray, color);
+        scoreMap.set(hash, score);
+      }
     }
     return score;
   }

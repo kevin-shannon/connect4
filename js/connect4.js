@@ -765,5 +765,23 @@ var helperMethods = {
   },
   disallowUIChipDrop: function() {
     playerCanDropChips = false;
+  },
+  hashBoard: function(board, color) {
+    var hash = color === RED ? 'r-' : 'b-';
+
+    for (var i = 1; i <= 7; i++) {
+      for (var j = 1; j <= 6; j++) {
+        var color = board[i][j];
+        if (color === RED) {
+          hash += 'r';
+        } else if (color === BLUE) {
+          hash += 'b';
+        } else {
+          hash += 'x'
+        }
+      }
+    }
+
+    return hash;
   }
 };
