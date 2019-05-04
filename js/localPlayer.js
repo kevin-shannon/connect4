@@ -28,6 +28,9 @@ var LocalPlayer = function(helperMethods, data) {
   }
 
   return {
+    getReady: function(onReady) {
+      onReady();
+    },
     takeTurn: function(currentBoard, yourColor, previousColumn, makeMove) {
       $("canvas").off("click");
       helperMethods.allowUIChipDrop(yourColor);

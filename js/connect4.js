@@ -244,9 +244,19 @@ function start(player1, player2) {
   //activate reset button
   resetButtonActive = true;
 
-  //start turn one
-  nextTurn(RED, player1, player2);
-  //now we wait for a click event
+  var numberOfReadyPlayers = 0;
+  function onReady() {
+    numberOfReadyPlayers++;
+    
+    // if both players are ready
+    if (numberOfReadyPlayers === 2) {
+      //start turn one
+      nextTurn(RED, player1, player2);
+    }
+  }
+
+  player1.getReady(onReady);
+  player2.getReady(onReady);
 }
 
 function nextTurn(color, playerToTakeTurnNow, playerToTakeTurnAfter, previousColumn) {

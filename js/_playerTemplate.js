@@ -80,6 +80,13 @@ var TemplatePlayer = function(helperMethods, data) {
       // with the same parameters.
     },
 
+    // Run any code that you want to run before the game starts
+    // here. You don't have to make changes, but do not delete this.
+    // "onReady" must be run by both players to start the game.
+    getReady: function(onReady) {
+      onReady();
+    },
+
     /* OPTIONAL */
     // These are not required to be implemented, and may be
     // deleted if you so wish.

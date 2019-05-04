@@ -96,6 +96,9 @@ var RemotePlayer = function(helperMethods, data) {
   }
 
   return {
+    getReady: function(onReady) {
+      onReady();
+    },
     takeTurn: function(currentBoard, yourColor, previousColumn, makeMove) {
       whenConnected(function() {
         

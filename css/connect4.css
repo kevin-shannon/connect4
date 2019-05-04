@@ -81,3 +81,7 @@ body {
   font-size: 10pt;
   justify-content: center;
 }
+
+#game-status {
+  user-select: text;
+}

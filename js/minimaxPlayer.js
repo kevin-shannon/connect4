@@ -146,6 +146,9 @@ var MinmaxPlayer = function(helperMethods, data) {
   }
 
   return {
+    getReady: function(onReady) {
+      onReady();
+    },
     takeTurn: function(currentBoard, yourColor, previousColumn, makeMove) {
       chipColor = yourColor;
       helperMethods.disallowUIChipDrop(yourColor);
