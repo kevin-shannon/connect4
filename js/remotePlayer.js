@@ -3,29 +3,49 @@ var RemotePlayer = function(helperMethods, data) {
   var peer;
   var connection;
 
-  peerNum = Math.floor(Math.random() * 900) + 100;
-
+  peerNum = generateId();
+  
   peer = new Peer(peerNum);
 
-  if (data.isHost) {
-    console.log("Game number: " + peerNum);
-    console.log("Waiting for a player to join...");
-    peer.on("connection", function(conn) {
-      console.log("Connection received!");
-      $("#game-status").html("");
-      connection = conn;
-    });
-  } else {
-    connection = peer.connect(data.gameCode);
+  console.log('Connecting to the Peer.js server..');
+  
+  peer.on('open', function () {
+    console.log('Connected to Peer.js server!');
+    peerNum = peer.id;
 
-    //ran if connection to host fails
-    peer.on("error", function(err) {
-      if (err.type == "peer-unavailable") {
-        Reset();
-        alert("Game does not exist.");
-      }
-    });
-  }
+    if (data.isHost) {
+      console.log("Game number: " + peerNum);
+      helperMethods.showGameNumber(peerNum);
+
+      console.log("Waiting for a player to join...");
+      peer.on("connection", function(conn) {
+        console.log("Opponent has connected!");
+        $("#game-status").html("");
+        connection = conn;
+
+        connection.on('close', function () {
+          console.log('Opponent disconnected.');
+        });
+      });
+
+    } else {
+      console.log('Connecting to other player...');
+      connection = peer.connect(data.gameCode);
+
+      connection.on('open', function () {
+        console.log('Connected to opponent!');
+      });
+  
+      //ran if connection to host fails
+      peer.on("error", function(err) {
+        console.error('Connection failed.');
+        if (err.type === "peer-unavailable") {
+          Reset();
+          alert("Game does not exist.");
+        }
+      });
+    }
+  });
 
   function sendLastMove(lastMove) {
     connection.send({
@@ -45,7 +65,8 @@ var RemotePlayer = function(helperMethods, data) {
     if (connection) {
       onValidConnection();
     } else {
-      peer.on("connection", function() {
+      peer.on("connection", function(conn) {
+        connection = conn;
         onValidConnection();
       });
     }
@@ -65,9 +86,19 @@ var RemotePlayer = function(helperMethods, data) {
     conn._events.data = new Array(0);
   }
 
+  function generateId() {
+    code = 'c4-';
+		var possible = 'abcdefghijklmnopqrstuvwxyz';
+		for (var i = 0; i < 4; i++) {
+			code += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return code;
+  }
+
   return {
     takeTurn: function(currentBoard, yourColor, previousColumn, makeMove) {
       whenConnected(function() {
+        
         sendLastMove(previousColumn);
         waitForMoveFromOtherPlayer(makeMove);
       });
@@ -78,11 +109,12 @@ var RemotePlayer = function(helperMethods, data) {
       });
     },
     clear: function() {
+      console.log('Attempting to close connection...');
       try {
-        peer.destroy();
         if (connection) {
           connection.close();
         }
+        peer.destroy();
       } catch (err) {
         console.log("Error closing connection");
       }

@@ -158,7 +158,6 @@ function gamemodeSelector() {
       }),
       new LocalPlayer(helperMethods)
     );
-    setGameStatus("Your game number is " + peerNum);
   });
 
   function startJoin() {
@@ -778,6 +777,9 @@ var helperMethods = {
   disallowUIChipDrop: function(color) {
     playerCanDropChips = false;
     setGameStatus('Waiting on ' + color + '...');
+  },
+  showGameNumber: function(gameNumber) {
+    setGameStatus("Your game number is " + gameNumber);
   },
   hashBoard: function(board, color) {
     var hash = color == RED ? 'r-' : 'b-';
