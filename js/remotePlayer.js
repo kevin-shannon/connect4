@@ -20,7 +20,7 @@ var RemotePlayer = function(helperMethods, data) {
 
     //ran if connection to host fails
     peer.on("error", function(err) {
-      if (err.type === "peer-unavailable") {
+      if (err.type == "peer-unavailable") {
         Reset();
         alert("Game does not exist.");
       }
