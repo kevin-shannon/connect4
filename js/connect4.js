@@ -267,7 +267,7 @@ function nextTurn(color, playerToTakeTurnNow, playerToTakeTurnAfter, previousCol
   );
 
   //if there's a winner, get outta here
-  if (winner || resetButtonActive === false) {
+  if (winner || resetButtonActive == false) {
     return;
   }
 
@@ -314,7 +314,7 @@ function drawChip(x, y, chipColor, shouldAnimate) {
   var chipImage = new Image();
 
   //Set the correct color chip to draw
-  chipImage = chipColor === RED ? redchip : bluechip;
+  chipImage = chipColor == RED ? redchip : bluechip;
 
   x = (bw / 7) * (x - 1);
   y = (bh / 6) * (y - 1);
@@ -344,7 +344,7 @@ function drawChip(x, y, chipColor, shouldAnimate) {
     animate(chip, chipCanvas, startTime);
 
     function animate(chip, chipCanvas, startTime) {
-      if (resetButtonActive === false) {
+      if (resetButtonActive == false) {
         chipCanvas.clearRect(0, -(bh / 6), bw, bh + bh / 6);
         return;
       }
@@ -377,7 +377,7 @@ function drawChip(x, y, chipColor, shouldAnimate) {
 }
 
 function setIndicatorColor(newColor) {
-  if (newColor === RED) {
+  if (newColor == RED) {
     $("#redturnIn").css("WebkitFilter", "grayscale(0%) opacity(100%) blur(0px)");
     $("#blueturnIn").css("WebkitFilter", "grayscale(50%) opacity(70%) blur(2px)");
   } else {
@@ -399,7 +399,7 @@ function Reset() {
   $("#redVic").css("visibility", "hidden");
   $("#blueVic").css("visibility", "hidden");
   $("#resetButton").css("visibility", "hidden");
-  
+
   resetBoard();
   hidePlayAgainPopup();
   clearGameStatus();
@@ -488,7 +488,7 @@ function displayPlay() {
 }
 
 function winAdder(color) {
-  if (color === RED) {
+  if (color == RED) {
     redVictories++;
     $("#redVic").text(redVictories);
   } else {
@@ -499,17 +499,17 @@ function winAdder(color) {
 
 function drawWinBanner(color) {
   //choose the correct picture for either red or blue
-  var bannerImage = color === RED ? redwins : bluewins;
+  var bannerImage = color == RED ? redwins : bluewins;
 
   //draw that sucker
-  if (resetButtonActive === true) {
+  if (resetButtonActive == true) {
     chipCanvas.drawImage(bannerImage, bw / 6, -(bh / 6), bw / 1.5, bh / 6);
   }
 }
 
 function drawWinXs(i, j, direction) {
   //repeat four times because it's connect FOUR
-  if (resetButtonActive === false) {
+  if (resetButtonActive == false) {
     return;
   }
   for (var n = 1; n < 5; n++) {
@@ -566,7 +566,7 @@ function repositionButtons() {
 }
 
 function getOppositeColor(color) {
-  return color === RED ? BLUE : RED;
+  return color == RED ? BLUE : RED;
 }
 
 //returns who's turn it is now
@@ -588,7 +588,7 @@ var helperMethods = {
     //for loop that checks array starting at bottom of board which is at 6 going up to 1
     for (var j = 6; j > 0; j--) {
       //the position in the array will be undefined when there is an open space to drop the chip
-      if (boardArray[column][j] === undefined) {
+      if (boardArray[column][j] == undefined) {
         if (onDrop) {
           onDrop(column, j, color);
         }
@@ -604,7 +604,7 @@ var helperMethods = {
     //for loop that checks array starting at top of board which is at 1 going down to 6
     for (var j = 1; j <= 6; j++) {
       //the position in the array will be undefined when there is chipless space
-      if (boardArray[column][j] !== undefined) {
+      if (boardArray[column][j] != undefined) {
         if (onUndrop) {
           onUndrop(column, j, color);
         }
@@ -627,9 +627,11 @@ var helperMethods = {
   checkForLastDropWin: function(board, lastDropColumn) {
     // find the row of the last dropped chip
     // while loop that checks array starting at top of board which is at 1 going down to 6
+    if(lastDropColumn == undefined)
+      return false;
     var x = lastDropColumn;
     var y = 1;
-    while (board[lastDropColumn][y] === undefined) {
+    while (board[lastDropColumn][y] == undefined) {
       y++;
     }
 
@@ -639,8 +641,8 @@ var helperMethods = {
     var B = Math.min(6, y + 3);
     var downCount = 0;
     for (var j = y + 1; j <= B; j++) {
-      downCount = (board[x][j] === color) ? downCount + 1 : 0;      
-      if (downCount === 3) return color;
+      downCount = (board[x][j] == color) ? downCount + 1 : 0;
+      if (downCount == 3) return color;
     }
 
     // horizontal
@@ -648,8 +650,8 @@ var helperMethods = {
     var R = Math.min(7, x + 3);
     var horCount = 0;
     for (var i = L; (i <= R); i++) {
-      horCount = (board[i][y] === color) ? horCount + 1 : 0;
-      if (horCount === 4) return color;
+      horCount = (board[i][y] == color) ? horCount + 1 : 0;
+      if (horCount == 4) return color;
     }
 
     // diagonal
@@ -661,8 +663,8 @@ var helperMethods = {
       if (i < 1 || i > 7) continue;
       if (j < 1 || j > 7) continue;
 
-      ldCount = (board[i][j] === color) ? ldCount + 1 : 0;
-      if (ldCount === 4) return color;
+      ldCount = (board[i][j] == color) ? ldCount + 1 : 0;
+      if (ldCount == 4) return color;
     }
 
     // anti diagonal
@@ -674,10 +676,10 @@ var helperMethods = {
       if (i < 1 || i > 7) continue;
       if (j < 1 || j > 7) continue;
 
-      rdCount = (board[i][j] === color) ? rdCount + 1 : 0;
-      if (rdCount === 4) return color;
+      rdCount = (board[i][j] == color) ? rdCount + 1 : 0;
+      if (rdCount == 4) return color;
     }
-    
+
     return false;
   },
 
@@ -688,10 +690,10 @@ var helperMethods = {
     for (var i = 1; i < 5; i++) {
       for (var j = 1; j < 7; j++) {
         if (
-          boardArray[i][j] !== undefined &&
-          boardArray[i][j] === boardArray[i + 1][j] &&
-          boardArray[i][j] === boardArray[i + 2][j] &&
-          boardArray[i][j] === boardArray[i + 3][j]
+          boardArray[i][j] != undefined &&
+          boardArray[i][j] == boardArray[i + 1][j] &&
+          boardArray[i][j] == boardArray[i + 2][j] &&
+          boardArray[i][j] == boardArray[i + 3][j]
         ) {
           if (onWin) {
             onWin(boardArray[i][j], i, j, "h");
@@ -705,10 +707,10 @@ var helperMethods = {
     for (var i = 1; i < 8; i++) {
       for (var j = 1; j < 4; j++) {
         if (
-          boardArray[i][j] !== undefined &&
-          boardArray[i][j] === boardArray[i][j + 1] &&
-          boardArray[i][j] === boardArray[i][j + 2] &&
-          boardArray[i][j] === boardArray[i][j + 3]
+          boardArray[i][j] != undefined &&
+          boardArray[i][j] == boardArray[i][j + 1] &&
+          boardArray[i][j] == boardArray[i][j + 2] &&
+          boardArray[i][j] == boardArray[i][j + 3]
         ) {
           if (onWin) {
             onWin(boardArray[i][j], i, j, "v");
@@ -721,10 +723,10 @@ var helperMethods = {
     for (var i = 1; i < 5; i++) {
       for (var j = 4; j < 7; j++) {
         if (
-          boardArray[i][j] !== undefined &&
-          boardArray[i][j] === boardArray[i + 1][j - 1] &&
-          boardArray[i][j] === boardArray[i + 2][j - 2] &&
-          boardArray[i][j] === boardArray[i + 3][j - 3]
+          boardArray[i][j] != undefined &&
+          boardArray[i][j] == boardArray[i + 1][j - 1] &&
+          boardArray[i][j] == boardArray[i + 2][j - 2] &&
+          boardArray[i][j] == boardArray[i + 3][j - 3]
         ) {
           if (onWin) {
             onWin(boardArray[i][j], i, j, "//");
@@ -737,10 +739,10 @@ var helperMethods = {
     for (var i = 1; i < 5; i++) {
       for (var j = 1; j < 4; j++) {
         if (
-          boardArray[i][j] !== undefined &&
-          boardArray[i][j] === boardArray[i + 1][j + 1] &&
-          boardArray[i][j] === boardArray[i + 2][j + 2] &&
-          boardArray[i][j] === boardArray[i + 3][j + 3]
+          boardArray[i][j] != undefined &&
+          boardArray[i][j] == boardArray[i + 1][j + 1] &&
+          boardArray[i][j] == boardArray[i + 2][j + 2] &&
+          boardArray[i][j] == boardArray[i + 3][j + 3]
         ) {
           if (onWin) {
             onWin(boardArray[i][j], i, j, "\\");
@@ -755,7 +757,7 @@ var helperMethods = {
       var boardIsNotFull = false;
       for (var i = 1; i < 8; i++) {
         for (var j = 1; j < 7; j++) {
-          if (boardArray[i][j] === undefined) {
+          if (boardArray[i][j] == undefined) {
             boardIsNotFull = true;
           }
         }
@@ -778,14 +780,14 @@ var helperMethods = {
     setGameStatus('Waiting on ' + color + '...');
   },
   hashBoard: function(board, color) {
-    var hash = color === RED ? 'r-' : 'b-';
+    var hash = color == RED ? 'r-' : 'b-';
 
     for (var i = 1; i <= 7; i++) {
       for (var j = 1; j <= 6; j++) {
         var color = board[i][j];
-        if (color === RED) {
+        if (color == RED) {
           hash += 'r';
-        } else if (color === BLUE) {
+        } else if (color == BLUE) {
           hash += 'b';
         } else {
           hash += 'x'

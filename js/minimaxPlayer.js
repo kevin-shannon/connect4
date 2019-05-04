@@ -1,35 +1,34 @@
 var MinmaxPlayer = function(helperMethods, data) {
   var chipColor;
+  var maxDepth;
   var scoreMap = new Map();
 
   function possibleMoves(boardArray) {
     var possible = new Array();
-
     for (var i = 0; i < 7; i++) {
-      
-      // TODO: wtf is this
-      var whatIsThisNumberKevin = Math.round(7 / 2 + ((1 - 2 * (i % 2)) * (i + 1)) / 2);
+      // i but from the middle outwards
+      var column = Math.round(7 / 2 + ((1 - 2 * (i % 2)) * (i + 1)) / 2);
 
       // we drop RED because color doesn't matter,
       // we're just seeing if the column is full or not
-      if (helperMethods.dropChip(boardArray, whatIsThisNumberKevin, RED)) {
-        possible.push(whatIsThisNumberKevin);
-        helperMethods.undropChip(boardArray, whatIsThisNumberKevin);
+      if (helperMethods.dropChip(boardArray, column, RED)) {
+        possible.push(column);
+        helperMethods.undropChip(boardArray, column);
       }
     }
     return possible;
   }
 
-  function boardScore(boardArray, color, winCheck) {
+  function boardScore(boardArray, color, winCheck, additonalMoves) {
     var score = 0;
     if (winCheck == color) {
-      score = 10000 - moves;
+      score = 10000 - moves - additonalMoves;
     } else if (typeof winCheck == "string" && winCheck == getOppositeColor(color)) {
-      score = -10000 + moves;
+      score = -10000 + moves + additonalMoves;
     } else {
       var hash = helperMethods.hashBoard(boardArray, color);
       score = scoreMap.get(hash);
-      if (score === undefined) {
+      if (score == undefined) {
         score = middleScorer(boardArray, color) + 5 * availableWins(boardArray, color);
         scoreMap.set(hash, score);
       }
@@ -88,17 +87,11 @@ var MinmaxPlayer = function(helperMethods, data) {
 
   function minimax(state, depth, colorToMax, currentColor, alpha, beta, lastDropColumn) {
 
-    var thisStateWinStatus;
+    var thisStateWinStatus = helperMethods.checkForLastDropWin(state, lastDropColumn);
 
-    if (lastDropColumn) {
-      thisStateWinStatus = helperMethods.checkForLastDropWin(state, lastDropColumn);
-    } else {
-      thisStateWinStatus = helperMethods.checkForWin(state);
-    }
-    
     if (depth == 0 || thisStateWinStatus) {
       return {
-        value: boardScore(state, colorToMax, thisStateWinStatus),
+        value: boardScore(state, colorToMax, thisStateWinStatus, maxDepth - depth),
         action: 0
       };
     }
@@ -162,10 +155,9 @@ var MinmaxPlayer = function(helperMethods, data) {
         var delayEnteredByTheUser = data;
         var shouldAnimate = delayEnteredByTheUser >= maxMillisecondsToAnimateChipDropping;
         //run the ai on the board
-        var depth = Math.round(Math.log(3000000) / Math.log(possibleMoves(currentBoard).length));
-        console.log('minimax depth: ' + depth);
-        var column = minimax(helperMethods.copyBoard(currentBoard), depth, yourColor, yourColor, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY).action;
-
+        maxDepth = Math.round(Math.log(3000000) / Math.log(possibleMoves(currentBoard).length));
+        console.log('minimax depth: ' + maxDepth);
+        var column = minimax(helperMethods.copyBoard(currentBoard), maxDepth, yourColor, yourColor, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY).action;
         makeMove(column, shouldAnimate);
       }, data);
     }
