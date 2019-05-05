@@ -3,49 +3,49 @@ var RemotePlayer = function(helperMethods, data) {
   var peer;
   var connection;
 
-  peerNum = generateId();
-  
-  peer = new Peer(peerNum);
+  function initHost (onReady) {
+    console.log("Game number: " + peerNum);
+    helperMethods.showGameNumber(peerNum);
 
-  console.log('Connecting to the Peer.js server..');
-  
-  peer.on('open', function () {
-    console.log('Connected to Peer.js server!');
-    peerNum = peer.id;
+    console.log("Waiting for a player to join...");
+    peer.on("connection", function(conn) {
+      console.log("Opponent has connected!");
+      helperMethods.disallowUIChipDrop(RED);
+      connection = conn;
 
-    if (data.isHost) {
-      console.log("Game number: " + peerNum);
-      helperMethods.showGameNumber(peerNum);
+      // we are ready to play
+      onReady();
 
-      console.log("Waiting for a player to join...");
-      peer.on("connection", function(conn) {
-        console.log("Opponent has connected!");
-        $("#game-status").html("");
-        connection = conn;
-
-        connection.on('close', function () {
-          console.log('Opponent disconnected.');
-        });
+      connection.on('close', function () {
+        onOpponentDisconnect();
       });
+    });
+  }
 
-    } else {
-      console.log('Connecting to other player...');
-      connection = peer.connect(data.gameCode);
+  function initJoin (onReady) {
+    console.log('Connecting to other player...');
+    connection = peer.connect(data.gameCode);
 
-      connection.on('open', function () {
-        console.log('Connected to opponent!');
-      });
-  
-      //ran if connection to host fails
-      peer.on("error", function(err) {
-        console.error('Connection failed.');
-        if (err.type === "peer-unavailable") {
-          Reset();
-          alert("Game does not exist.");
-        }
-      });
-    }
-  });
+    connection.on('open', function () {
+      console.log('Connected to opponent!');
+
+      // we are ready to play
+      onReady();
+    });
+
+    //ran if connection to host fails
+    peer.on("error", function(err) {
+      if (err.type === "peer-unavailable") {
+        onOpponentDisconnect();
+      }
+    });
+  }
+
+  function onOpponentDisconnect() {
+    console.log('Disconnected');
+    alert('Lost connection to opponent.');
+    Reset();
+  }
 
   function sendLastMove(lastMove) {
     connection.send({
@@ -97,7 +97,23 @@ var RemotePlayer = function(helperMethods, data) {
 
   return {
     getReady: function(onReady) {
-      onReady();
+      helperMethods.disallowUIChipDrop('connection');
+
+      peerNum = generateId();
+      peer = new Peer(peerNum);
+
+      console.log('Connecting to the Peer.js server..');
+      
+      peer.on('open', function () {
+        console.log('Connected to Peer.js server!');
+        peerNum = peer.id;
+
+        if (data.isHost) {
+          initHost(onReady);
+        } else {
+          initJoin(onReady);
+        }
+      });
     },
     takeTurn: function(currentBoard, yourColor, previousColumn, makeMove) {
       whenConnected(function() {
@@ -112,7 +128,7 @@ var RemotePlayer = function(helperMethods, data) {
       });
     },
     clear: function() {
-      console.log('Attempting to close connection...');
+      console.log('Closing connection.');
       try {
         if (connection) {
           connection.close();
