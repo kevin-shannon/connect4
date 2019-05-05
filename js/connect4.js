@@ -395,7 +395,15 @@ function setIndicatorColor(newColor) {
   }
 }
 
-function Reset() {
+function resetGame() {
+  resetBoard();
+  hidePlayAgainButton();
+  clearGameStatus();
+}
+
+function exitGame() {
+  resetGame();
+
   AIDelay = 1000;
 
   redVictories = 0;
@@ -409,10 +417,6 @@ function Reset() {
   $("#blueVic").css("visibility", "hidden");
   $("#resetButton").css("visibility", "hidden");
 
-  resetBoard();
-  hidePlayAgainPopup();
-  clearGameStatus();
-
   if (lastPlayer1.clear) {
     lastPlayer1.clear();
   }
@@ -421,22 +425,27 @@ function Reset() {
     lastPlayer2.clear();
   }
 
-  //restart the game
-  gamemodeSelector();
+    //restart the game
+    gamemodeSelector();
 }
 
-function showPlayAgainPopup(functionToRunOnClick) {
-  $("#playAgainButton").show();
-  $("#playAgainButton").click(functionToRunOnClick);
+function showPlayAgainButton() {
+  setTimeout(function() {
+    clearGameStatus();
+    if (resetButtonActive) {
+      $("#playAgainButton").show();
+      $("#playAgainButton").one('click', function () {
+        playAgain();
+      });
+    }
+  }, 1000);
 }
 
-function hidePlayAgainPopup() {
+function hidePlayAgainButton() {
   $("#playAgainButton").hide();
-  $("#playAgainButton").off();
 }
 
 function resetBoard() {
-  console.log("Resetting board");
   mainBoard.length = 0;
   mainBoard = fillArray();
   winner = false;
@@ -465,10 +474,10 @@ function win(color, i, j, direction) {
   //this is to make sure that the events are blocked
   playerCanDropChips = false;
   //Draw the win pic based on the color of the chip that won after a delay
-  setTimeout(drawWinBanner, 500, mainBoard[i][j]);
+  setTimeout(drawWinBanner, 500, color);
   //delay
   setTimeout(drawWinXs, 1000, i, j, direction);
-  displayPlay();
+  showPlayAgainButton();
 }
 
 function tie() {
@@ -479,21 +488,13 @@ function tie() {
     setTimeout(function() {
       chipCanvas.drawImage(draw, (3 * bw) / 10, -(bh / 6), bw / 2.5, bh / 6);
     }, 450);
-    displayPlay();
+    showPlayAgainButton();
   }, 50);
 }
 
-function displayPlay() {
-  setTimeout(function() {
-    clearGameStatus();
-    if (resetButtonActive) {
-      showPlayAgainPopup(function() {
-        resetBoard();
-        start(lastPlayer1, lastPlayer2);
-        hidePlayAgainPopup();
-      });
-    }
-  }, 1000);
+function playAgain() {
+  resetGame();
+  start(lastPlayer1, lastPlayer2);
 }
 
 function winAdder(color) {

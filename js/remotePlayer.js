@@ -44,7 +44,7 @@ var RemotePlayer = function(helperMethods, data) {
   function onOpponentDisconnect() {
     console.log('Disconnected');
     alert('Lost connection to opponent.');
-    Reset();
+    exitGame();
   }
 
   function sendLastMove(lastMove) {
@@ -54,8 +54,7 @@ var RemotePlayer = function(helperMethods, data) {
   }
 
   function waitForMoveFromOtherPlayer(onMove) {
-    connection.on("data", function(receivedData) {
-      removeAllDataListeners(connection);
+    connection.once("data", function(receivedData) {
       var move = receivedData.lastMove;
       onMove(move, true);
     });
@@ -82,10 +81,6 @@ var RemotePlayer = function(helperMethods, data) {
     }
   }
 
-  function removeAllDataListeners(conn) {
-    conn._events.data = new Array(0);
-  }
-
   function generateId() {
     code = 'c4-';
 		var possible = 'abcdefghijklmnopqrstuvwxyz';
@@ -93,6 +88,18 @@ var RemotePlayer = function(helperMethods, data) {
 			code += possible.charAt(Math.floor(Math.random() * possible.length));
     }
     return code;
+  }
+
+  function endConnection() {
+    console.log('Closing connection.');
+    try {
+      if (connection) {
+        connection.close();
+      }
+      peer.destroy();
+    } catch (err) {
+      console.log("Error closing connection");
+    }
   }
 
   return {
@@ -128,15 +135,7 @@ var RemotePlayer = function(helperMethods, data) {
       });
     },
     clear: function() {
-      console.log('Closing connection.');
-      try {
-        if (connection) {
-          connection.close();
-        }
-        peer.destroy();
-      } catch (err) {
-        console.log("Error closing connection");
-      }
+      endConnection();
     }
   };
 };
