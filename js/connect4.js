@@ -3,10 +3,8 @@
  */
 
 /*
- * Variable declarations
+ * Setup
  */
-
-var resetButtonActive = false;
 
 //colors and design
 var RED = "red";
@@ -41,12 +39,12 @@ $(window).on("resize", function() {
   repositionButtons();
 });
 
-//logic globals (these are bad practice and will probably have to be replaced)
 var mainBoard;
 var moves = 0;
-var winner = false;
-var redVictories = 0;
-var blueVictories = 0;
+var inGame = false; // false when menu is on screen, true all other times
+
+var redVictories = 0; // TODO: maybe refactor out
+var blueVictories = 0; // TODO: maybe refactor out
 
 var lastPlayer1;
 var lastPlayer2;
@@ -121,7 +119,6 @@ function checkForReady() {
 
 /*
  * Main Game Functions
- * --main
  */
 
 function initialize() {
@@ -241,15 +238,14 @@ function start(player1, player2) {
   //get the mainBoard ready for some epic connect4 action
   mainBoard = fillArray();
 
-  //activate reset button
-  resetButtonActive = true;
-
   var numberOfReadyPlayers = 0;
   function onReady() {
     numberOfReadyPlayers++;
     
     // if both players are ready
     if (numberOfReadyPlayers === 2) {
+      inGame = true;
+
       //start turn one
       nextTurn(RED, player1, player2);
     }
@@ -260,7 +256,7 @@ function start(player1, player2) {
 }
 
 function nextTurn(color, playerToTakeTurnNow, playerToTakeTurnAfter, previousColumn) {
-  helperMethods.checkForWin(
+  var isGameWon = helperMethods.checkForWin(
     mainBoard,
     function(colorThatWon, xPos, yPos, direction) {
       //ran when someone has won
@@ -276,7 +272,7 @@ function nextTurn(color, playerToTakeTurnNow, playerToTakeTurnAfter, previousCol
   );
 
   //if there's a winner, get outta here
-  if (winner || resetButtonActive == false) {
+  if (isGameWon) {
     return;
   }
 
@@ -353,10 +349,9 @@ function drawChip(x, y, chipColor, shouldAnimate) {
     animate(chip, chipCanvas, startTime);
 
     function animate(chip, chipCanvas, startTime) {
-      if (resetButtonActive == false) {
-        chipCanvas.clearRect(0, -(bh / 6), bw, bh + bh / 6);
-        return;
-      }
+      // prevents drawings on board after we're back on the menu
+      if (!inGame) return;
+
       // update
       var time = new Date().getTime() - startTime;
       var a = bh * 1.7;
@@ -403,6 +398,8 @@ function resetGame() {
 
 function exitGame() {
   resetGame();
+  
+  inGame = false;
 
   AIDelay = 1000;
 
@@ -432,12 +429,12 @@ function exitGame() {
 function showPlayAgainButton() {
   setTimeout(function() {
     clearGameStatus();
-    if (resetButtonActive) {
-      $("#playAgainButton").show();
-      $("#playAgainButton").one('click', function () {
-        playAgain();
-      });
-    }
+
+    $("#playAgainButton").show();
+    $("#playAgainButton").one('click', function () {
+      playAgain();
+    });
+
   }, 1000);
 }
 
@@ -448,10 +445,8 @@ function hidePlayAgainButton() {
 function resetBoard() {
   mainBoard.length = 0;
   mainBoard = fillArray();
-  winner = false;
   moves = 0;
   playerCanDropChips = false;
-  resetButtonActive = false;
   chipCanvas.clearRect(0, -(bh / 6), bw, bh + bh / 6);
   setTimeout(function() {
     chipCanvas.clearRect(0, -(bh / 6), bw, bh + bh / 6);
@@ -468,7 +463,6 @@ function fillArray() {
 
 //i and j are the coord of the first chip in the winning four
 function win(color, i, j, direction) {
-  winner = true;
   console.log(color + " wins on turn " + moves);
   winAdder(color);
   //this is to make sure that the events are blocked
@@ -483,8 +477,7 @@ function win(color, i, j, direction) {
 function tie() {
   setTimeout(function() {
     //manual win event instead of using win function
-    console.log("the game is a draw");
-    winner = true;
+    console.log("The game is a draw");
     setTimeout(function() {
       chipCanvas.drawImage(draw, (3 * bw) / 10, -(bh / 6), bw / 2.5, bh / 6);
     }, 450);
@@ -508,20 +501,21 @@ function winAdder(color) {
 }
 
 function drawWinBanner(color) {
+  // prevents drawings on board after we're back on the menu
+  if (!inGame) return;
+
   //choose the correct picture for either red or blue
   var bannerImage = color == RED ? redwins : bluewins;
 
   //draw that sucker
-  if (resetButtonActive == true) {
-    chipCanvas.drawImage(bannerImage, bw / 6, -(bh / 6), bw / 1.5, bh / 6);
-  }
+  chipCanvas.drawImage(bannerImage, bw / 6, -(bh / 6), bw / 1.5, bh / 6);
 }
 
 function drawWinXs(i, j, direction) {
+  // prevents drawings on board after we're back on the menu
+  if (!inGame) return;
+
   //repeat four times because it's connect FOUR
-  if (resetButtonActive == false) {
-    return;
-  }
   for (var n = 1; n < 5; n++) {
     //draw the X
     chipCanvas.drawImage(XXX, (bw / 7) * (i - 1), (bh / 6) * (j - 1), bw / 7, bh / 6);

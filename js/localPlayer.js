@@ -20,7 +20,7 @@ var LocalPlayer = function(helperMethods, data) {
 
     //draw the image of the chip to be dropped
     for (var i = 1; i < 8; i++) {
-      if (xPos > (i - 1) * (w / 7) && xPos < i * (w / 7) && winner == false) {
+      if (xPos > (i - 1) * (w / 7) && xPos < i * (w / 7) && inGame) {
         chipCanvas.clearRect(0, -(bh / 6), bw, bh / 6);
         chipCanvas.drawImage(image, (i - 1) * (bw / 7), -(bh / 6), bw / 7, bh / 6);
       }
