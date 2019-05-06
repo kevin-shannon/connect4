@@ -1,23 +1,33 @@
-var peerNum;
 var RemotePlayer = function(helperMethods, data) {
   var peer;
   var connection;
+  var hasBeenReset = false;
+
+  helperMethods.setGameStatus('Waiting on a connection...');
+
+  if (data.isHost) {
+    peer = new Peer(generateId());
+  } else {
+    peer = new Peer();
+  }
+
+  console.log('Connecting to the Peer.js server..');
+  
+  peer.once('open', function () {
+    console.log('Connected to Peer.js server!');
+  });
 
   function initHost (onReady) {
-    console.log("Game number: " + peerNum);
-    helperMethods.setGameStatus("Your game number is " + peerNum);
+    console.log("Game number: " + peer.id);
+    helperMethods.setGameStatus("Your game number is " + peer.id);
 
     console.log("Waiting for a player to join...");
-    peer.on("connection", function(conn) {
+    peer.once("connection", function(conn) {
       console.log("Opponent has connected!");
       connection = conn;
 
       // we are ready to play
       onReady();
-
-      connection.on('close', function () {
-        onOpponentDisconnect();
-      });
     });
   }
 
@@ -25,7 +35,7 @@ var RemotePlayer = function(helperMethods, data) {
     console.log('Connecting to other player...');
     connection = peer.connect(data.gameCode);
 
-    connection.on('open', function () {
+    connection.once('open', function () {
       console.log('Connected to opponent!');
 
       // we are ready to play
@@ -33,7 +43,7 @@ var RemotePlayer = function(helperMethods, data) {
     });
 
     //ran if connection to host fails
-    peer.on("error", function(err) {
+    peer.once("error", function(err) {
       if (err.type === "peer-unavailable") {
         onOpponentDisconnect();
       }
@@ -41,8 +51,7 @@ var RemotePlayer = function(helperMethods, data) {
   }
 
   function onOpponentDisconnect() {
-    console.log('Disconnected');
-    alert('Lost connection to opponent.');
+    alert('Opponent disconnected.');
     resetGame();
   }
 
@@ -52,10 +61,48 @@ var RemotePlayer = function(helperMethods, data) {
     });
   }
 
-  function waitForMoveFromOtherPlayer(onMove) {
-    connection.once("data", function(receivedData) {
-      var move = receivedData.lastMove;
-      onMove(move, true);
+  function sendPlayAgainRequest() {
+    connection.send({
+      playAgainRequest: true
+    });
+  }
+
+  function sendEndGame() {
+    if (!connection) return;
+
+    connection.send({
+      endGame: true
+    });
+  }
+
+  function openUpToReceiveData(onMove) {
+    connection.on("data", function(receivedData) {
+      if (receivedData.endGame && !hasBeenReset) {
+        onOpponentDisconnect();
+        return;
+      }
+
+      if (onMove) {
+        onMove(receivedData.lastMove, true);
+      }
+    });
+  }
+
+  function removeOldDataReceiver() {
+    if (connection) {
+      connection.off('data');
+    }
+  }
+
+  function waitForPlayAgainRequest(onRequest) {
+    connection.on("data", function(receivedData) {
+      if (receivedData.playAgainRequest) {
+        helperMethods.setGameStatus('The other player wants to play again!');
+        onRequest();
+      }
+      if (receivedData.endGame && !hasBeenReset) {
+        onOpponentDisconnect();
+      }
     });
   }
 
@@ -103,30 +150,43 @@ var RemotePlayer = function(helperMethods, data) {
 
   return {
     getReady: function(onReady) {
-      helperMethods.setGameStatus('Waiting on a connection...');
+      // runs before every game.
+      // code that runs once is at the top of the file
 
-      peerNum = generateId();
-      peer = new Peer(peerNum);
+      // wait until we are connected to the peer server
+      // to connect to the other player
+      if (peer.disconnected) {
+        peer.once('open', () => init());
+      } else {
+        init();
+      }
 
-      console.log('Connecting to the Peer.js server..');
-      
-      peer.on('open', function () {
-        console.log('Connected to Peer.js server!');
-        peerNum = peer.id;
+      // ensure no old data receivers were left behind
+      removeOldDataReceiver();
 
+      function init() {
         if (data.isHost) {
-          initHost(onReady);
+          initHost(readyToGo);
         } else {
-          initJoin(onReady);
+          initJoin(readyToGo);
         }
-      });
+      }
+
+      function readyToGo() {
+        // open up early to receive end game mesages
+        openUpToReceiveData();
+
+        onReady();
+      }
     },
     takeTurn: function(currentBoard, yourColor, previousColumn, makeMove) {
       whenConnected(function() {
         
         sendLastMove(previousColumn);
         helperMethods.setGameStatus('Waiting on ' + yourColor + '...');
-        waitForMoveFromOtherPlayer(makeMove);
+
+        removeOldDataReceiver();
+        openUpToReceiveData(makeMove);
       });
     },
     winningMove: function(theMove) {
@@ -134,11 +194,35 @@ var RemotePlayer = function(helperMethods, data) {
         sendLastMove(theMove);
       });
     },
+    onPlayAgainRequest: function () {
+      // this runs when the local player want to play again
+      // tells the remote player that the local player wants to play again
+      sendPlayAgainRequest();
+    },
     onReset: function() {
-      endConnection();
+      if (hasBeenReset) return;
+      
+      sendEndGame();
+
+      // end game message won't get sent if you end the connection immediately
+      setTimeout(() => endConnection(), 1000);
+
+      hasBeenReset = true;
     },
     onGameEnd: function(playAgain) {
-      playAgain();
+      removeOldDataReceiver();
+
+      // if the remote player says they want to play again,
+      // run the playAgain function.
+
+      // if the local player hasn't pressed the button, 
+      // the status will be updated to tell them that the
+      // remote player wants to play again
+
+      // if the local player has already pressed the button 
+      // once the play again request is received, the game 
+      // will start
+      waitForPlayAgainRequest(playAgain);
     }
   };
 };

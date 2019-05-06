@@ -81,6 +81,7 @@ var LocalPlayer = function(helperMethods, data) {
     onGameEnd: function(playAgain) {
       showPlayAgainButton(function () {
         hidePlayAgainButton();
+        helperMethods.setGameStatus('Waiting for other play to play again...');
         playAgain();
       });
     }

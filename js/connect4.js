@@ -139,16 +139,16 @@ function initialize() {
 function gamemodeSelector() {
   $("#gamemodeSelector").modal("show");
 
-  $("#single").click(function() {
+  $("#single").on('click', function() {
     var computerPlayerDelay = 1000;
     start(new LocalPlayer(helperMethods), new MinmaxPlayer(helperMethods, computerPlayerDelay));
   });
 
-  $("#local").click(function() {
+  $("#local").on('click', function() {
     start(new LocalPlayer(helperMethods), new LocalPlayer(helperMethods));
   });
 
-  $("#host").click(function() {
+  $("#host").on('click', function() {
     start(
       new RemotePlayer(helperMethods, {
         isHost: true
@@ -174,14 +174,14 @@ function gamemodeSelector() {
     );
   }
 
-  $("#aivsai").click(function() {
+  $("#aivsai").on('click', function() {
     start(new MinmaxPlayer(helperMethods, 0), new MinmaxPlayer(helperMethods, 0));
   });
 
-  $("#joinbut").click(startJoin);
+  $("#joinbut").on('click', startJoin);
 
   //checks for enter key press on input box
-  $("#joinin").keypress(function(e) {
+  $("#joinin").on('keypress', function(e) {
     if (e.which == 13) {
       startJoin();
       return false;
@@ -202,6 +202,8 @@ function start(player1, player2) {
   $("#host").off("click");
   $("#joinbut").off("click");
   $("#aibut").off("click");
+  $("#joinin").off("keypress");
+  $("#joinin").val('');
 
   //actual board width and height
   var w = chips.get(0).scrollWidth;
@@ -477,27 +479,27 @@ function askIfPlayersWantToPlayAgain(player1, player2) {
 
     player1.onGameEnd(function () {
       numberOfPlayersThatWantToPlayAgain++;
+
+      if (player2.onPlayAgainRequest) {
+        player2.onPlayAgainRequest();
+      }
   
       // if both players want to play again
       if (numberOfPlayersThatWantToPlayAgain === 2) {
         playAgain(player1, player2);
-      } else {
-        if (player2.onPlayAgainRequest) {
-          player2.onPlayAgainRequest();
-        }
       }
     });
   
     player2.onGameEnd(function () {
       numberOfPlayersThatWantToPlayAgain++;
+
+      if (player1.onPlayAgainRequest) {
+        player1.onPlayAgainRequest();
+      }
   
       // if both players want to play again
       if (numberOfPlayersThatWantToPlayAgain === 2) {
         playAgain(player1, player2);
-      } else {
-        if (player1.onPlayAgainRequest) {
-          player1.onPlayAgainRequest();
-        }
       }
     });
   }, 1100);
