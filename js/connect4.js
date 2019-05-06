@@ -264,10 +264,12 @@ function nextTurn(color, playerToTakeTurnNow, playerToTakeTurnAfter, previousCol
         playerToTakeTurnNow.winningMove(previousColumn);
       }
       win(colorThatWon, xPos, yPos, direction);
+      askIfPlayersWantToPlayAgain(playerToTakeTurnNow, playerToTakeTurnAfter);
     },
     function() {
       //ran in the event of a tie
       tie();
+      askIfPlayersWantToPlayAgain(playerToTakeTurnNow, playerToTakeTurnAfter);
     }
   );
 
@@ -392,7 +394,6 @@ function setIndicatorColor(newColor) {
 
 function clearCurrentGame() {
   resetBoard();
-  hidePlayAgainButton();
   clearGameStatus();
 }
 
@@ -426,23 +427,6 @@ function resetGame() {
   gamemodeSelector();
 }
 
-function showPlayAgainButton() {
-  setTimeout(function() {
-    clearGameStatus();
-
-    $("#playAgainButton").show();
-    $("#playAgainButton").one('click', function () {
-      playAgain();
-    });
-
-  }, 1000);
-}
-
-function hidePlayAgainButton() {
-  $("#playAgainButton").hide();
-  $("#playAgainButton").off();
-}
-
 function resetBoard() {
   mainBoard.length = 0;
   mainBoard = fillArray();
@@ -472,7 +456,7 @@ function win(color, i, j, direction) {
   setTimeout(drawWinBanner, 500, color);
   //delay
   setTimeout(drawWinXs, 1000, i, j, direction);
-  showPlayAgainButton();
+  clearGameStatus();
 }
 
 function tie() {
@@ -482,13 +466,46 @@ function tie() {
     setTimeout(function() {
       chipCanvas.drawImage(draw, (3 * bw) / 10, -(bh / 6), bw / 2.5, bh / 6);
     }, 450);
-    showPlayAgainButton();
   }, 50);
+  clearGameStatus();
 }
 
-function playAgain() {
+function askIfPlayersWantToPlayAgain(player1, player2) {
+  // wait until after the Xs and win banner have been drawn
+  setTimeout(function() {
+    var numberOfPlayersThatWantToPlayAgain = 0;
+
+    player1.onGameEnd(function () {
+      numberOfPlayersThatWantToPlayAgain++;
+  
+      // if both players want to play again
+      if (numberOfPlayersThatWantToPlayAgain === 2) {
+        playAgain(player1, player2);
+      } else {
+        if (player2.onPlayAgainRequest) {
+          player2.onPlayAgainRequest();
+        }
+      }
+    });
+  
+    player2.onGameEnd(function () {
+      numberOfPlayersThatWantToPlayAgain++;
+  
+      // if both players want to play again
+      if (numberOfPlayersThatWantToPlayAgain === 2) {
+        playAgain(player1, player2);
+      } else {
+        if (player1.onPlayAgainRequest) {
+          player1.onPlayAgainRequest();
+        }
+      }
+    });
+  }, 1100);
+}
+
+function playAgain(player1, player2) {
   clearCurrentGame();
-  start(lastPlayer1, lastPlayer2);
+  start(player1, player2);
 }
 
 function winAdder(color) {
@@ -580,7 +597,7 @@ function advanceTurn() {
 }
 
 function clearGameStatus() {
-  $('#game-status').html('');
+  helperMethods.setGameStatus('');
 }
 
 var helperMethods = {

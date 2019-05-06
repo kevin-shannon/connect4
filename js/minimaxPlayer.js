@@ -163,6 +163,10 @@ var MinmaxPlayer = function(helperMethods, data) {
         var column = minimax(helperMethods.copyBoard(currentBoard), maxDepth, yourColor, yourColor, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY).action;
         makeMove(column, shouldAnimate);
       }, data);
+    },
+    onGameEnd: function(playAgain) {
+      // the AI is always ready to play again
+      playAgain();
     }
   };
 };

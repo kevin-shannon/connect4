@@ -136,6 +136,9 @@ var RemotePlayer = function(helperMethods, data) {
     },
     onReset: function() {
       endConnection();
+    },
+    onGameEnd: function(playAgain) {
+      playAgain();
     }
   };
 };

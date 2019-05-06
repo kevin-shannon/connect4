@@ -28,6 +28,20 @@ var LocalPlayer = function(helperMethods, data) {
     }
   }
 
+  function showPlayAgainButton(onClick) {
+    $("#playAgainButton").show();
+
+    // in a local game, this handler gets applied twice 
+    // to the same button, which is kind of weird but it 
+    // seems to work fine so ¯\_(ツ)_/¯
+    $("#playAgainButton").one('click', onClick);
+  }
+  
+  function hidePlayAgainButton() {
+    $("#playAgainButton").hide();
+    $("#playAgainButton").off();
+  }
+
   return {
     getReady: function(onReady) {
       onReady();
@@ -61,6 +75,14 @@ var LocalPlayer = function(helperMethods, data) {
       // prevent double moves on new games after reset
       $('canvas').off('mousemove');
       $('canvas').off('click');
+
+      hidePlayAgainButton();
+    },
+    onGameEnd: function(playAgain) {
+      showPlayAgainButton(function () {
+        hidePlayAgainButton();
+        playAgain();
+      });
     }
   };
 };

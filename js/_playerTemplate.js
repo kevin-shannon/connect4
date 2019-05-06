@@ -83,8 +83,17 @@ var TemplatePlayer = function(helperMethods, data) {
     // Run any code that you want to run before the game starts
     // here. You don't have to make changes, but do not delete this.
     // "onReady" must be run by both players to start the game.
+    // this will also be ran when the game starts from a play again
     getReady: function(onReady) {
       onReady();
+    },
+
+    // called when the game ends due to win or tie
+    // if this player will always be okay with playing again,
+    // for example an AI, keep this as is.
+    onGameEnd: function(playAgain) {
+      // run this function if this player wants to play again
+      playAgain();
     },
 
     /* OPTIONAL */
@@ -95,6 +104,8 @@ var TemplatePlayer = function(helperMethods, data) {
     winningMove: function(theMove) {},
 
     // called when the game is reset
-    onReset: function() {}
+    onReset: function() {},
+
+    onPlayAgainRequest: function() {}
   };
 };
