@@ -390,14 +390,14 @@ function setIndicatorColor(newColor) {
   }
 }
 
-function resetGame() {
+function clearCurrentGame() {
   resetBoard();
   hidePlayAgainButton();
   clearGameStatus();
 }
 
-function exitGame() {
-  resetGame();
+function resetGame() {
+  clearCurrentGame();
   
   inGame = false;
 
@@ -414,12 +414,12 @@ function exitGame() {
   $("#blueVic").css("visibility", "hidden");
   $("#resetButton").css("visibility", "hidden");
 
-  if (lastPlayer1.clear) {
-    lastPlayer1.clear();
+  if (lastPlayer1.onReset) {
+    lastPlayer1.onReset();
   }
 
-  if (lastPlayer2.clear) {
-    lastPlayer2.clear();
+  if (lastPlayer2.onReset) {
+    lastPlayer2.onReset();
   }
 
   //restart the game
@@ -487,7 +487,7 @@ function tie() {
 }
 
 function playAgain() {
-  resetGame();
+  clearCurrentGame();
   start(lastPlayer1, lastPlayer2);
 }
 

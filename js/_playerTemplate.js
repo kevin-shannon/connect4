@@ -95,6 +95,6 @@ var TemplatePlayer = function(helperMethods, data) {
     winningMove: function(theMove) {},
 
     // called when the game is reset
-    clear: function() {}
+    onReset: function() {}
   };
 };

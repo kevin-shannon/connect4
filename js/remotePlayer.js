@@ -43,7 +43,7 @@ var RemotePlayer = function(helperMethods, data) {
   function onOpponentDisconnect() {
     console.log('Disconnected');
     alert('Lost connection to opponent.');
-    exitGame();
+    resetGame();
   }
 
   function sendLastMove(lastMove) {
@@ -134,7 +134,7 @@ var RemotePlayer = function(helperMethods, data) {
         sendLastMove(theMove);
       });
     },
-    clear: function() {
+    onReset: function() {
       endConnection();
     }
   };
