@@ -290,7 +290,7 @@ function tryTurn(chipColor, playerToTakeTurnNow, playerToTakeTurnAfter, previous
 
   //give the correct player control based on the gamemode
   playerToTakeTurnNow.takeTurn(mainBoard, chipColor, previousColumn, function(columnToDropIn, shouldAnimate) {
-    //ran when the plauer makes their moves
+    //ran when the player makes their moves
 
     //the player has decided their move, so let's execute it.
     var chipWasDropped = helperMethods.dropChip(mainBoard, columnToDropIn, chipColor, function(column, j, colorOfChip) {
@@ -422,8 +422,8 @@ function exitGame() {
     lastPlayer2.clear();
   }
 
-    //restart the game
-    gamemodeSelector();
+  //restart the game
+  gamemodeSelector();
 }
 
 function showPlayAgainButton() {
@@ -440,6 +440,7 @@ function showPlayAgainButton() {
 
 function hidePlayAgainButton() {
   $("#playAgainButton").hide();
+  $("#playAgainButton").off();
 }
 
 function resetBoard() {

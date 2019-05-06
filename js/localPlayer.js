@@ -56,6 +56,11 @@ var LocalPlayer = function(helperMethods, data) {
           }
         }
       });
+    },
+    clear: function () {
+      // prevent double moves on new games after reset
+      $('canvas').off('mousemove');
+      $('canvas').off('click');
     }
   };
 };
