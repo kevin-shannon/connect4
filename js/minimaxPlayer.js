@@ -151,7 +151,7 @@ var MinmaxPlayer = function(helperMethods, data) {
     },
     takeTurn: function(currentBoard, yourColor, previousColumn, makeMove) {
       chipColor = yourColor;
-      helperMethods.disallowUIChipDrop(yourColor);
+      helperMethods.setGameStatus('Waiting on ' + yourColor + '...');
       setTimeout(function() {
         //decide if chip dropping animation should play
         var maxMillisecondsToAnimateChipDropping = 120;

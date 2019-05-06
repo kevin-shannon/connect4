@@ -578,10 +578,6 @@ function advanceTurn() {
   moves++;
 }
 
-function setGameStatus(status) {
-  $('#game-status').html(status);
-}
-
 function clearGameStatus() {
   $('#game-status').html('');
 }
@@ -775,16 +771,8 @@ var helperMethods = {
 
     return victory;
   },
-  allowUIChipDrop: function(color) {
-    playerCanDropChips = true;
-    setGameStatus('It is your turn, ' + color + '.');
-  },
-  disallowUIChipDrop: function(color) {
-    playerCanDropChips = false;
-    setGameStatus('Waiting on ' + color + '...');
-  },
-  showGameNumber: function(gameNumber) {
-    setGameStatus("Your game number is " + gameNumber);
+  setGameStatus: function(status) {
+    $('#game-status').html(status);
   },
   hashBoard: function(board, color) {
     var hash = color == RED ? 'r-' : 'b-';

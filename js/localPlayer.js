@@ -2,9 +2,10 @@ var LocalPlayer = function(helperMethods, data) {
   var chipColor;
 
   function hoverChip(e) {
+    /*
     if (playerCanDropChips == false) {
       return false;
-    }
+    }*/
 
     var offset = $("canvas").offset();
     var xPos = e.pageX - offset.left;
@@ -32,15 +33,14 @@ var LocalPlayer = function(helperMethods, data) {
       onReady();
     },
     takeTurn: function(currentBoard, yourColor, previousColumn, makeMove) {
-      $("canvas").off("click");
-      helperMethods.allowUIChipDrop(yourColor);
+      helperMethods.setGameStatus('It is your turn, ' + yourColor + '.');
 
       //called when the mouse moves across the canvas
-      $("canvas").mousemove(hoverChip);
+      $("canvas").on('mousemove', hoverChip);
       chipColor = yourColor;
 
       //Ran when user clicks on the canvas
-      $("canvas").click(function(e) {
+      $("canvas").one('click', function(e) {
         //actual board width and height
         //bw bh are the "initial" size of the canvas or
         //whatever idk
@@ -51,8 +51,7 @@ var LocalPlayer = function(helperMethods, data) {
         var xPos = e.pageX - offset.left;
         for (var i = 1; i < 8; i++) {
           if ((i - 1) * (w / 7) < xPos && xPos < i * (w / 7)) {
-            $("canvas").off();
-            helperMethods.disallowUIChipDrop(getOppositeColor(yourColor));
+            $("canvas").off('mousemove', hoverChip);
             makeMove(i, true);
           }
         }

@@ -5,12 +5,11 @@ var RemotePlayer = function(helperMethods, data) {
 
   function initHost (onReady) {
     console.log("Game number: " + peerNum);
-    helperMethods.showGameNumber(peerNum);
+    helperMethods.setGameStatus("Your game number is " + peerNum);
 
     console.log("Waiting for a player to join...");
     peer.on("connection", function(conn) {
       console.log("Opponent has connected!");
-      helperMethods.disallowUIChipDrop(RED);
       connection = conn;
 
       // we are ready to play
@@ -104,7 +103,7 @@ var RemotePlayer = function(helperMethods, data) {
 
   return {
     getReady: function(onReady) {
-      helperMethods.disallowUIChipDrop('connection');
+      helperMethods.setGameStatus('Waiting on a connection...');
 
       peerNum = generateId();
       peer = new Peer(peerNum);
@@ -126,6 +125,7 @@ var RemotePlayer = function(helperMethods, data) {
       whenConnected(function() {
         
         sendLastMove(previousColumn);
+        helperMethods.setGameStatus('Waiting on ' + yourColor + '...');
         waitForMoveFromOtherPlayer(makeMove);
       });
     },
