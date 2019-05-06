@@ -1,4 +1,4 @@
-importScripts('helperMethods.js');
+importScripts('../bin/helperMethods.js');
 
 var maxDepth;
 var scoreMap = new Map();

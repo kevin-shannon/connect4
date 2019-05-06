@@ -1,5 +1,5 @@
 var MinmaxPlayer = function(helperMethods, data) {
-  var worker = new Worker('js/minimaxMethods.js');
+  var worker = new Worker('js/bin/minimaxMethods.js');
 
   return {
     getReady: function(onReady) {
