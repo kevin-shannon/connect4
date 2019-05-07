@@ -133,9 +133,12 @@ function initialize() {
   $("#loading").hide();
 
   var urlParams = new URLSearchParams(window.location.search);
-  var joinID = urlParams.get('id');
+  var joinID = urlParams.get("id");
 
   if (joinID) {
+    // remove the params from the url in the browser bar
+    window.history.replaceState({}, document.title, "/");
+
     startJoin(joinID);
   } else {
     //popup the gamemode selector

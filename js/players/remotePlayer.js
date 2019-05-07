@@ -12,9 +12,9 @@ var RemotePlayer = function(helperMethods, data) {
   });
 
   function initHost(onReady) {
-    var url = window.location.href.split('?')[0];
+    var url = window.location.href.split("?")[0];
     var gameStatus = "Send this link to the other player: ";
-    gameStatus += '<a>' + url + '?id=' + peer.id + '</a>'
+    gameStatus += "<a>" + url + "?id=" + peer.id + "</a>";
 
     console.log("Game number: " + peer.id);
     helperMethods.setGameStatus(gameStatus);
@@ -145,15 +145,19 @@ var RemotePlayer = function(helperMethods, data) {
       // wait until we are connected to the peer server
       // to connect to the other player
       if (data.isHost) {
-        peer.once("open", function () {
+        if (connection) {
           initHost(readyToGo);
-        });
+        } else {
+          peer.once("open", function() {
+            initHost(readyToGo);
+          });
+        }
       } else {
         initJoin(readyToGo);
       }
       // ensure no old data receivers were left behind
       removeOldDataReceiver();
-      
+
       function readyToGo() {
         // open up early to receive end game mesages
         openUpToReceiveData();
