@@ -1,5 +1,6 @@
 # connect4
-*By Kevin Shannon and Tanner Krewson*  
+
+_By Kevin Shannon and Tanner Krewson_
 
 The original vertical four in a line game.
 

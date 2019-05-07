@@ -66,7 +66,11 @@ html,
 body {
   height: 100%;
   background: white;
-  background: linear-gradient(-45deg, rgba(244, 255, 182, 0.9), rgba(200, 240, 255, 1));
+  background: linear-gradient(
+    -45deg,
+    rgba(244, 255, 182, 0.9),
+    rgba(200, 240, 255, 1)
+  );
 }
 
 .container {

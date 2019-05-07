@@ -2,15 +2,26 @@
 <html lang="en">
   <head>
     <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
 
     <link rel="shortcut icon" type="image/ico" href="img/favicon.ico" />
     <link rel="stylesheet" type="text/css" href="css/connect4.css" />
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans"
+      rel="stylesheet"
+    />
 
     <title>Connect 4</title>
   </head>
@@ -27,44 +38,104 @@
       </div>
       <div class="row">
         <div class="col">
-          <img id="redturnIn" src="img/bestchipred.png" class="chipIndicator img-fluid float-left" />
-          <h5><span id="redVic" class="badge badge-danger chipIndicator">0</span></h5>
+          <img
+            id="redturnIn"
+            src="img/bestchipred.png"
+            class="chipIndicator img-fluid float-left"
+          />
+          <h5>
+            <span id="redVic" class="badge badge-danger chipIndicator">0</span>
+          </h5>
         </div>
         <div class="col mx-auto my-auto text-center">
           <h6 id="game-status"></h6>
-          <button type="button" class="btn btn-primary big-screen-button" id="resetButton" onclick="resetGame()">
+          <button
+            type="button"
+            class="btn btn-primary big-screen-button"
+            id="resetButton"
+            onclick="resetGame()"
+          >
             Reset
           </button>
           <div class="col">
-            <button type="button" class="btn btn-danger big-screen-button" id="playAgainButton">
+            <button
+              type="button"
+              class="btn btn-danger big-screen-button"
+              id="playAgainButton"
+            >
               Play Again
             </button>
           </div>
         </div>
         <div class="col">
-          <img id="blueturnIn" src="img/bestchipblue.png" class="chipIndicator img-fluid float-right" />
-          <h5><span id="blueVic" class="badge badge-primary chipIndicator float-right">0</span></h5>
+          <img
+            id="blueturnIn"
+            src="img/bestchipblue.png"
+            class="chipIndicator img-fluid float-right"
+          />
+          <h5>
+            <span
+              id="blueVic"
+              class="badge badge-primary chipIndicator float-right"
+              >0</span
+            >
+          </h5>
         </div>
       </div>
     </div>
 
-    <div class="modal fade" id="gamemodeSelector" data-keyboard="false" data-backdrop="static">
+    <div
+      class="modal fade"
+      id="gamemodeSelector"
+      data-keyboard="false"
+      data-backdrop="static"
+    >
       <div style="text-align: center;">
-        <div class="modal-dialog" role="document" style="display: inline-block;">
+        <div
+          class="modal-dialog"
+          role="document"
+          style="display: inline-block;"
+        >
           <div class="modal-content">
             <div class="row mx-auto">
-              <img id="logo" src="img/spinningchip.gif" height="128px" style="max-width: 100%;" />
+              <img
+                id="logo"
+                src="img/spinningchip.gif"
+                height="128px"
+                style="max-width: 100%;"
+              />
             </div>
             <div class="row mx-auto">
               <h4>Connect 4</h4>
             </div>
             <div class="modal-body mx-auto" style="text-align:center;">
               <div id="gamemodeSelectorButtons" role="group">
-                <button type="button" class="btn btn-primary" id="single">Single Player</button>
-                <button type="button" class="btn btn-primary" id="local">Local Multiplayer</button>
-                <button type="button" class="btn btn-primary" id="aivsai" data-toggle="modal">AI vs AI</button>
-                <button type="button" class="btn btn-primary" id="host">Host Online Game</button>
-                <button type="button" class="btn btn-primary" id="join" data-toggle="modal" data-target="#joinpop">Join Online Game</button>
+                <button type="button" class="btn btn-primary" id="single">
+                  Single Player
+                </button>
+                <button type="button" class="btn btn-primary" id="local">
+                  Local Multiplayer
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  id="aivsai"
+                  data-toggle="modal"
+                >
+                  AI vs AI
+                </button>
+                <button type="button" class="btn btn-primary" id="host">
+                  Host Online Game
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  id="join"
+                  data-toggle="modal"
+                  data-target="#joinpop"
+                >
+                  Join Online Game
+                </button>
               </div>
             </div>
             <div class="modal-footer">
@@ -78,7 +149,10 @@
                   Tanner Krewson
                 </a>
                 <br />
-                <a href="https://github.com/kevin-shannon/connect4" target="_blank">
+                <a
+                  href="https://github.com/kevin-shannon/connect4"
+                  target="_blank"
+                >
                   View on GitHub
                 </a>
               </div>
@@ -93,30 +167,60 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">Enter game number:</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
-            <input type="text" class="form-control" id="joinin" placeholder="Game number" />
+            <input
+              type="text"
+              class="form-control"
+              id="joinin"
+              placeholder="Game number"
+            />
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary" id="joinbut">Play</button>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" id="joinbut">
+              Play
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Cancel
+            </button>
           </div>
         </div>
       </div>
     </div>
 
     <!-- jQuery first, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/peerjs@1.0.0/dist/peerjs.min.js" integrity="sha256-e1yWu3sXOHFexYeDonJSjQVXJzai7A+m2hmSizA253Y=" crossorigin="anonymous"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/peerjs@1.0.0/dist/peerjs.min.js"
+      integrity="sha256-e1yWu3sXOHFexYeDonJSjQVXJzai7A+m2hmSizA253Y="
+      crossorigin="anonymous"
+    ></script>
 
     <!-- Player modules -->
     <script src="js/bin/helperMethods.js"></script>
-    
+
     <script src="js/players/localPlayer.js"></script>
     <script src="js/players/minimaxPlayer.js"></script>
     <script src="js/players/remotePlayer.js"></script>
