@@ -1,15 +1,9 @@
 var RemotePlayer = function(helperMethods, data) {
-  var peer;
+  var peer = new Peer();
   var connection;
   var hasBeenReset = false;
 
   helperMethods.setGameStatus("Waiting on a connection...");
-
-  if (data.isHost) {
-    peer = new Peer(generateId());
-  } else {
-    peer = new Peer();
-  }
 
   console.log("Connecting to the Peer.js server..");
 
@@ -18,8 +12,12 @@ var RemotePlayer = function(helperMethods, data) {
   });
 
   function initHost(onReady) {
+    var url = window.location.href.split('?')[0];
+    var gameStatus = "Send this link to the other player: ";
+    gameStatus += '<a>' + url + '?id=' + peer.id + '</a>'
+
     console.log("Game number: " + peer.id);
-    helperMethods.setGameStatus("Your game number is " + peer.id);
+    helperMethods.setGameStatus(gameStatus);
 
     console.log("Waiting for a player to join...");
     peer.once("connection", function(conn) {
@@ -127,15 +125,6 @@ var RemotePlayer = function(helperMethods, data) {
     }
   }
 
-  function generateId() {
-    code = "c4-";
-    var possible = "abcdefghijklmnopqrstuvwxyz";
-    for (var i = 0; i < 4; i++) {
-      code += possible.charAt(Math.floor(Math.random() * possible.length));
-    }
-    return code;
-  }
-
   function endConnection() {
     console.log("Closing connection.");
     try {
@@ -155,23 +144,16 @@ var RemotePlayer = function(helperMethods, data) {
 
       // wait until we are connected to the peer server
       // to connect to the other player
-      if (peer.disconnected) {
-        peer.once("open", () => init());
+      if (data.isHost) {
+        peer.once("open", function () {
+          initHost(readyToGo);
+        });
       } else {
-        init();
+        initJoin(readyToGo);
       }
-
       // ensure no old data receivers were left behind
       removeOldDataReceiver();
-
-      function init() {
-        if (data.isHost) {
-          initHost(readyToGo);
-        } else {
-          initJoin(readyToGo);
-        }
-      }
-
+      
       function readyToGo() {
         // open up early to receive end game mesages
         openUpToReceiveData();

@@ -132,8 +132,15 @@ function initialize() {
   //hide the loading screen
   $("#loading").hide();
 
-  //popup the gamemode selector
-  gamemodeSelector();
+  var urlParams = new URLSearchParams(window.location.search);
+  var joinID = urlParams.get('id');
+
+  if (joinID) {
+    startJoin(joinID);
+  } else {
+    //popup the gamemode selector
+    gamemodeSelector();
+  }
 }
 
 function gamemodeSelector() {
@@ -160,39 +167,22 @@ function gamemodeSelector() {
     );
   });
 
-  function startJoin() {
-    //get the game number from the input box in the popup and send
-    //it to the join online game function
-    var gn = $("#joinin").val();
-
-    //simulates clicking join online game button to close the popup
-    $("#join").click();
-
-    start(
-      new LocalPlayer(helperMethods),
-      new RemotePlayer(helperMethods, {
-        isHost: false,
-        gameCode: gn
-      })
-    );
-  }
-
   $("#aivsai").on("click", function() {
     start(
       new MinmaxPlayer(helperMethods, 0),
       new MinmaxPlayer(helperMethods, 0)
     );
   });
+}
 
-  $("#joinbut").on("click", startJoin);
-
-  //checks for enter key press on input box
-  $("#joinin").on("keypress", function(e) {
-    if (e.which == 13) {
-      startJoin();
-      return false;
-    }
-  });
+function startJoin(gn) {
+  start(
+    new LocalPlayer(helperMethods),
+    new RemotePlayer(helperMethods, {
+      isHost: false,
+      gameCode: gn
+    })
+  );
 }
 
 function start(player1, player2) {
@@ -206,10 +196,7 @@ function start(player1, player2) {
   $("#single").off("click");
   $("#local").off("click");
   $("#host").off("click");
-  $("#joinbut").off("click");
   $("#aivsai").off("click");
-  $("#joinin").off("keypress");
-  $("#joinin").val("");
 
   //actual board width and height
   var w = chips.get(0).scrollWidth;
