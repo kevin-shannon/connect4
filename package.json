@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "http-server",
-    "prettier": "prettier --write \"**/*.{html,css,js,prettierrc}\""
+    "prettier": "prettier --write \"**/*.{html,css,js,json,prettierrc}\""
   },
   "repository": {
     "type": "git",
