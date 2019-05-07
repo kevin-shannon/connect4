@@ -4,7 +4,8 @@
   "description": "The original vertical four in a line game.",
   "main": "index.js",
   "scripts": {
-    "dev": "http-server"
+    "dev": "http-server",
+    "pretty-quick": "pretty-quick"
   },
   "repository": {
     "type": "git",
@@ -17,6 +18,14 @@
   },
   "homepage": "https://kevinshannon.dev/connect4/",
   "devDependencies": {
-    "http-server": "^0.11.1"
+    "http-server": "^0.11.1",
+    "husky": "^2.2.0",
+    "prettier": "^1.17.0",
+    "pretty-quick": "^1.10.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
   }
 }

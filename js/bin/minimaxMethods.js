@@ -1,4 +1,4 @@
-importScripts('../bin/helperMethods.js');
+importScripts("../bin/helperMethods.js");
 
 var maxDepth;
 var scoreMap = new Map();
@@ -9,25 +9,27 @@ var BLUE = "blue";
 var moves;
 
 onmessage = function(e) {
-    // transfer external stuff into the worker
-    var currentBoard = e.data[0];
-    var yourColor = e.data[1];
-    moves = e.data[2];
+  // transfer external stuff into the worker
+  var currentBoard = e.data[0];
+  var yourColor = e.data[1];
+  moves = e.data[2];
 
-    maxDepth = Math.round(Math.log(3000000) / Math.log(possibleMoves(currentBoard).length));
-    console.log('minimax depth: ' + maxDepth);
+  maxDepth = Math.round(
+    Math.log(3000000) / Math.log(possibleMoves(currentBoard).length)
+  );
+  console.log("minimax depth: " + maxDepth);
 
-    var column = minimax(
-        helperMethods.copyBoard(currentBoard),
-        maxDepth,
-        yourColor,
-        yourColor,
-        Number.NEGATIVE_INFINITY,
-        Number.POSITIVE_INFINITY
-    ).action;
+  var column = minimax(
+    helperMethods.copyBoard(currentBoard),
+    maxDepth,
+    yourColor,
+    yourColor,
+    Number.NEGATIVE_INFINITY,
+    Number.POSITIVE_INFINITY
+  ).action;
 
-    postMessage(column);
-}
+  postMessage(column);
+};
 
 function getOppositeColor(color) {
   return color == RED ? BLUE : RED;
@@ -53,13 +55,17 @@ function boardScore(boardArray, color, winCheck, additonalMoves) {
   var score = 0;
   if (winCheck == color) {
     score = 10000 - moves - additonalMoves;
-  } else if (typeof winCheck == "string" && winCheck == getOppositeColor(color)) {
+  } else if (
+    typeof winCheck == "string" &&
+    winCheck == getOppositeColor(color)
+  ) {
     score = -10000 + moves + additonalMoves;
   } else {
     var hash = helperMethods.hashBoard(boardArray, color);
     score = scoreMap.get(hash);
     if (score == undefined) {
-      score = middleScorer(boardArray, color) + 5 * availableWins(boardArray, color);
+      score =
+        middleScorer(boardArray, color) + 5 * availableWins(boardArray, color);
       scoreMap.set(hash, score);
     }
   }
@@ -115,13 +121,28 @@ function middleScorer(boardArray, color) {
   return counter;
 }
 
-function minimax(state, depth, colorToMax, currentColor, alpha, beta, lastDropColumn) {
-
-  var thisStateWinStatus = helperMethods.checkForLastDropWin(state, lastDropColumn);
+function minimax(
+  state,
+  depth,
+  colorToMax,
+  currentColor,
+  alpha,
+  beta,
+  lastDropColumn
+) {
+  var thisStateWinStatus = helperMethods.checkForLastDropWin(
+    state,
+    lastDropColumn
+  );
 
   if (depth == 0 || thisStateWinStatus) {
     return {
-      value: boardScore(state, colorToMax, thisStateWinStatus, maxDepth - depth),
+      value: boardScore(
+        state,
+        colorToMax,
+        thisStateWinStatus,
+        maxDepth - depth
+      ),
       action: 0
     };
   }
@@ -131,7 +152,15 @@ function minimax(state, depth, colorToMax, currentColor, alpha, beta, lastDropCo
     bestValue = Number.NEGATIVE_INFINITY;
     for (let action of possibleMoves(state)) {
       helperMethods.dropChip(state, action, currentColor);
-      actionValue = minimax(state, depth - 1, colorToMax, getOppositeColor(currentColor), alpha, beta, action).value;
+      actionValue = minimax(
+        state,
+        depth - 1,
+        colorToMax,
+        getOppositeColor(currentColor),
+        alpha,
+        beta,
+        action
+      ).value;
       helperMethods.undropChip(state, action);
       if (actionValue >= bestValue) {
         bestValue = actionValue;
@@ -154,7 +183,15 @@ function minimax(state, depth, colorToMax, currentColor, alpha, beta, lastDropCo
     bestValue = Number.POSITIVE_INFINITY;
     for (let action of possibleMoves(state)) {
       helperMethods.dropChip(state, action, currentColor);
-      actionValue = minimax(state, depth - 1, colorToMax, getOppositeColor(currentColor), alpha, beta, action).value;
+      actionValue = minimax(
+        state,
+        depth - 1,
+        colorToMax,
+        getOppositeColor(currentColor),
+        alpha,
+        beta,
+        action
+      ).value;
       helperMethods.undropChip(state, action);
       if (actionValue <= bestValue) {
         bestValue = actionValue;

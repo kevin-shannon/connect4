@@ -139,16 +139,19 @@ function initialize() {
 function gamemodeSelector() {
   $("#gamemodeSelector").modal("show");
 
-  $("#single").on('click', function() {
+  $("#single").on("click", function() {
     var computerPlayerDelay = 1000;
-    start(new LocalPlayer(helperMethods), new MinmaxPlayer(helperMethods, computerPlayerDelay));
+    start(
+      new LocalPlayer(helperMethods),
+      new MinmaxPlayer(helperMethods, computerPlayerDelay)
+    );
   });
 
-  $("#local").on('click', function() {
+  $("#local").on("click", function() {
     start(new LocalPlayer(helperMethods), new LocalPlayer(helperMethods));
   });
 
-  $("#host").on('click', function() {
+  $("#host").on("click", function() {
     start(
       new RemotePlayer(helperMethods, {
         isHost: true
@@ -174,14 +177,17 @@ function gamemodeSelector() {
     );
   }
 
-  $("#aivsai").on('click', function() {
-    start(new MinmaxPlayer(helperMethods, 0), new MinmaxPlayer(helperMethods, 0));
+  $("#aivsai").on("click", function() {
+    start(
+      new MinmaxPlayer(helperMethods, 0),
+      new MinmaxPlayer(helperMethods, 0)
+    );
   });
 
-  $("#joinbut").on('click', startJoin);
+  $("#joinbut").on("click", startJoin);
 
   //checks for enter key press on input box
-  $("#joinin").on('keypress', function(e) {
+  $("#joinin").on("keypress", function(e) {
     if (e.which == 13) {
       startJoin();
       return false;
@@ -203,7 +209,7 @@ function start(player1, player2) {
   $("#joinbut").off("click");
   $("#aivsai").off("click");
   $("#joinin").off("keypress");
-  $("#joinin").val('');
+  $("#joinin").val("");
 
   //actual board width and height
   var w = chips.get(0).scrollWidth;
@@ -243,7 +249,7 @@ function start(player1, player2) {
   var numberOfReadyPlayers = 0;
   function onReady() {
     numberOfReadyPlayers++;
-    
+
     // if both players are ready
     if (numberOfReadyPlayers === 2) {
       inGame = true;
@@ -257,7 +263,12 @@ function start(player1, player2) {
   player2.getReady(onReady);
 }
 
-function nextTurn(color, playerToTakeTurnNow, playerToTakeTurnAfter, previousColumn) {
+function nextTurn(
+  color,
+  playerToTakeTurnNow,
+  playerToTakeTurnAfter,
+  previousColumn
+) {
   var isGameWon = helperMethods.checkForWin(
     mainBoard,
     function(colorThatWon, xPos, yPos, direction) {
@@ -288,33 +299,62 @@ function nextTurn(color, playerToTakeTurnNow, playerToTakeTurnAfter, previousCol
   tryTurn(color, playerToTakeTurnNow, playerToTakeTurnAfter, previousColumn);
 }
 
-function tryTurn(chipColor, playerToTakeTurnNow, playerToTakeTurnAfter, previousColumn) {
+function tryTurn(
+  chipColor,
+  playerToTakeTurnNow,
+  playerToTakeTurnAfter,
+  previousColumn
+) {
   // records the current time before the move is made
   var beforeMove = performance.now();
 
   //give the correct player control based on the gamemode
-  playerToTakeTurnNow.takeTurn(mainBoard, chipColor, previousColumn, function(columnToDropIn, shouldAnimate) {
+  playerToTakeTurnNow.takeTurn(mainBoard, chipColor, previousColumn, function(
+    columnToDropIn,
+    shouldAnimate
+  ) {
     //ran when the player makes their moves
 
     //the player has decided their move, so let's execute it.
-    var chipWasDropped = helperMethods.dropChip(mainBoard, columnToDropIn, chipColor, function(column, j, colorOfChip) {
-      //ran when the chip has been dropped into the board array
+    var chipWasDropped = helperMethods.dropChip(
+      mainBoard,
+      columnToDropIn,
+      chipColor,
+      function(column, j, colorOfChip) {
+        //ran when the chip has been dropped into the board array
 
-      // log how long it took to make the move
-      var afterMove = performance.now();
-      var moveTime = (afterMove - beforeMove) / 1000;
-      console.log(colorOfChip + " took " + moveTime.toFixed(6) + " seconds to drop in column " + column);
+        // log how long it took to make the move
+        var afterMove = performance.now();
+        var moveTime = (afterMove - beforeMove) / 1000;
+        console.log(
+          colorOfChip +
+            " took " +
+            moveTime.toFixed(6) +
+            " seconds to drop in column " +
+            column
+        );
 
-      drawChip(column, j, colorOfChip, shouldAnimate);
-    });
+        drawChip(column, j, colorOfChip, shouldAnimate);
+      }
+    );
 
     if (chipWasDropped) {
       //player has successfully made their move,
       //so switch the color and players and keep going.
-      nextTurn(getOppositeColor(chipColor), playerToTakeTurnAfter, playerToTakeTurnNow, columnToDropIn);
+      nextTurn(
+        getOppositeColor(chipColor),
+        playerToTakeTurnAfter,
+        playerToTakeTurnNow,
+        columnToDropIn
+      );
     } else {
       //try the same thing again
-      tryTurn(chipColor, playerToTakeTurnNow, playerToTakeTurnAfter, previousColumn);
+      tryTurn(
+        chipColor,
+        playerToTakeTurnNow,
+        playerToTakeTurnAfter,
+        previousColumn
+      );
     }
   });
 }
@@ -370,7 +410,13 @@ function drawChip(x, y, chipColor, shouldAnimate) {
       } else {
         chip.y = y;
         setTimeout(function() {
-          chipCanvas.drawImage(chipImage, chip.x, chip.y, chip.width, chip.height);
+          chipCanvas.drawImage(
+            chipImage,
+            chip.x,
+            chip.y,
+            chip.width,
+            chip.height
+          );
         }, 100);
       }
       chipCanvas.clearRect(x, chip.y - bh / 6, bw / 7, bh / 6 + bh / 12);
@@ -386,11 +432,23 @@ function drawChip(x, y, chipColor, shouldAnimate) {
 
 function setIndicatorColor(newColor) {
   if (newColor == RED) {
-    $("#redturnIn").css("WebkitFilter", "grayscale(0%) opacity(100%) blur(0px)");
-    $("#blueturnIn").css("WebkitFilter", "grayscale(50%) opacity(70%) blur(2px)");
+    $("#redturnIn").css(
+      "WebkitFilter",
+      "grayscale(0%) opacity(100%) blur(0px)"
+    );
+    $("#blueturnIn").css(
+      "WebkitFilter",
+      "grayscale(50%) opacity(70%) blur(2px)"
+    );
   } else {
-    $("#redturnIn").css("WebkitFilter", "grayscale(50%) opacity(70%) blur(2px)");
-    $("#blueturnIn").css("WebkitFilter", "grayscale(0%) opacity(100%) blur(0px)");
+    $("#redturnIn").css(
+      "WebkitFilter",
+      "grayscale(50%) opacity(70%) blur(2px)"
+    );
+    $("#blueturnIn").css(
+      "WebkitFilter",
+      "grayscale(0%) opacity(100%) blur(0px)"
+    );
   }
 }
 
@@ -401,7 +459,7 @@ function clearCurrentGame() {
 
 function resetGame() {
   clearCurrentGame();
-  
+
   inGame = false;
 
   AIDelay = 1000;
@@ -477,26 +535,26 @@ function askIfPlayersWantToPlayAgain(player1, player2) {
   setTimeout(function() {
     var numberOfPlayersThatWantToPlayAgain = 0;
 
-    player1.onGameEnd(function () {
+    player1.onGameEnd(function() {
       numberOfPlayersThatWantToPlayAgain++;
 
       if (player2.onPlayAgainRequest) {
         player2.onPlayAgainRequest();
       }
-  
+
       // if both players want to play again
       if (numberOfPlayersThatWantToPlayAgain === 2) {
         playAgain(player1, player2);
       }
     });
-  
-    player2.onGameEnd(function () {
+
+    player2.onGameEnd(function() {
       numberOfPlayersThatWantToPlayAgain++;
 
       if (player1.onPlayAgainRequest) {
         player1.onPlayAgainRequest();
       }
-  
+
       // if both players want to play again
       if (numberOfPlayersThatWantToPlayAgain === 2) {
         playAgain(player1, player2);
@@ -538,7 +596,13 @@ function drawWinXs(i, j, direction) {
   //repeat four times because it's connect FOUR
   for (var n = 1; n < 5; n++) {
     //draw the X
-    chipCanvas.drawImage(XXX, (bw / 7) * (i - 1), (bh / 6) * (j - 1), bw / 7, bh / 6);
+    chipCanvas.drawImage(
+      XXX,
+      (bw / 7) * (i - 1),
+      (bh / 6) * (j - 1),
+      bw / 7,
+      bh / 6
+    );
     //change the coordinate position based on which direction the win was
     switch (direction) {
       case "h":
@@ -599,5 +663,5 @@ function advanceTurn() {
 }
 
 function clearGameStatus() {
-  helperMethods.setGameStatus('');
+  helperMethods.setGameStatus("");
 }
