@@ -1,0 +1,22 @@
+{
+  "name": "connect4",
+  "version": "1.0.0",
+  "description": "The original vertical four in a line game.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "http-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kevin-shannon/connect4.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kevin-shannon/connect4/issues"
+  },
+  "homepage": "https://kevinshannon.dev/connect4/",
+  "devDependencies": {
+    "http-server": "^0.11.1"
+  }
+}
