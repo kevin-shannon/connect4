@@ -201,7 +201,7 @@ function start(player1, player2) {
   $("#local").off("click");
   $("#host").off("click");
   $("#joinbut").off("click");
-  $("#aibut").off("click");
+  $("#aivsai").off("click");
   $("#joinin").off("keypress");
   $("#joinin").val('');
 
