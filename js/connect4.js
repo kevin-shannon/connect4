@@ -303,7 +303,7 @@ function tryTurn(chipColor, playerToTakeTurnNow, playerToTakeTurnAfter, previous
       // log how long it took to make the move
       var afterMove = performance.now();
       var moveTime = (afterMove - beforeMove) / 1000;
-      console.log(colorOfChip + " took " + moveTime + " seconds to drop in column " + column);
+      console.log(colorOfChip + " took " + moveTime.toFixed(6) + " seconds to drop in column " + column);
 
       drawChip(column, j, colorOfChip, shouldAnimate);
     });
