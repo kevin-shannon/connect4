@@ -39,6 +39,10 @@ $(window).on("resize", function() {
   repositionButtons();
 });
 
+$(function() {
+  $('[data-toggle="popover"]').popover();
+});
+
 var mainBoard;
 var moves = 0;
 var inGame = false; // false when menu is on screen, true all other times
@@ -129,8 +133,9 @@ function initialize() {
 
   repositionButtons();
 
-  //hide the loading screen
+  //hide the loading screen and copyBox
   $("#loading").hide();
+  $("#copyBox").hide();
 
   var urlParams = new URLSearchParams(window.location.search);
   var joinID = urlParams.get("id");
@@ -168,6 +173,7 @@ function gamemodeSelector() {
       }),
       new LocalPlayer(helperMethods)
     );
+    copyBox();
   });
 
   $("#aivsai").on("click", function() {
@@ -442,6 +448,16 @@ function setIndicatorColor(newColor) {
   }
 }
 
+function copyBox() {
+  $("#copyBox").show();
+  $("#copyButton").on("click", function() {
+    $("#hostLink").select();
+    document.execCommand("copy");
+    window.getSelection().removeAllRanges();
+    $("#hostLink").blur();
+  });
+}
+
 function clearCurrentGame() {
   resetBoard();
   clearGameStatus();
@@ -464,6 +480,8 @@ function resetGame() {
   $("#redVic").css("visibility", "hidden");
   $("#blueVic").css("visibility", "hidden");
   $("#resetButton").css("visibility", "hidden");
+
+  $("#copyBox").hide();
 
   if (lastPlayer1.onReset) {
     lastPlayer1.onReset();

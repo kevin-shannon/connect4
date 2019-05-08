@@ -14,7 +14,8 @@ var RemotePlayer = function(helperMethods, data) {
   function initHost(onReady) {
     var url = window.location.href.split("?")[0];
     var gameStatus = "Send this link to the other player: ";
-    gameStatus += "<a>" + url + "?id=" + peer.id + "</a>";
+    var link = url + "?id=" + peer.id;
+    $("#hostLink").attr("value", link);
 
     console.log("Game number: " + peer.id);
     helperMethods.setGameStatus(gameStatus);
@@ -22,6 +23,7 @@ var RemotePlayer = function(helperMethods, data) {
     console.log("Waiting for a player to join...");
     peer.once("connection", function(conn) {
       console.log("Opponent has connected!");
+      $("#copyBox").hide();
       connection = conn;
 
       // we are ready to play
