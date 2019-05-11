@@ -449,7 +449,7 @@ function setIndicatorColor(newColor) {
 }
 
 function copyBox() {
-  $("#copyBox").show();
+  $("#copyBox").css("display", "flex");
   $("#copyButton").on("click", function() {
     $("#hostLink").select();
     document.execCommand("copy");

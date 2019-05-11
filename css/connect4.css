@@ -35,6 +35,10 @@
   visibility: hidden;
 }
 
+#copyBox {
+  display: none;
+}
+
 .popup {
   display: none;
 }
