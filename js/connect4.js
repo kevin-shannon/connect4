@@ -267,12 +267,12 @@ function nextTurn(
 ) {
   var isGameWon = helperMethods.checkForWin(
     mainBoard,
-    function(colorThatWon, xPos, yPos) {
+    function(colorThatWon) {
       //ran when someone has won
       if (playerToTakeTurnNow.winningMove) {
         playerToTakeTurnNow.winningMove(previousColumn);
       }
-      win(colorThatWon, xPos, yPos);
+      win(colorThatWon);
       askIfPlayersWantToPlayAgain(playerToTakeTurnNow, playerToTakeTurnAfter);
     },
     function() {
@@ -515,7 +515,7 @@ function fillArray() {
 }
 
 //i and j are the coord of the first chip in the winning four
-function win(color, i, j) {
+function win(color) {
   console.log(color + " wins on turn " + moves);
   winAdder(color);
   //this is to make sure that the events are blocked

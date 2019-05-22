@@ -114,7 +114,7 @@ var helperMethods = {
         || (i < 5 && j > 3 && boardArray[i][j] == boardArray[i + 1][j - 1] && boardArray[i][j] == boardArray[i + 2][j - 2] && boardArray[i][j] == boardArray[i + 3][j - 3])
         || (i < 5 && j < 4 && boardArray[i][j] == boardArray[i + 1][j + 1] && boardArray[i][j] == boardArray[i + 2][j + 2] && boardArray[i][j] == boardArray[i + 3][j + 3])) {
           if (onWin)
-            onWin(boardArray[i][j], i, j);
+            onWin(boardArray[i][j]);
           return boardArray[i][j];
         }
       }
