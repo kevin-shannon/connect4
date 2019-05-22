@@ -267,12 +267,12 @@ function nextTurn(
 ) {
   var isGameWon = helperMethods.checkForWin(
     mainBoard,
-    function(colorThatWon, xPos, yPos, direction) {
+    function(colorThatWon, xPos, yPos) {
       //ran when someone has won
       if (playerToTakeTurnNow.winningMove) {
         playerToTakeTurnNow.winningMove(previousColumn);
       }
-      win(colorThatWon, xPos, yPos, direction);
+      win(colorThatWon, xPos, yPos);
       askIfPlayersWantToPlayAgain(playerToTakeTurnNow, playerToTakeTurnAfter);
     },
     function() {
@@ -515,7 +515,7 @@ function fillArray() {
 }
 
 //i and j are the coord of the first chip in the winning four
-function win(color, i, j, direction) {
+function win(color, i, j) {
   console.log(color + " wins on turn " + moves);
   winAdder(color);
   //this is to make sure that the events are blocked
@@ -523,7 +523,7 @@ function win(color, i, j, direction) {
   //Draw the win pic based on the color of the chip that won after a delay
   setTimeout(drawWinBanner, 500, color);
   //delay
-  setTimeout(drawWinXs, 1000, i, j, direction);
+  setTimeout(drawWinXs, 1000, color);
   clearGameStatus();
 }
 
@@ -597,9 +597,7 @@ function drawWinBanner(color) {
   chipCanvas.drawImage(bannerImage, bw / 6, -(bh / 6), bw / 1.5, bh / 6);
 }
 
-function drawWinXs(i, j, direction) {
-  // prevents drawings on board after we're back on the menu
-  if (!inGame) return;
+function draw4Xs(i, j, direction) {
 
   //repeat four times because it's connect FOUR
   for (var n = 1; n < 5; n++) {
@@ -627,6 +625,28 @@ function drawWinXs(i, j, direction) {
         j++;
         i++;
         break;
+    }
+  }
+}
+
+
+function drawWinXs(color) {
+  // prevents drawings on board after we're back on the menu
+  if (!inGame) return;
+
+  for(var i = 1; i < 8; i++) {
+    for(var j = 6; j > 0; j--) {
+      if(mainBoard[i][j] == undefined) break;
+      if(mainBoard[i][j] == color) {
+        if(i < 5 && color == mainBoard[i + 1][j] && color == mainBoard[i + 2][j] && color == mainBoard[i + 3][j])
+          draw4Xs(i, j, "h");
+        if(j < 4 && color == mainBoard[i][j + 1] && color == mainBoard[i][j + 2] && color == mainBoard[i][j + 3])
+          draw4Xs(i, j, "v");
+        if(i < 5 && j > 3 && color == mainBoard[i + 1][j - 1] && color == mainBoard[i + 2][j - 2] && color == mainBoard[i + 3][j - 3])
+          draw4Xs(i, j, "//");
+        if(i < 5 && j < 4 && color == mainBoard[i + 1][j + 1] && color == mainBoard[i + 2][j + 2] && color == mainBoard[i + 3][j + 3])
+          draw4Xs(i, j, "\\");
+      }
     }
   }
 }

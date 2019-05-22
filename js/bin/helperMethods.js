@@ -101,94 +101,35 @@ var helperMethods = {
   checkForWin: function(boardArray, onWin, onTie) {
     //[columns][rows]
     var victory = false;
-    //horizontal
-    for (var i = 1; i < 5; i++) {
-      for (var j = 1; j < 7; j++) {
-        if (
-          boardArray[i][j] != undefined &&
-          boardArray[i][j] == boardArray[i + 1][j] &&
-          boardArray[i][j] == boardArray[i + 2][j] &&
-          boardArray[i][j] == boardArray[i + 3][j]
-        ) {
-          if (onWin) {
-            onWin(boardArray[i][j], i, j, "h");
-          }
-          victory = boardArray[i][j];
+
+    for(var i = 1; i < 8; i++) {
+      for(var j = 6; j > 0; j--) {
+        if(boardArray[i][j] == undefined){
+          boardIsNotFull = true;
+          break;
+        }
+        //longest if statement ever checks if there is a connect 4
+        if(i < 5 && boardArray[i][j] == boardArray[i + 1][j] && boardArray[i][j] == boardArray[i + 2][j] && boardArray[i][j] == boardArray[i + 3][j]
+        || (j < 4 && boardArray[i][j] == boardArray[i][j + 1] && boardArray[i][j] == boardArray[i][j + 2] && boardArray[i][j] == boardArray[i][j + 3])
+        || (i < 5 && j > 3 && boardArray[i][j] == boardArray[i + 1][j - 1] && boardArray[i][j] == boardArray[i + 2][j - 2] && boardArray[i][j] == boardArray[i + 3][j - 3])
+        || (i < 5 && j < 4 && boardArray[i][j] == boardArray[i + 1][j + 1] && boardArray[i][j] == boardArray[i + 2][j + 2] && boardArray[i][j] == boardArray[i + 3][j + 3])) {
+          if (onWin)
+            onWin(boardArray[i][j], i, j);
+          return boardArray[i][j];
         }
       }
     }
 
-    //vertical
-    for (var i = 1; i < 8; i++) {
-      for (var j = 1; j < 4; j++) {
-        if (
-          boardArray[i][j] != undefined &&
-          boardArray[i][j] == boardArray[i][j + 1] &&
-          boardArray[i][j] == boardArray[i][j + 2] &&
-          boardArray[i][j] == boardArray[i][j + 3]
-        ) {
-          if (onWin) {
-            onWin(boardArray[i][j], i, j, "v");
-          }
-          victory = boardArray[i][j];
-        }
-      }
+    if (!boardIsNotFull && onTie) {
+      onTie();
+      return "draw";
     }
-    // /diagonals
-    for (var i = 1; i < 5; i++) {
-      for (var j = 4; j < 7; j++) {
-        if (
-          boardArray[i][j] != undefined &&
-          boardArray[i][j] == boardArray[i + 1][j - 1] &&
-          boardArray[i][j] == boardArray[i + 2][j - 2] &&
-          boardArray[i][j] == boardArray[i + 3][j - 3]
-        ) {
-          if (onWin) {
-            onWin(boardArray[i][j], i, j, "//");
-          }
-          victory = boardArray[i][j];
-        }
-      }
-    }
-    // \diagonals
-    for (var i = 1; i < 5; i++) {
-      for (var j = 1; j < 4; j++) {
-        if (
-          boardArray[i][j] != undefined &&
-          boardArray[i][j] == boardArray[i + 1][j + 1] &&
-          boardArray[i][j] == boardArray[i + 2][j + 2] &&
-          boardArray[i][j] == boardArray[i + 3][j + 3]
-        ) {
-          if (onWin) {
-            onWin(boardArray[i][j], i, j, "\\");
-          }
-          victory = boardArray[i][j];
-        }
-      }
-    }
-
-    //check for a tie
-    if (!victory) {
-      var boardIsNotFull = false;
-      for (var i = 1; i < 8; i++) {
-        for (var j = 1; j < 7; j++) {
-          if (boardArray[i][j] == undefined) {
-            boardIsNotFull = true;
-          }
-        }
-      }
-
-      if (!boardIsNotFull && onTie) {
-        onTie();
-        victory = "draw";
-      }
-    }
-
-    return victory;
   },
+
   setGameStatus: function(status) {
     $("#game-status").html(status);
   },
+
   hashBoard: function(board, color) {
     var hash = color == RED ? "r-" : "b-";
 
