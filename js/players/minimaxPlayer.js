@@ -16,8 +16,7 @@ var MinmaxPlayer = function(helperMethods, data) {
       //decide if chip dropping animation should play
       var maxMillisecondsToAnimateChipDropping = 120;
       var delayEnteredByTheUser = data;
-      var shouldAnimate =
-        delayEnteredByTheUser >= maxMillisecondsToAnimateChipDropping;
+      var shouldAnimate = delayEnteredByTheUser >= maxMillisecondsToAnimateChipDropping;
 
       //run the ai on the board in a worker
       worker.postMessage([currentBoard, yourColor, moves, sobriety]);

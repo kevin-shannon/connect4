@@ -15,7 +15,7 @@ onmessage = function(e) {
   moves = e.data[2];
   var sobriety = e.data[3];
 
-  if(sobriety) {
+  if (sobriety) {
     maxDepth = Math.round(Math.log(3000000) / Math.log(possibleMoves(currentBoard).length + 1));
   } else {
     maxDepth = Math.round(Math.log(1000000) / Math.log(possibleMoves(currentBoard).length + 1));
@@ -24,17 +24,11 @@ onmessage = function(e) {
 
   //drunk player has a 50% chance to make a random move
 
-  if(sobriety || Math.random() < .5) {
-    var column = minimax(
-      helperMethods.copyBoard(currentBoard),
-      maxDepth,
-      yourColor,
-      yourColor,
-      Number.NEGATIVE_INFINITY,
-      Number.POSITIVE_INFINITY
-    ).action;
-  } else { //I don't feel so good
-    var column = possibleMoves(currentBoard)[Math.floor(Math.random()*possibleMoves(currentBoard).length)];
+  if (sobriety || Math.random() < 0.5) {
+    var column = minimax(helperMethods.copyBoard(currentBoard), maxDepth, yourColor, yourColor, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY).action;
+  } else {
+    //I don't feel so good
+    var column = possibleMoves(currentBoard)[Math.floor(Math.random() * possibleMoves(currentBoard).length)];
   }
 
   postMessage(column);
@@ -64,17 +58,13 @@ function boardScore(boardArray, color, winCheck, additonalMoves) {
   var score = 0;
   if (winCheck == color) {
     score = 10000 - moves - additonalMoves;
-  } else if (
-    typeof winCheck == "string" &&
-    winCheck == getOppositeColor(color)
-  ) {
+  } else if (typeof winCheck == "string" && winCheck == getOppositeColor(color)) {
     score = -10000 + moves + additonalMoves;
   } else {
     var hash = helperMethods.hashBoard(boardArray, color);
     score = scoreMap.get(hash);
     if (score == undefined) {
-      score =
-        middleScorer(boardArray, color) + 5 * availableWins(boardArray, color);
+      score = middleScorer(boardArray, color) + 5 * availableWins(boardArray, color);
       scoreMap.set(hash, score);
     }
   }
@@ -130,28 +120,12 @@ function middleScorer(boardArray, color) {
   return counter;
 }
 
-function minimax(
-  state,
-  depth,
-  colorToMax,
-  currentColor,
-  alpha,
-  beta,
-  lastDropColumn
-) {
-  var thisStateWinStatus = helperMethods.checkForLastDropWin(
-    state,
-    lastDropColumn
-  );
+function minimax(state, depth, colorToMax, currentColor, alpha, beta, lastDropColumn) {
+  var thisStateWinStatus = helperMethods.checkForLastDropWin(state, lastDropColumn);
 
   if (depth == 0 || thisStateWinStatus) {
     return {
-      value: boardScore(
-        state,
-        colorToMax,
-        thisStateWinStatus,
-        maxDepth - depth
-      ),
+      value: boardScore(state, colorToMax, thisStateWinStatus, maxDepth - depth),
       action: 0
     };
   }
@@ -161,15 +135,7 @@ function minimax(
     bestValue = Number.NEGATIVE_INFINITY;
     for (let action of possibleMoves(state)) {
       helperMethods.dropChip(state, action, currentColor);
-      actionValue = minimax(
-        state,
-        depth - 1,
-        colorToMax,
-        getOppositeColor(currentColor),
-        alpha,
-        beta,
-        action
-      ).value;
+      actionValue = minimax(state, depth - 1, colorToMax, getOppositeColor(currentColor), alpha, beta, action).value;
       helperMethods.undropChip(state, action);
       if (actionValue >= bestValue) {
         bestValue = actionValue;
@@ -192,15 +158,7 @@ function minimax(
     bestValue = Number.POSITIVE_INFINITY;
     for (let action of possibleMoves(state)) {
       helperMethods.dropChip(state, action, currentColor);
-      actionValue = minimax(
-        state,
-        depth - 1,
-        colorToMax,
-        getOppositeColor(currentColor),
-        alpha,
-        beta,
-        action
-      ).value;
+      actionValue = minimax(state, depth - 1, colorToMax, getOppositeColor(currentColor), alpha, beta, action).value;
       helperMethods.undropChip(state, action);
       if (actionValue <= bestValue) {
         bestValue = actionValue;

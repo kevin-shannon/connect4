@@ -156,10 +156,7 @@ function gamemodeSelector() {
 
   $("#single").on("click", function() {
     var computerPlayerDelay = 1000;
-    start(
-      new LocalPlayer(helperMethods),
-      new MinmaxPlayer(helperMethods, computerPlayerDelay)
-    );
+    start(new LocalPlayer(helperMethods), new MinmaxPlayer(helperMethods, computerPlayerDelay));
   });
 
   $("#local").on("click", function() {
@@ -177,10 +174,7 @@ function gamemodeSelector() {
   });
 
   $("#aivsai").on("click", function() {
-    start(
-      new DrunkPlayer(helperMethods, 200),
-      new DrunkPlayer(helperMethods, 200)
-    );
+    start(new DrunkPlayer(helperMethods, 200), new DrunkPlayer(helperMethods, 200));
   });
 }
 
@@ -259,12 +253,7 @@ function start(player1, player2) {
   player2.getReady(onReady);
 }
 
-function nextTurn(
-  color,
-  playerToTakeTurnNow,
-  playerToTakeTurnAfter,
-  previousColumn
-) {
+function nextTurn(color, playerToTakeTurnNow, playerToTakeTurnAfter, previousColumn) {
   var isGameWon = helperMethods.checkForWin(
     mainBoard,
     function(colorThatWon) {
@@ -295,62 +284,33 @@ function nextTurn(
   tryTurn(color, playerToTakeTurnNow, playerToTakeTurnAfter, previousColumn);
 }
 
-function tryTurn(
-  chipColor,
-  playerToTakeTurnNow,
-  playerToTakeTurnAfter,
-  previousColumn
-) {
+function tryTurn(chipColor, playerToTakeTurnNow, playerToTakeTurnAfter, previousColumn) {
   // records the current time before the move is made
   var beforeMove = performance.now();
 
   //give the correct player control based on the gamemode
-  playerToTakeTurnNow.takeTurn(mainBoard, chipColor, previousColumn, function(
-    columnToDropIn,
-    shouldAnimate
-  ) {
+  playerToTakeTurnNow.takeTurn(mainBoard, chipColor, previousColumn, function(columnToDropIn, shouldAnimate) {
     //ran when the player makes their moves
 
     //the player has decided their move, so let's execute it.
-    var chipWasDropped = helperMethods.dropChip(
-      mainBoard,
-      columnToDropIn,
-      chipColor,
-      function(column, j, colorOfChip) {
-        //ran when the chip has been dropped into the board array
+    var chipWasDropped = helperMethods.dropChip(mainBoard, columnToDropIn, chipColor, function(column, j, colorOfChip) {
+      //ran when the chip has been dropped into the board array
 
-        // log how long it took to make the move
-        var afterMove = performance.now();
-        var moveTime = (afterMove - beforeMove) / 1000;
-        console.log(
-          colorOfChip +
-            " took " +
-            moveTime.toFixed(6) +
-            " seconds to drop in column " +
-            column
-        );
+      // log how long it took to make the move
+      var afterMove = performance.now();
+      var moveTime = (afterMove - beforeMove) / 1000;
+      console.log(colorOfChip + " took " + moveTime.toFixed(6) + " seconds to drop in column " + column);
 
-        drawChip(column, j, colorOfChip, shouldAnimate);
-      }
-    );
+      drawChip(column, j, colorOfChip, shouldAnimate);
+    });
 
     if (chipWasDropped) {
       //player has successfully made their move,
       //so switch the color and players and keep going.
-      nextTurn(
-        getOppositeColor(chipColor),
-        playerToTakeTurnAfter,
-        playerToTakeTurnNow,
-        columnToDropIn
-      );
+      nextTurn(getOppositeColor(chipColor), playerToTakeTurnAfter, playerToTakeTurnNow, columnToDropIn);
     } else {
       //try the same thing again
-      tryTurn(
-        chipColor,
-        playerToTakeTurnNow,
-        playerToTakeTurnAfter,
-        previousColumn
-      );
+      tryTurn(chipColor, playerToTakeTurnNow, playerToTakeTurnAfter, previousColumn);
     }
   });
 }
@@ -406,13 +366,7 @@ function drawChip(x, y, chipColor, shouldAnimate) {
       } else {
         chip.y = y;
         setTimeout(function() {
-          chipCanvas.drawImage(
-            chipImage,
-            chip.x,
-            chip.y,
-            chip.width,
-            chip.height
-          );
+          chipCanvas.drawImage(chipImage, chip.x, chip.y, chip.width, chip.height);
         }, 100);
       }
       chipCanvas.clearRect(x, chip.y - bh / 6, bw / 7, bh / 6 + bh / 12);
@@ -428,23 +382,11 @@ function drawChip(x, y, chipColor, shouldAnimate) {
 
 function setIndicatorColor(newColor) {
   if (newColor == RED) {
-    $("#redturnIn").css(
-      "WebkitFilter",
-      "grayscale(0%) opacity(100%) blur(0px)"
-    );
-    $("#blueturnIn").css(
-      "WebkitFilter",
-      "grayscale(50%) opacity(70%) blur(2px)"
-    );
+    $("#redturnIn").css("WebkitFilter", "grayscale(0%) opacity(100%) blur(0px)");
+    $("#blueturnIn").css("WebkitFilter", "grayscale(50%) opacity(70%) blur(2px)");
   } else {
-    $("#redturnIn").css(
-      "WebkitFilter",
-      "grayscale(50%) opacity(70%) blur(2px)"
-    );
-    $("#blueturnIn").css(
-      "WebkitFilter",
-      "grayscale(0%) opacity(100%) blur(0px)"
-    );
+    $("#redturnIn").css("WebkitFilter", "grayscale(50%) opacity(70%) blur(2px)");
+    $("#blueturnIn").css("WebkitFilter", "grayscale(0%) opacity(100%) blur(0px)");
   }
 }
 
@@ -598,17 +540,10 @@ function drawWinBanner(color) {
 }
 
 function draw4Xs(i, j, direction) {
-
   //repeat four times because it's connect FOUR
   for (var n = 1; n < 5; n++) {
     //draw the X
-    chipCanvas.drawImage(
-      XXX,
-      (bw / 7) * (i - 1),
-      (bh / 6) * (j - 1),
-      bw / 7,
-      bh / 6
-    );
+    chipCanvas.drawImage(XXX, (bw / 7) * (i - 1), (bh / 6) * (j - 1), bw / 7, bh / 6);
     //change the coordinate position based on which direction the win was
     switch (direction) {
       case "h":
@@ -629,23 +564,18 @@ function draw4Xs(i, j, direction) {
   }
 }
 
-
 function drawWinXs(color) {
   // prevents drawings on board after we're back on the menu
   if (!inGame) return;
 
-  for(var i = 1; i < 8; i++) {
-    for(var j = 6; j > 0; j--) {
-      if(mainBoard[i][j] == undefined) break;
-      if(mainBoard[i][j] == color) {
-        if(i < 5 && color == mainBoard[i + 1][j] && color == mainBoard[i + 2][j] && color == mainBoard[i + 3][j])
-          draw4Xs(i, j, "h");
-        if(j < 4 && color == mainBoard[i][j + 1] && color == mainBoard[i][j + 2] && color == mainBoard[i][j + 3])
-          draw4Xs(i, j, "v");
-        if(i < 5 && j > 3 && color == mainBoard[i + 1][j - 1] && color == mainBoard[i + 2][j - 2] && color == mainBoard[i + 3][j - 3])
-          draw4Xs(i, j, "//");
-        if(i < 5 && j < 4 && color == mainBoard[i + 1][j + 1] && color == mainBoard[i + 2][j + 2] && color == mainBoard[i + 3][j + 3])
-          draw4Xs(i, j, "\\");
+  for (var i = 1; i < 8; i++) {
+    for (var j = 6; j > 0; j--) {
+      if (mainBoard[i][j] == undefined) break;
+      if (mainBoard[i][j] == color) {
+        if (i < 5 && color == mainBoard[i + 1][j] && color == mainBoard[i + 2][j] && color == mainBoard[i + 3][j]) draw4Xs(i, j, "h");
+        if (j < 4 && color == mainBoard[i][j + 1] && color == mainBoard[i][j + 2] && color == mainBoard[i][j + 3]) draw4Xs(i, j, "v");
+        if (i < 5 && j > 3 && color == mainBoard[i + 1][j - 1] && color == mainBoard[i + 2][j - 2] && color == mainBoard[i + 3][j - 3]) draw4Xs(i, j, "//");
+        if (i < 5 && j < 4 && color == mainBoard[i + 1][j + 1] && color == mainBoard[i + 2][j + 2] && color == mainBoard[i + 3][j + 3]) draw4Xs(i, j, "\\");
       }
     }
   }

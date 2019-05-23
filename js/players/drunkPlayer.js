@@ -15,8 +15,7 @@ var DrunkPlayer = function(helperMethods, data) {
 
       //decide if chip dropping animation should play
       var maxMillisecondsToAnimateChipDropping = 120;
-      var shouldAnimate =
-        minimumMoveTime >= maxMillisecondsToAnimateChipDropping;
+      var shouldAnimate = minimumMoveTime >= maxMillisecondsToAnimateChipDropping;
 
       //run the ai on the board in a worker
       worker.postMessage([currentBoard, yourColor, moves, sobriety]);

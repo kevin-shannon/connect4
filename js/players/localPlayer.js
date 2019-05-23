@@ -23,13 +23,7 @@ var LocalPlayer = function(helperMethods, data) {
     for (var i = 1; i < 8; i++) {
       if (xPos > (i - 1) * (w / 7) && xPos < i * (w / 7) && inGame) {
         chipCanvas.clearRect(0, -(bh / 6), bw, bh / 6);
-        chipCanvas.drawImage(
-          image,
-          (i - 1) * (bw / 7),
-          -(bh / 6),
-          bw / 7,
-          bh / 6
-        );
+        chipCanvas.drawImage(image, (i - 1) * (bw / 7), -(bh / 6), bw / 7, bh / 6);
       }
     }
   }
@@ -87,9 +81,7 @@ var LocalPlayer = function(helperMethods, data) {
     onGameEnd: function(playAgain) {
       showPlayAgainButton(function() {
         hidePlayAgainButton();
-        helperMethods.setGameStatus(
-          "Waiting for other player to play again..."
-        );
+        helperMethods.setGameStatus("Waiting for other player to play again...");
         playAgain();
       });
     }

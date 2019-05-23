@@ -103,19 +103,28 @@ var helperMethods = {
     var victory = false;
     var boardIsNotFull = false;
 
-    for(var i = 1; i < 8; i++) {
-      for(var j = 6; j > 0; j--) {
-        if(boardArray[i][j] == undefined){
+    for (var i = 1; i < 8; i++) {
+      for (var j = 6; j > 0; j--) {
+        if (boardArray[i][j] == undefined) {
           boardIsNotFull = true;
           break;
         }
         //longest if statement ever checks if there is a connect 4
-        if(i < 5 && boardArray[i][j] == boardArray[i + 1][j] && boardArray[i][j] == boardArray[i + 2][j] && boardArray[i][j] == boardArray[i + 3][j]
-        || (j < 4 && boardArray[i][j] == boardArray[i][j + 1] && boardArray[i][j] == boardArray[i][j + 2] && boardArray[i][j] == boardArray[i][j + 3])
-        || (i < 5 && j > 3 && boardArray[i][j] == boardArray[i + 1][j - 1] && boardArray[i][j] == boardArray[i + 2][j - 2] && boardArray[i][j] == boardArray[i + 3][j - 3])
-        || (i < 5 && j < 4 && boardArray[i][j] == boardArray[i + 1][j + 1] && boardArray[i][j] == boardArray[i + 2][j + 2] && boardArray[i][j] == boardArray[i + 3][j + 3])) {
-          if (onWin)
-            onWin(boardArray[i][j]);
+        if (
+          (i < 5 && boardArray[i][j] == boardArray[i + 1][j] && boardArray[i][j] == boardArray[i + 2][j] && boardArray[i][j] == boardArray[i + 3][j]) ||
+          (j < 4 && boardArray[i][j] == boardArray[i][j + 1] && boardArray[i][j] == boardArray[i][j + 2] && boardArray[i][j] == boardArray[i][j + 3]) ||
+          (i < 5 &&
+            j > 3 &&
+            boardArray[i][j] == boardArray[i + 1][j - 1] &&
+            boardArray[i][j] == boardArray[i + 2][j - 2] &&
+            boardArray[i][j] == boardArray[i + 3][j - 3]) ||
+          (i < 5 &&
+            j < 4 &&
+            boardArray[i][j] == boardArray[i + 1][j + 1] &&
+            boardArray[i][j] == boardArray[i + 2][j + 2] &&
+            boardArray[i][j] == boardArray[i + 3][j + 3])
+        ) {
+          if (onWin) onWin(boardArray[i][j]);
           return boardArray[i][j];
         }
       }
