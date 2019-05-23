@@ -13,20 +13,28 @@ onmessage = function(e) {
   var currentBoard = e.data[0];
   var yourColor = e.data[1];
   moves = e.data[2];
+  var sobriety = e.data[3];
 
-  maxDepth = Math.round(
-    Math.log(3000000) / Math.log(possibleMoves(currentBoard).length)
-  );
+  if(sobriety) {
+    maxDepth = Math.round(Math.log(3000000) / Math.log(possibleMoves(currentBoard).length));
+  } else {
+    maxDepth = Math.round(Math.log(1000000) / Math.log(possibleMoves(currentBoard).length));
+  }
   console.log("minimax depth: " + maxDepth);
 
-  var column = minimax(
-    helperMethods.copyBoard(currentBoard),
-    maxDepth,
-    yourColor,
-    yourColor,
-    Number.NEGATIVE_INFINITY,
-    Number.POSITIVE_INFINITY
-  ).action;
+  //drunk player has a 50% chance to make a random move
+  if(sobriety || Math.random() < .5) {
+    var column = minimax(
+      helperMethods.copyBoard(currentBoard),
+      maxDepth,
+      yourColor,
+      yourColor,
+      Number.NEGATIVE_INFINITY,
+      Number.POSITIVE_INFINITY
+    ).action;
+  } else { //I don't feel so good
+    var column = possibleMoves(currentBoard)[Math.floor(Math.random()*possibleMoves(currentBoard).length)];
+  }
 
   postMessage(column);
 };

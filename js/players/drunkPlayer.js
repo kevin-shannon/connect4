@@ -1,4 +1,4 @@
-var MinmaxPlayer = function(helperMethods, data) {
+var DrunkPlayer = function(helperMethods, data) {
   var worker = new Worker("js/bin/minimaxMethods.js");
   var minimumMoveTime = data;
 
@@ -11,13 +11,12 @@ var MinmaxPlayer = function(helperMethods, data) {
 
       var beforeTime = performance.now();
 
-      var sobriety = true;
+      var sobriety = false;
 
       //decide if chip dropping animation should play
       var maxMillisecondsToAnimateChipDropping = 120;
-      var delayEnteredByTheUser = data;
       var shouldAnimate =
-        delayEnteredByTheUser >= maxMillisecondsToAnimateChipDropping;
+        minimumMoveTime >= maxMillisecondsToAnimateChipDropping;
 
       //run the ai on the board in a worker
       worker.postMessage([currentBoard, yourColor, moves, sobriety]);

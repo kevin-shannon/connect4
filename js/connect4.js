@@ -178,8 +178,8 @@ function gamemodeSelector() {
 
   $("#aivsai").on("click", function() {
     start(
-      new MinmaxPlayer(helperMethods, 0),
-      new MinmaxPlayer(helperMethods, 0)
+      new DrunkPlayer(helperMethods, 200),
+      new DrunkPlayer(helperMethods, 200)
     );
   });
 }
