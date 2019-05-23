@@ -35,7 +35,6 @@ var DrunkPlayer = function(helperMethods, data) {
         var moveTimeSoFar = afterTime - beforeTime;
 
         var remainingDelay = minimumMoveTime - moveTimeSoFar;
-        console.log(remainingDelay);
 
         setTimeout(function() {
           var column = e.data;

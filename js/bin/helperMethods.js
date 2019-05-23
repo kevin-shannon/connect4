@@ -101,6 +101,7 @@ var helperMethods = {
   checkForWin: function(boardArray, onWin, onTie) {
     //[columns][rows]
     var victory = false;
+    var boardIsNotFull = false;
 
     for(var i = 1; i < 8; i++) {
       for(var j = 6; j > 0; j--) {

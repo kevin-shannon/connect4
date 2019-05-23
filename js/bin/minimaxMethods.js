@@ -16,13 +16,14 @@ onmessage = function(e) {
   var sobriety = e.data[3];
 
   if(sobriety) {
-    maxDepth = Math.round(Math.log(3000000) / Math.log(possibleMoves(currentBoard).length));
+    maxDepth = Math.round(Math.log(3000000) / Math.log(possibleMoves(currentBoard).length + 1));
   } else {
-    maxDepth = Math.round(Math.log(1000000) / Math.log(possibleMoves(currentBoard).length));
+    maxDepth = Math.round(Math.log(1000000) / Math.log(possibleMoves(currentBoard).length + 1));
   }
   console.log("minimax depth: " + maxDepth);
 
   //drunk player has a 50% chance to make a random move
+
   if(sobriety || Math.random() < .5) {
     var column = minimax(
       helperMethods.copyBoard(currentBoard),
