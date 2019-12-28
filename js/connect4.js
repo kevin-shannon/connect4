@@ -141,15 +141,15 @@ function initialize() {
   var joinID = urlParams.get("joinid");
   var createID = urlParams.get("createid");
 
-  console.log(joinID);
-  console.log(createID);
-
   if (joinID) {
     // remove the params from the url in the browser bar
-    window.history.replaceState({}, document.title, "/");
+    window.history.replaceState(null, null, window.location.pathname);
 
     startJoin(joinID);
   } else if (createID) {
+    // remove the params from the url in the browser bar
+    window.history.replaceState(null, null, window.location.pathname);
+
     start(
       new RemotePlayer(helperMethods, {
         isHost: true,
