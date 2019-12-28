@@ -1,5 +1,7 @@
 var RemotePlayer = function(helperMethods, data) {
-  var peer = new Peer();
+  // if data.createID doesn't exist, peerjs will generate its own
+  var peer = new Peer(data.createID);
+
   var connection;
   var hasBeenReset = false;
 
@@ -11,14 +13,28 @@ var RemotePlayer = function(helperMethods, data) {
     console.log("Connected to Peer.js server!");
   });
 
-  function initHost(onReady) {
+  function internalHost() {
     var url = window.location.href.split("?")[0];
     var gameStatus = "Send this link to the other player: ";
-    var link = url + "?id=" + peer.id;
+    var link = url + "?joinid=" + peer.id;
     $("#hostLink").attr("value", link);
 
     console.log("Game number: " + peer.id);
     helperMethods.setGameStatus(gameStatus);
+  }
+
+  function externalHost() {
+    helperMethods.setGameStatus("Waiting for another player to join...");
+  }
+
+  function initHost(onReady) {
+    if (data.createID) {
+      // if this game was created via url
+      externalHost();
+    } else {
+      // if this game was created with the "online multiplayer" button
+      internalHost();
+    }
 
     console.log("Waiting for a player to join...");
     peer.once("connection", function(conn) {

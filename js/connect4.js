@@ -138,13 +138,25 @@ function initialize() {
   $("#copyBox").hide();
 
   var urlParams = new URLSearchParams(window.location.search);
-  var joinID = urlParams.get("id");
+  var joinID = urlParams.get("joinid");
+  var createID = urlParams.get("createid");
 
   if (joinID) {
     // remove the params from the url in the browser bar
-    window.history.replaceState({}, document.title, "/");
+    window.history.replaceState(null, null, window.location.pathname);
 
     startJoin(joinID);
+  } else if (createID) {
+    // remove the params from the url in the browser bar
+    window.history.replaceState(null, null, window.location.pathname);
+
+    start(
+      new RemotePlayer(helperMethods, {
+        isHost: true,
+        createID
+      }),
+      new LocalPlayer(helperMethods)
+    );
   } else {
     //popup the gamemode selector
     gamemodeSelector();
