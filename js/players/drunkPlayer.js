@@ -1,13 +1,14 @@
 var DrunkPlayer = function(helperMethods, data) {
   var worker = new Worker("js/bin/minimaxMethods.js");
-  var minimumMoveTime = data;
+  var minimumMoveTime = data.delay;
+  var chipColor = data.chipColor;
 
   return {
     getReady: function(onReady) {
       onReady();
     },
-    takeTurn: function(currentBoard, yourColor, previousColumn, makeMove) {
-      helperMethods.setGameStatus("Waiting on " + yourColor + "...");
+    takeTurn: function(currentBoard, previousColumn, makeMove) {
+      helperMethods.setGameStatus("Waiting on " + chipColor + "...");
 
       var beforeTime = performance.now();
 
@@ -18,7 +19,7 @@ var DrunkPlayer = function(helperMethods, data) {
       var shouldAnimate = minimumMoveTime >= maxMillisecondsToAnimateChipDropping;
 
       //run the ai on the board in a worker
-      worker.postMessage([currentBoard, yourColor, moves, sobriety]);
+      worker.postMessage([currentBoard, moves, sobriety]);
 
       worker.onmessage = function(e) {
         // example to explain the following code:
@@ -47,6 +48,7 @@ var DrunkPlayer = function(helperMethods, data) {
     },
     onReset: function() {
       worker.terminate();
-    }
+    },
+    chipColor: chipColor
   };
 };

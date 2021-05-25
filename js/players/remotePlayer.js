@@ -1,6 +1,7 @@
 var RemotePlayer = function(helperMethods, data) {
   // if data.createID doesn't exist, peerjs will generate its own
   var peer = new Peer(data.createID);
+  var chipColor = data.chipColor;
 
   var connection;
   var hasBeenReset = false;
@@ -183,10 +184,10 @@ var RemotePlayer = function(helperMethods, data) {
         onReady();
       }
     },
-    takeTurn: function(currentBoard, yourColor, previousColumn, makeMove) {
+    takeTurn: function(currentBoard, previousColumn, makeMove) {
       whenConnected(function() {
         sendLastMove(previousColumn);
-        helperMethods.setGameStatus("Waiting on " + yourColor + "...");
+        helperMethods.setGameStatus("Waiting on " + chipColor + "...");
 
         removeOldDataReceiver();
         openUpToReceiveData(makeMove);
@@ -226,6 +227,7 @@ var RemotePlayer = function(helperMethods, data) {
       // once the play again request is received, the game
       // will start
       waitForPlayAgainRequest(playAgain);
-    }
+    },
+    chipColor: chipColor
   };
 };

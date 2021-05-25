@@ -1,5 +1,5 @@
 var LocalPlayer = function(helperMethods, data) {
-  var chipColor;
+  var chipColor = data;
 
   function hoverChip(e) {
     /*
@@ -46,12 +46,11 @@ var LocalPlayer = function(helperMethods, data) {
     getReady: function(onReady) {
       onReady();
     },
-    takeTurn: function(currentBoard, yourColor, previousColumn, makeMove) {
-      helperMethods.setGameStatus("It is your turn, " + yourColor + ".");
+    takeTurn: function(currentBoard, previousColumn, makeMove) {
+      helperMethods.setGameStatus("It is your turn, " + chipColor + ".");
 
       //called when the mouse moves across the canvas
       $("canvas").on("mousemove", hoverChip);
-      chipColor = yourColor;
 
       //Ran when user clicks on the canvas
       $("canvas").one("click", function(e) {
@@ -84,6 +83,7 @@ var LocalPlayer = function(helperMethods, data) {
         helperMethods.setGameStatus("Waiting for other player to play again...");
         playAgain();
       });
-    }
+    },
+    chipColor: chipColor
   };
 };

@@ -1,5 +1,10 @@
 /*
  *   Connect 4 by Kevin Shannon and Tanner Krewson
+ *
+ *   Single Player: player is always red. first player is randomized
+ *   Local Multi:   players stay same color. first player is randomized
+ *   Online Multi:  players stay same color. first player is randomized
+ *
  */
 
 /*
@@ -168,39 +173,56 @@ function gamemodeSelector() {
 
   $("#single").on("click", function() {
     var computerPlayerDelay = 1000;
-    start(new LocalPlayer(helperMethods), new MinmaxPlayer(helperMethods, computerPlayerDelay));
+    start(
+      new LocalPlayer(helperMethods, RED),
+      new MinmaxPlayer(helperMethods, {
+        delay: computerPlayerDelay,
+        chipColor: BLUE
+      })
+    );
   });
 
   $("#local").on("click", function() {
-    start(new LocalPlayer(helperMethods), new LocalPlayer(helperMethods));
+    start(new LocalPlayer(helperMethods, RED), new LocalPlayer(helperMethods, BLUE));
   });
 
   $("#host").on("click", function() {
     start(
+      new LocalPlayer(helperMethods, RED),
       new RemotePlayer(helperMethods, {
-        isHost: true
-      }),
-      new LocalPlayer(helperMethods)
+        isHost: true,
+        chipColor: BLUE
+      })
     );
     copyBox();
   });
 
   $("#aivsai").on("click", function() {
-    start(new DrunkPlayer(helperMethods, 200), new DrunkPlayer(helperMethods, 200));
+    start(
+      new DrunkPlayer(helperMethods, {
+        delay: 200,
+        chipColor: RED
+      }),
+      new DrunkPlayer(helperMethods, {
+        delay: 200,
+        chipColor: BLUE
+      })
+    );
   });
 }
 
 function startJoin(gn) {
   start(
-    new LocalPlayer(helperMethods),
     new RemotePlayer(helperMethods, {
       isHost: false,
-      gameCode: gn
-    })
+      gameCode: gn,
+      chipColor: RED
+    }),
+    new LocalPlayer(helperMethods, BLUE)
   );
 }
 
-function start(player1, player2) {
+function start(player1, player2, rematch = false) {
   lastPlayer1 = player1;
   lastPlayer2 = player2;
 
@@ -211,7 +233,7 @@ function start(player1, player2) {
   $("#single").off("click");
   $("#local").off("click");
   $("#host").off("click");
-  $("#aivsai").off("click");
+  //$("#aivsai").off("click");
 
   //actual board width and height
   var w = chips.get(0).scrollWidth;
@@ -257,7 +279,7 @@ function start(player1, player2) {
       inGame = true;
 
       //start turn one
-      nextTurn(RED, player1, player2);
+      nextTurn(player1, player2);
     }
   }
 
@@ -265,7 +287,7 @@ function start(player1, player2) {
   player2.getReady(onReady);
 }
 
-function nextTurn(color, playerToTakeTurnNow, playerToTakeTurnAfter, previousColumn) {
+function nextTurn(playerToTakeTurnNow, playerToTakeTurnAfter, previousColumn) {
   var isGameWon = helperMethods.checkForWin(
     mainBoard,
     function(colorThatWon) {
@@ -274,12 +296,16 @@ function nextTurn(color, playerToTakeTurnNow, playerToTakeTurnAfter, previousCol
         playerToTakeTurnNow.winningMove(previousColumn);
       }
       win(colorThatWon);
-      askIfPlayersWantToPlayAgain(playerToTakeTurnNow, playerToTakeTurnAfter);
+      if (moves % 2) {
+        askIfPlayersWantToPlayAgain(playerToTakeTurnNow, playerToTakeTurnAfter);
+      } else {
+        askIfPlayersWantToPlayAgain(playerToTakeTurnAfter, playerToTakeTurnNow);
+      }
     },
     function() {
       //ran in the event of a tie
       tie();
-      askIfPlayersWantToPlayAgain(playerToTakeTurnNow, playerToTakeTurnAfter);
+      askIfPlayersWantToPlayAgain(playerToTakeTurnAfter, playerToTakeTurnNow);
     }
   );
 
@@ -289,40 +315,40 @@ function nextTurn(color, playerToTakeTurnNow, playerToTakeTurnAfter, previousCol
   }
 
   advanceTurn();
-  console.log("Turn " + moves + ", " + color + "'s turn.");
+  console.log("Turn " + moves + ", " + playerToTakeTurnNow.chipColor + "'s turn.");
 
-  setIndicatorColor(color);
+  setIndicatorColor(playerToTakeTurnNow.chipColor);
 
-  tryTurn(color, playerToTakeTurnNow, playerToTakeTurnAfter, previousColumn);
+  tryTurn(playerToTakeTurnNow, playerToTakeTurnAfter, previousColumn);
 }
 
-function tryTurn(chipColor, playerToTakeTurnNow, playerToTakeTurnAfter, previousColumn) {
+function tryTurn(playerToTakeTurnNow, playerToTakeTurnAfter, previousColumn) {
   // records the current time before the move is made
   var beforeMove = performance.now();
 
   //give the correct player control based on the gamemode
-  playerToTakeTurnNow.takeTurn(mainBoard, chipColor, previousColumn, function(columnToDropIn, shouldAnimate) {
+  playerToTakeTurnNow.takeTurn(mainBoard, previousColumn, function(columnToDropIn, shouldAnimate) {
     //ran when the player makes their moves
 
     //the player has decided their move, so let's execute it.
-    var chipWasDropped = helperMethods.dropChip(mainBoard, columnToDropIn, chipColor, function(column, j, colorOfChip) {
+    var chipWasDropped = helperMethods.dropChip(mainBoard, columnToDropIn, playerToTakeTurnNow.chipColor, function(column, j, chipColor) {
       //ran when the chip has been dropped into the board array
 
       // log how long it took to make the move
       var afterMove = performance.now();
       var moveTime = (afterMove - beforeMove) / 1000;
-      console.log(colorOfChip + " took " + moveTime.toFixed(6) + " seconds to drop in column " + column);
+      console.log(chipColor + " took " + moveTime.toFixed(6) + " seconds to drop in column " + column);
 
-      drawChip(column, j, colorOfChip, shouldAnimate);
+      drawChip(column, j, chipColor, shouldAnimate);
     });
 
     if (chipWasDropped) {
       //player has successfully made their move,
       //so switch the color and players and keep going.
-      nextTurn(getOppositeColor(chipColor), playerToTakeTurnAfter, playerToTakeTurnNow, columnToDropIn);
+      nextTurn(playerToTakeTurnAfter, playerToTakeTurnNow, columnToDropIn);
     } else {
       //try the same thing again
-      tryTurn(chipColor, playerToTakeTurnNow, playerToTakeTurnAfter, previousColumn);
+      tryTurn(playerToTakeTurnNow, playerToTakeTurnAfter, previousColumn);
     }
   });
 }
@@ -527,7 +553,8 @@ function askIfPlayersWantToPlayAgain(player1, player2) {
 
 function playAgain(player1, player2) {
   clearCurrentGame();
-  start(player1, player2);
+  console.log(player1, player2);
+  start(player1, player2, true);
 }
 
 function winAdder(color) {
