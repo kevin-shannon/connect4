@@ -222,7 +222,7 @@ function startJoin(gn) {
   );
 }
 
-function start(player1, player2, rematch = false) {
+function start(player1, player2) {
   lastPlayer1 = player1;
   lastPlayer2 = player2;
 
@@ -553,8 +553,7 @@ function askIfPlayersWantToPlayAgain(player1, player2) {
 
 function playAgain(player1, player2) {
   clearCurrentGame();
-  console.log(player1, player2);
-  start(player1, player2, true);
+  start(player1, player2);
 }
 
 function winAdder(color) {
