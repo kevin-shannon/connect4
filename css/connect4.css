@@ -35,6 +35,16 @@
   visibility: hidden;
 }
 
+.btn-time {
+  background-color: #6868ff;
+  color: #fff;
+}
+
+.btn-time:hover {
+  background-color: #5a5add;
+  color: rgb(251, 251, 251);
+}
+
 #copyBox {
   display: none;
 }
@@ -54,6 +64,24 @@
 
 #loading {
   margin: 64px;
+}
+
+#back {
+  padding: 10px;
+}
+
+#gamemodeSelector {
+  margin: 10% auto;
+}
+
+.modal-title {
+  margin: auto;
+}
+
+.host-menu {
+  display: none;
+  margin: auto;
+  width: 80%;
 }
 
 body {

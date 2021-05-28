@@ -1,10 +1,8 @@
 /*
  *   Connect 4 by Kevin Shannon and Tanner Krewson
  *
- *   Single Player: player is always red. first player is randomized
- *   Local Multi:   players stay same color. first player is randomized
- *   Online Multi:  players stay same color. first player is randomized
- *
+ *   per player / per turn
+ *   30 sec, 1 min, 2min, 3 min, 5min, custom / 3 sec, 5 sec, 10 sec, 15 sec, 20 sec, custom
  */
 
 /*
@@ -170,6 +168,9 @@ function initialize() {
 
 function gamemodeSelector() {
   $("#gamemodeSelector").modal("show");
+  $("#gamemodeSelectorButtons").show();
+  $(".modal-title").show();
+  $("#back").hide();
 
   $("#single").on("click", function() {
     var computerPlayerDelay = 1000;
@@ -187,14 +188,7 @@ function gamemodeSelector() {
   });
 
   $("#host").on("click", function() {
-    start(
-      new LocalPlayer(helperMethods, RED),
-      new RemotePlayer(helperMethods, {
-        isHost: true,
-        chipColor: BLUE
-      })
-    );
-    copyBox();
+    hostMenu();
   });
 
   $("#aivsai").on("click", function() {
@@ -209,6 +203,14 @@ function gamemodeSelector() {
       })
     );
   });
+
+  $("#back").click(function() {
+    $("#gamemodeSelector").modal("show");
+    $("#gamemodeSelectorButtons").show();
+    $(".modal-title").show();
+    $("#back").hide();
+    $(".host-menu").css("display", "none");
+  });
 }
 
 function startJoin(gn) {
@@ -220,6 +222,25 @@ function startJoin(gn) {
     }),
     new LocalPlayer(helperMethods, BLUE)
   );
+}
+
+function hostMenu() {
+  $("#gamemodeSelectorButtons").hide();
+  $(".modal-title").hide();
+  $("#back").show();
+  $(".host-menu").css("display", "block");
+  /*
+  "on join" {
+    start(
+      new LocalPlayer(helperMethods, RED),
+      new RemotePlayer(helperMethods, {
+        isHost: true,
+        chipColor: BLUE
+      })
+    );
+  }
+  copyBox();
+  */
 }
 
 function start(player1, player2) {
@@ -647,10 +668,6 @@ function repositionButtons() {
     buttons.find("*").addClass("big-screen-button");
     buttons.find("*").removeClass("small-screen-button");
   }
-}
-
-function getOppositeColor(color) {
-  return color == RED ? BLUE : RED;
 }
 
 //returns who's turn it is now

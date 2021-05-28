@@ -1,0 +1,78 @@
+.loader {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  margin: 30px auto;
+}
+
+.ball {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  z-index: 4;
+  border-radius: 50%;
+  background: rgba(0, 0, 255, 0.2);
+  animation: jelly 2.5s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+}
+.ball:nth-child(2) {
+  z-index: 3;
+  transform: scale(1.4);
+  animation: jelly2 2.5s 0.2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+}
+.ball:nth-child(3) {
+  z-index: 2;
+  transform: scale(1.8);
+  animation: jelly3 2.5s 0.4s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+}
+.ball:nth-child(4) {
+  z-index: 1;
+  transform: scale(2.2);
+  animation: jelly4 2.5s 0.6s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+}
+
+@keyframes jelly {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.6);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes jelly2 {
+  0% {
+    transform: scale(1.4);
+  }
+  45% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.4);
+  }
+}
+@keyframes jelly3 {
+  0% {
+    transform: scale(1.8);
+  }
+  40% {
+    transform: scale(1.35);
+  }
+  100% {
+    transform: scale(1.8);
+  }
+}
+@keyframes jelly4 {
+  0% {
+    transform: scale(2.2);
+  }
+  35% {
+    transform: scale(1.7);
+  }
+  100% {
+    transform: scale(2.2);
+  }
+}
+
+/*# sourceMappingURL=jellychip.css.map */

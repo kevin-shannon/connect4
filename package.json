@@ -29,5 +29,8 @@
     "hooks": {
       "pre-commit": "npm run prettier"
     }
+  },
+  "dependencies": {
+    "material-design-icons": "^3.0.1"
   }
 }

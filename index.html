@@ -21,7 +21,9 @@
 
     <link rel="shortcut icon" type="image/ico" href="img/favicon.ico" />
     <link rel="stylesheet" type="text/css" href="css/connect4.css" />
+    <link rel="stylesheet" type="text/css" href="css/jellychip.css" />
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 
     <title>Connect 4</title>
   </head>
@@ -93,43 +95,64 @@
     </div>
 
     <div class="modal fade" id="gamemodeSelector" data-keyboard="false" data-backdrop="static">
-      <div style="text-align: center;">
-        <div class="modal-dialog" role="document" style="display: inline-block;">
-          <div class="modal-content">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <span class="material-icons" id="back">arrow_back_ios</span>
+          <div class="modal-title">
             <div class="row mx-auto">
               <img id="logo" src="img/spinningchip.gif" height="128px" style="max-width: 100%;" />
             </div>
             <div class="row mx-auto">
               <h4>Connect 4</h4>
             </div>
-            <div class="modal-body mx-auto" style="text-align:center;">
-              <div id="gamemodeSelectorButtons" role="group">
-                <button type="button" class="btn btn-primary" id="single">
-                  Single Player
-                </button>
-                <button type="button" class="btn btn-primary" id="local">
-                  Local Multiplayer
-                </button>
-                <button type="button" class="btn btn-primary" id="host">
-                  Online Multiplayer
-                </button>
-              </div>
+          </div>
+          <div class="host-menu">
+            <button
+              class="btn btn-time btn-lg btn-block"
+              type="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+              onclick="this.blur();"
+            >
+              <span class="material-icons" style="float: left;">timer</span>
+              <span>30 sec</span>
+              <span class="material-icons" style="float: right;">arrow_drop_down</span>
+            </button>
+            <div class="loader">
+              <div class="ball"></div>
+              <div class="ball"></div>
+              <div class="ball"></div>
+              <div class="ball"></div>
             </div>
-            <div class="modal-footer">
-              <div>
-                Made with ❤️ by
-                <a href="https://kevinshannon.dev/" target="_blank">
-                  Kevin Shannon
-                </a>
-                and
-                <a href="https://www.tannerkrewson.com/" target="_blank">
-                  Tanner Krewson
-                </a>
-                <br />
-                <a href="https://github.com/kevin-shannon/connect4" target="_blank">
-                  View on GitHub
-                </a>
-              </div>
+          </div>
+          <div class="modal-body mx-auto" style="text-align:center;">
+            <div id="gamemodeSelectorButtons" role="group">
+              <button type="button" class="btn btn-primary" id="single">
+                Single Player
+              </button>
+              <button type="button" class="btn btn-primary" id="local">
+                Local Multiplayer
+              </button>
+              <button type="button" class="btn btn-primary" id="host">
+                Online Multiplayer
+              </button>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <div>
+              Made with ❤️ by
+              <a href="https://kevinshannon.dev/" target="_blank">
+                Kevin Shannon
+              </a>
+              and
+              <a href="https://www.tannerkrewson.com/" target="_blank">
+                Tanner Krewson
+              </a>
+              <br />
+              <a href="https://github.com/kevin-shannon/connect4" target="_blank">
+                View on GitHub
+              </a>
             </div>
           </div>
         </div>
