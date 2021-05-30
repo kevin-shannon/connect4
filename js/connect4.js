@@ -2,7 +2,7 @@
  *   Connect 4 by Kevin Shannon and Tanner Krewson
  *
  *   per player / per turn
- *   30 sec, 1 min, 2min, 3 min, 5min, custom / 3 sec, 5 sec, 10 sec, 15 sec, 20 sec, custom
+ *   30 sec, 1 min, 2 min, 3 min, 5min, custom / 3 sec, 5 sec, 10 sec, 15 sec, 20 sec, custom
  */
 
 /*
@@ -138,7 +138,6 @@ function initialize() {
 
   //hide the loading screen and copyBox
   $("#loading").hide();
-  $("#copyBox").hide();
 
   var urlParams = new URLSearchParams(window.location.search);
   var joinID = urlParams.get("joinid");
@@ -211,6 +210,13 @@ function gamemodeSelector() {
     $("#back").hide();
     $(".host-menu").css("display", "none");
   });
+
+  $("#copyButton").on("click", function() {
+    $("#hostLink").select();
+    document.execCommand("copy");
+    window.getSelection().removeAllRanges();
+    $("#hostLink").blur();
+  });
 }
 
 function startJoin(gn) {
@@ -241,6 +247,15 @@ function hostMenu() {
   }
   copyBox();
   */
+}
+
+function toggleDropDown() {
+  display = $(".dropdown-content").css("display");
+  if (display === "block") {
+    $(".dropdown-content").css("display", "none");
+  } else {
+    $(".dropdown-content").css("display", "block");
+  }
 }
 
 function start(player1, player2) {
@@ -451,12 +466,6 @@ function setIndicatorColor(newColor) {
 
 function copyBox() {
   $("#copyBox").css("display", "flex");
-  $("#copyButton").on("click", function() {
-    $("#hostLink").select();
-    document.execCommand("copy");
-    window.getSelection().removeAllRanges();
-    $("#hostLink").blur();
-  });
 }
 
 function clearCurrentGame() {
@@ -468,9 +477,7 @@ function resetGame() {
   clearCurrentGame();
 
   inGame = false;
-
   AIDelay = 1000;
-
   redVictories = 0;
   blueVictories = 0;
   $("#redVic").text(redVictories);
@@ -481,8 +488,6 @@ function resetGame() {
   $("#redVic").css("visibility", "hidden");
   $("#blueVic").css("visibility", "hidden");
   $("#resetButton").css("visibility", "hidden");
-
-  $("#copyBox").hide();
 
   if (lastPlayer1.onReset) {
     lastPlayer1.onReset();

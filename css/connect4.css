@@ -35,17 +35,47 @@
   visibility: hidden;
 }
 
-.btn-time {
-  background-color: #6868ff;
+.btn-time-grid {
+  background-color: #768ce1;
   color: #fff;
 }
 
-.btn-time:hover {
-  background-color: #5a5add;
+.btn-time-grid:hover {
+  background-color: #516dd8;
   color: rgb(251, 251, 251);
 }
 
-#copyBox {
+.btn-blue {
+  background-color: #516dd8;
+  color: #fff;
+}
+
+.btn-blue:hover {
+  background-color: #4961c2;
+  color: rgb(251, 251, 251);
+}
+
+.btn-outline-blue {
+  color: #516dd8;
+  border-color: #516dd8;
+}
+
+.btn-outline-blue:hover {
+  background-color: #516dd8;
+  color: #fff;
+}
+
+.btn-grid-info {
+  margin-left: -10px;
+  color: #444444;
+}
+
+.info-icon {
+  vertical-align: bottom;
+  font-size: larger !important;
+}
+
+.dropdown-content {
   display: none;
 }
 
@@ -67,7 +97,8 @@
 }
 
 #back {
-  padding: 10px;
+  padding: 12px;
+  width: fit-content;
 }
 
 #gamemodeSelector {
@@ -103,10 +134,28 @@ body {
 
 .container {
   max-width: 85vh;
-
   background: white;
   padding: 1em;
   box-shadow: 0 0 256px 200px white;
+}
+
+.button-container {
+  padding: 1em;
+}
+
+.col-sm {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.copy-load {
+  display: flex;
+  margin-top: 10px;
+}
+
+.copy-block {
+  margin-top: 10px;
+  margin-right: 10px;
 }
 
 .modal-footer {

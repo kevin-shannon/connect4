@@ -47,36 +47,7 @@
         </div>
         <div class="col mx-auto my-auto text-center">
           <h6 id="game-status"></h6>
-          <div id="copyBox" class="input-group mb-3">
-            <input
-              id="hostLink"
-              type="text"
-              class="form-control"
-              value=""
-              onFocus="this.select();"
-              onfocusout="window.getSelection().removeAllRanges();"
-              aria-label="host link"
-              style="background-color:White"
-              aria-describedby="basic-addon2"
-              readonly
-            />
-            <div class="input-group-append">
-              <button
-                id="copyButton"
-                class="btn btn-outline-primary"
-                type="button"
-                data-container="body"
-                data-toggle="popover"
-                data-placement="bottom"
-                data-trigger="focus"
-                data-delay='{"hide": 1000}'
-                data-content="Copied!"
-              >
-                Copy
-              </button>
-            </div>
-          </div>
-          <button type="button" class="btn btn-primary big-screen-button" id="resetButton" onclick="resetGame()">
+          <button type="button" class="btn btn-blue big-screen-button" id="resetButton" onclick="resetGame()">
             Menu
           </button>
           <div class="col">
@@ -107,34 +78,130 @@
             </div>
           </div>
           <div class="host-menu">
-            <button
-              class="btn btn-time btn-lg btn-block"
-              type="button"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-              onclick="this.blur();"
-            >
-              <span class="material-icons" style="float: left;">timer</span>
-              <span>30 sec</span>
-              <span class="material-icons" style="float: right;">arrow_drop_down</span>
-            </button>
-            <div class="loader">
-              <div class="ball"></div>
-              <div class="ball"></div>
-              <div class="ball"></div>
-              <div class="ball"></div>
+            <div class="dropdown">
+              <button
+                class="btn btn-blue btn-lg btn-block"
+                type="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+                onclick="this.blur(); toggleDropDown();"
+              >
+                <span class="material-icons" style="float: left;">timer</span>
+                <span>30 sec</span>
+                <span class="material-icons" style="float: right;">arrow_drop_down</span>
+              </button>
+              <div class="dropdown-content">
+                <div class="button-container">
+                  <div class="btn-grid-info"><span>Per Player</span><span class="material-icons info-icon">person_outline</span></div>
+                  <div class="row">
+                    <div class="col-sm">
+                      <button class="btn btn-time-grid btn-block" type="radio" onclick="this.blur();">
+                        30 sec
+                      </button>
+                      <button class="btn btn-time-grid btn-block" type="radio" onclick="this.blur();">
+                        3 min
+                      </button>
+                    </div>
+                    <div class="col-sm">
+                      <button class="btn btn-time-grid btn-block" type="radio" onclick="this.blur();">
+                        1 min
+                      </button>
+                      <button class="btn btn-time-grid btn-block" type="radio" onclick="this.blur();">
+                        5 min
+                      </button>
+                    </div>
+                    <div class="col-sm">
+                      <button class="btn btn-time-grid btn-block" type="radio" onclick="this.blur();">
+                        2 min
+                      </button>
+                      <button class="btn btn-time-grid btn-block" type="radio" onclick="this.blur();">
+                        10 min
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="button-container">
+                  <div class="btn-grid-info"><span>Per Turn </span><span class="material-icons info-icon">toll</span></div>
+                  <div class="row">
+                    <div class="col-sm">
+                      <button class="btn btn-time-grid btn-block" type="radio" onclick="this.blur();">
+                        3 sec
+                      </button>
+                      <button class="btn btn-time-grid btn-block" type="radio" onclick="this.blur();">
+                        20 sec
+                      </button>
+                    </div>
+                    <div class="col-sm">
+                      <button class="btn btn-time-grid btn-block" type="radio" onclick="this.blur();">
+                        5 sec
+                      </button>
+                      <button class="btn btn-time-grid btn-block" type="radio" onclick="this.blur();">
+                        30 sec
+                      </button>
+                    </div>
+                    <div class="col-sm">
+                      <button class="btn btn-time-grid btn-block" type="radio" onclick="this.blur();">
+                        10 sec
+                      </button>
+                      <button class="btn btn-time-grid btn-block" type="radio" onclick="this.blur();">
+                        1 min
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="copy-load">
+              <div class="copy-block">
+                <span>Send this link to your opponent!</span>
+                <div id="copyBox" class="input-group mb-3">
+                  <input
+                    id="hostLink"
+                    type="text"
+                    class="form-control"
+                    value=""
+                    onFocus="this.select();"
+                    onfocusout="window.getSelection().removeAllRanges();"
+                    aria-label="host link"
+                    style="background-color:White"
+                    aria-describedby="basic-addon2"
+                    readonly
+                  />
+                  <div class="input-group-append">
+                    <button
+                      id="copyButton"
+                      class="btn btn-outline-blue"
+                      type="button"
+                      data-container="body"
+                      data-toggle="popover"
+                      data-placement="bottom"
+                      data-trigger="focus"
+                      data-delay='{"hide": 1000}'
+                      data-content="Copied!"
+                    >
+                      <span class="material-icons" style="font-size: initial;">content_copy</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="loader">
+                <div class="ball"></div>
+                <div class="ball"></div>
+                <div class="ball"></div>
+                <div class="ball"></div>
+              </div>
             </div>
           </div>
           <div class="modal-body mx-auto" style="text-align:center;">
             <div id="gamemodeSelectorButtons" role="group">
-              <button type="button" class="btn btn-primary" id="single">
+              <button type="button" class="btn btn-blue" id="single">
                 Single Player
               </button>
-              <button type="button" class="btn btn-primary" id="local">
+              <button type="button" class="btn btn-blue" id="local">
                 Local Multiplayer
               </button>
-              <button type="button" class="btn btn-primary" id="host">
+              <button type="button" class="btn btn-blue" id="host">
                 Online Multiplayer
               </button>
             </div>
