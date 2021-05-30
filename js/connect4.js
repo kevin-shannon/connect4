@@ -66,6 +66,37 @@ var pageReady = false;
 var numOfImagesLoaded = 0;
 var TOTAL_IMAGES = 7;
 
+//dropdown button mappings
+var buttonMappings = {
+  pp30s:
+    "<span class='material-icons' style='float: left;'>timer</span>30 sec <span class='material-icons drop-p-icon'>person_outline</span><span class='material-icons' style='float: right;'>arrow_drop_down</span>",
+  pp1m:
+    "<span class='material-icons' style='float: left;'>timer</span>1 min <span class='material-icons drop-p-icon'>person_outline</span><span class='material-icons' style='float: right;'>arrow_drop_down</span>",
+  pp2m:
+    "<span class='material-icons' style='float: left;'>timer</span>2 min <span class='material-icons drop-p-icon'>person_outline</span><span class='material-icons' style='float: right;'>arrow_drop_down</span>",
+  pp3m:
+    "<span class='material-icons' style='float: left;'>timer</span>3 min <span class='material-icons drop-p-icon'>person_outline</span><span class='material-icons' style='float: right;'>arrow_drop_down</span>",
+  pp5m:
+    "<span class='material-icons' style='float: left;'>timer</span>5 min <span class='material-icons drop-p-icon'>person_outline</span><span class='material-icons' style='float: right;'>arrow_drop_down</span>",
+  pp10m:
+    "<span class='material-icons' style='float: left;'>timer</span>10 min <span class='material-icons drop-p-icon'>person_outline</span><span class='material-icons' style='float: right;'>arrow_drop_down</span>",
+  pt3s:
+    "<span class='material-icons' style='float: left;'>timer</span>3 sec <span class='material-icons drop-t-icon'>toll</span><span class='material-icons' style='float: right;'>arrow_drop_down</span>",
+  pt5s:
+    "<span class='material-icons' style='float: left;'>timer</span>5 sec <span class='material-icons drop-t-icon'>toll</span><span class='material-icons' style='float: right;'>arrow_drop_down</span>",
+  pt10s:
+    "<span class='material-icons' style='float: left;'>timer</span>10 sec <span class='material-icons drop-t-icon'>toll</span><span class='material-icons' style='float: right;'>arrow_drop_down</span>",
+  pt20s:
+    "<span class='material-icons' style='float: left;'>timer</span>20 sec <span class='material-icons drop-t-icon'>toll</span><span class='material-icons' style='float: right;'>arrow_drop_down</span>",
+  pt30s:
+    "<span class='material-icons' style='float: left;'>timer</span>30 sec <span class='material-icons drop-t-icon'>toll</span><span class='material-icons' style='float: right;'>arrow_drop_down</span>",
+  pt1m:
+    "<span class='material-icons' style='float: left;'>timer</span>1 min <span class='material-icons drop-t-icon'>toll</span><span class='material-icons' style='float: right;'>arrow_drop_down</span>"
+};
+
+//<span class='material-icons' style='float: left;'></span>
+//<span class='material-icons' style='float: right;'>arrow_drop_down</span>
+
 function imageLoaded() {
   numOfImagesLoaded++;
   if (numOfImagesLoaded >= TOTAL_IMAGES) {
@@ -245,7 +276,6 @@ function hostMenu() {
       })
     );
   }
-  copyBox();
   */
 }
 
@@ -256,6 +286,11 @@ function toggleDropDown() {
   } else {
     $(".dropdown-content").css("display", "block");
   }
+}
+
+function updateDropDownText(id) {
+  buttonText = buttonMappings[id];
+  $("#btn-main-time").html(buttonText);
 }
 
 function start(player1, player2) {

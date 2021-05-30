@@ -45,6 +45,13 @@
   color: rgb(251, 251, 251);
 }
 
+.btn-time-grid:not(:disabled):not(.disabled).active {
+  color: #fff;
+  background-color: #465eb9;
+  border-color: #465eb9;
+  box-shadow: 0 0 0 0.18rem rgb(70 93 181 / 47%);
+}
+
 .btn-blue {
   background-color: #516dd8;
   color: #fff;
@@ -73,6 +80,14 @@
 .info-icon {
   vertical-align: bottom;
   font-size: larger !important;
+}
+
+.drop-p-icon {
+  vertical-align: sub;
+}
+
+.drop-t-icon {
+  vertical-align: middle;
 }
 
 .dropdown-content {

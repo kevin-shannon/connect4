@@ -79,74 +79,68 @@
           </div>
           <div class="host-menu">
             <div class="dropdown">
-              <button
-                class="btn btn-blue btn-lg btn-block"
-                type="button"
-                data-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-                onclick="this.blur(); toggleDropDown();"
-              >
+              <button class="btn btn-blue btn-lg btn-block" id="btn-main-time" type="button" onclick="this.blur(); toggleDropDown();">
                 <span class="material-icons" style="float: left;">timer</span>
-                <span>30 sec</span>
+                <span>30 sec </span>
+                <span class="material-icons info-icon">toll</span>
                 <span class="material-icons" style="float: right;">arrow_drop_down</span>
               </button>
-              <div class="dropdown-content">
+              <div class="dropdown-content" data-toggle="buttons">
                 <div class="button-container">
                   <div class="btn-grid-info"><span>Per Player</span><span class="material-icons info-icon">person_outline</span></div>
                   <div class="row">
-                    <div class="col-sm">
-                      <button class="btn btn-time-grid btn-block" type="radio" onclick="this.blur();">
-                        30 sec
-                      </button>
-                      <button class="btn btn-time-grid btn-block" type="radio" onclick="this.blur();">
-                        3 min
-                      </button>
+                    <div class="col-sm btn-group-toggle">
+                      <label class="btn btn-time-grid btn-block" onclick="updateDropDownText('pp30s'); toggleDropDown();">
+                        <input type="radio" name="options" id="pp30s" /> 30 sec
+                      </label>
+                      <label class="btn btn-time-grid btn-block" onclick="updateDropDownText('pp3m'); toggleDropDown();">
+                        <input type="radio" name="options" id="pp3m" /> 3 min
+                      </label>
                     </div>
-                    <div class="col-sm">
-                      <button class="btn btn-time-grid btn-block" type="radio" onclick="this.blur();">
-                        1 min
-                      </button>
-                      <button class="btn btn-time-grid btn-block" type="radio" onclick="this.blur();">
-                        5 min
-                      </button>
+                    <div class="col-sm btn-group-toggle">
+                      <label class="btn btn-time-grid btn-block" onclick="updateDropDownText('pp1m'); toggleDropDown();">
+                        <input type="radio" name="options" id="pp1m" /> 1 min
+                      </label>
+                      <label class="btn btn-time-grid btn-block" onclick="updateDropDownText('pp5m'); toggleDropDown();">
+                        <input type="radio" name="options" id="pp5m" /> 5 min
+                      </label>
                     </div>
-                    <div class="col-sm">
-                      <button class="btn btn-time-grid btn-block" type="radio" onclick="this.blur();">
-                        2 min
-                      </button>
-                      <button class="btn btn-time-grid btn-block" type="radio" onclick="this.blur();">
-                        10 min
-                      </button>
+                    <div class="col-sm btn-group-toggle">
+                      <label class="btn btn-time-grid btn-block" onclick="updateDropDownText('pp2m'); toggleDropDown();">
+                        <input type="radio" name="options" id="pp2m" /> 2 min
+                      </label>
+                      <label class="btn btn-time-grid btn-block" onclick="updateDropDownText('pp10m'); toggleDropDown();">
+                        <input type="radio" name="options" id="pp10m" /> 10 min
+                      </label>
                     </div>
                   </div>
                 </div>
                 <div class="button-container">
                   <div class="btn-grid-info"><span>Per Turn </span><span class="material-icons info-icon">toll</span></div>
                   <div class="row">
-                    <div class="col-sm">
-                      <button class="btn btn-time-grid btn-block" type="radio" onclick="this.blur();">
-                        3 sec
-                      </button>
-                      <button class="btn btn-time-grid btn-block" type="radio" onclick="this.blur();">
-                        20 sec
-                      </button>
+                    <div class="col-sm btn-group-toggle">
+                      <label class="btn btn-time-grid btn-block" onclick="updateDropDownText('pt3s'); toggleDropDown();">
+                        <input type="radio" name="options" id="pt3s" /> 3 sec
+                      </label>
+                      <label class="btn btn-time-grid btn-block" onclick="updateDropDownText('pt20s'); toggleDropDown();">
+                        <input type="radio" name="options" id="pt20s" /> 20 sec
+                      </label>
                     </div>
-                    <div class="col-sm">
-                      <button class="btn btn-time-grid btn-block" type="radio" onclick="this.blur();">
-                        5 sec
-                      </button>
-                      <button class="btn btn-time-grid btn-block" type="radio" onclick="this.blur();">
-                        30 sec
-                      </button>
+                    <div class="col-sm btn-group-toggle">
+                      <label class="btn btn-time-grid btn-block" onclick="updateDropDownText('pt5s'); toggleDropDown();">
+                        <input type="radio" name="options" id="pt5s" /> 5 sec
+                      </label>
+                      <label class="btn btn-time-grid btn-block active" onclick="updateDropDownText('pt30s'); toggleDropDown();">
+                        <input type="radio" name="options" id="pt30s" checked="checked" /> 30 sec
+                      </label>
                     </div>
-                    <div class="col-sm">
-                      <button class="btn btn-time-grid btn-block" type="radio" onclick="this.blur();">
-                        10 sec
-                      </button>
-                      <button class="btn btn-time-grid btn-block" type="radio" onclick="this.blur();">
-                        1 min
-                      </button>
+                    <div class="col-sm btn-group-toggle">
+                      <label class="btn btn-time-grid btn-block" onclick="updateDropDownText('pt10s'); toggleDropDown();">
+                        <input type="radio" name="options" id="pt10s" /> 10 sec
+                      </label>
+                      <label class="btn btn-time-grid btn-block" onclick="updateDropDownText('pt1m'); toggleDropDown();">
+                        <input type="radio" name="options" id="pt1m" /> 1 min
+                      </label>
                     </div>
                   </div>
                 </div>
