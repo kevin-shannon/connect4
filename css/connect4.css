@@ -35,6 +35,16 @@
   visibility: hidden;
 }
 
+#btn-main-time {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-group-toggle > .btn {
+  margin-bottom: 0.5rem;
+}
+
 .btn-time-grid {
   background-color: #768ce1;
   color: #fff;
