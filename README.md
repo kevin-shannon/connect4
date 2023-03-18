@@ -4,7 +4,7 @@ _By Kevin Shannon and Tanner Krewson_
 
 The original vertical four in a line game.
 
-### Try it out: https://kevinshannon.dev/connect4/
+### Try it out: https://kevinshannon.com/connect4/
 
 ## Development
 
